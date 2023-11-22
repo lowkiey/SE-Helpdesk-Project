@@ -1,5 +1,4 @@
 const userModel = require("../Models/userModel");
-const productModel = require("../Models/productModel");
 const sessionModel = require("../Models/sessionModel");
 const jwt = require("jsonwebtoken");
 require('dotenv').config();
@@ -122,55 +121,7 @@ const userController = {
             return res.status(500).json({ message: error.message });
         }
     },
-    getShoppingCart: async (req, res) => {
-        try {
-            const user = await userModel.findById(req.params.id);
-            return res.status(200).json(user.shoppingCart);
-        } catch (error) {
-            return res.status(500).json({ message: error.message });
-        }
-    },
-    addToCart: async (req, res) => {
-        try {
-            const user = await userModel.findById(req.params.id);
-            const product = await productModel.findById(req.params.productid);
-            user.shoppingCart.push(product);
-            const newUser = await user.save(); // save here works as update
-            return res.status(201).json(newUser);
-        } catch (e) {
-            return res.status(400).json({ message: e.message });
-        }
-    },
-    removeFromCart: async (req, res) => {
-        try {
-            const user = await userModel.findById(req.params.id);
-            const product = await productModel.findById(req.params.productid);
-            user.shoppingCart.pull(product);
-            const newUser = await user.save();
-            return res.status(201).json(newUser);
-        } catch (e) {
-            return res.status(400).json({ message: e.message });
-        }
-    },
-    checkout: async (req, res) => {
-        try {
-            const user = await userModel.findById(req.params.id);
-            const total = user.shoppingCart.reduce(
-                (total, product) => total + product.price,
-                0
-            );
-            await userModel.findByIdAndUpdate(
-                req.params.id,
-                { shoppingCart: [] },
-                {
-                    new: true,
-                }
-            );
-            console.log(total);
-            return res.status(200).json(total);
-        } catch (error) {
-            return res.status(500).json({ message: error.message });
-        }
-    },
+
+
 };
 module.exports = userController;
