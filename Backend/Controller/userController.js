@@ -41,20 +41,19 @@ const userController = {
 
             // Find the user by email
             const user = await userModel.findOne({ email });
+
             if (!user) {
-                return res.status(404).json({ message: "email not found" });
+                return res.status(404).json({ message: "User not found" });
             }
 
-            console.log("password: ", user.password);
             // Check if the password is correct
-
             const passwordMatch = await bcrypt.compare(password, user.password);
             if (!passwordMatch) {
-                return res.status(405).json({ message: "incorect password" });
+                return res.status(405).json({ message: "Incorrect password" });
             }
 
             const currentDateTime = new Date();
-            const expiresAt = new Date(+currentDateTime + 180000000); // expire in 3 minutes
+            const expiresAt = new Date(+currentDateTime + 1800000); // expire in 3 minutes
             // Generate a JWT token
             const token = jwt.sign(
                 { user: { userId: user._id, role: user.role } },
@@ -63,26 +62,29 @@ const userController = {
                     expiresIn: 3 * 60 * 60,
                 }
             );
+
             let newSession = new sessionModel({
                 userId: user._id,
                 token,
                 expiresAt: expiresAt,
             });
             await newSession.save();
+
             return res
                 .cookie("token", token, {
                     expires: expiresAt,
                     withCredentials: true,
                     httpOnly: false,
-                    SameSite: 'none'
+                    sameSite: 'none'
                 })
                 .status(200)
-                .json({ message: "login successfully", user });
+                .json({ message: "Login successful", user });
         } catch (error) {
             console.error("Error logging in:", error);
             res.status(500).json({ message: "Server error" });
         }
     },
+
     getAllUsers: async (req, res) => {
         try {
             const users = await userModel.find();
