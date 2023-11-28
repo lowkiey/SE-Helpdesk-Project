@@ -4,7 +4,14 @@ const app = express();
 const mongoose = require("mongoose");
 const userRouter = require("./Routes/users");
 const authRouter = require("./Routes/auth");
+const agentRoutes = require('./routes/agentRoutes');
+const PORT = process.env.PORT || 3000;
+
 require('dotenv').config();
+
+
+
+
 
 const authenticationMiddleware = require("./Middleware/authenticationMiddleware");
 const cors = require("cors");
