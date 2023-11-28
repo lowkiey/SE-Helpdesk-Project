@@ -10,7 +10,8 @@ const authenticationMiddleware = require("./Middleware/authenticationMiddleware"
 const cors = require("cors");
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+
+app.use(cookieParser())
 
 app.use(
     cors({
@@ -21,27 +22,10 @@ app.use(
 );
 
 app.use("/api/v1", authRouter);
-app.use("/api/v1/users", authenticationMiddleware, userRouter);
-
-// app.use((req, res, next) => {
-//   res.setHeader("Access-Control-Allow-Origin", "*");
-//   res.setHeader("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS,HEAD");
-//   res.setHeader(
-//     "Access-Control-Expose-Headers",
-//     "*"
-//   );
-
-//   next();
-// });
-
-
+app.use(authenticationMiddleware);
+app.use("/api/v1/users", userRouter);
 const db_name = process.env.DB_NAME;
-// * Cloud Connection
-// const db_url = `mongodb+srv://TestUser:TestPassword@cluster0.lfqod.mongodb.net/${db_name}?retryWrites=true&w=majority`;
-// * Local connection
-const db_url = `${process.env.DB_URL}/${db_name}`; // if it gives error try to change the localhost to 127.0.0.1
-
-// ! Mongoose Driver Connection
+const db_url = `mongodb://localhost:27017/SE_Project1`;
 
 const connectionOptions = {
     useUnifiedTopology: true,
@@ -50,12 +34,14 @@ const connectionOptions = {
 
 mongoose
     .connect(db_url, connectionOptions)
-    .then(() => console.log("mongoDB connected"))
+    .then(() => console.log("MongoDB connected"))
     .catch((e) => {
-        console.log(e);
+        console.error("MongoDB connection error:", e);
     });
 
 app.use(function (req, res, next) {
     return res.status(404).send("404");
 });
-app.listen(process.env.PORT, () => console.log("server started"));
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
