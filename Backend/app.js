@@ -5,9 +5,8 @@ const mongoose = require("mongoose");
 const userRouter = require("./Routes/users");
 const ticketRouter = require("./Routes/tickets");
 const authRouter = require("./Routes/auth");
-const agentRoutes = require('./routes/agentRoutes');
 const PORT = process.env.PORT || 3000;
-
+const CustomizationSettingsRoute = require("./Routes/CustomizationSettingsRoutes");
 require('dotenv').config();
 
 
@@ -28,6 +27,8 @@ app.use(
         credentials: true,
     })
 );
+
+app.use("/api", CustomizationSettingsRoute);
 
 // app.use((req, res, next) => {
 //   res.setHeader("Access-Control-Allow-Origin", "*");
