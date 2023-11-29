@@ -1,16 +1,16 @@
 const CustomizationSettings = require('../Models/CustomizationSettings');
 
 // CREATE operation
-async function createCustomizationSettings(adminId, appearance) {
+async function createCustomizationSettings(res, req) {
   try {
     const customizationSettings = new CustomizationSettings({
       admin_id: adminId,
       appearance: appearance,
     });
     const result = await customizationSettings.save();
-    return result;
+    res.status(200).send(customizationSettings);
   } catch (error) {
-    throw error;
+    res.status(500).send(error.message);
   }
 }
 
