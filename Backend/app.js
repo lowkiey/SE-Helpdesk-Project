@@ -10,7 +10,7 @@ require('dotenv').config();
 const authenticationMiddleware = require("./Middleware/authenticationMiddleware");
 const cors = require("cors");
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 
 app.use(cookieParser())
 
@@ -43,8 +43,7 @@ const db_name = process.env.DB_NAME;
 // const db_url = `mongodb+srv://TestUser:TestPassword@cluster0.lfqod.mongodb.net/${db_name}?retryWrites=true&w=majority`;
 // * Local connection
 //const db_url = `${process.env.DB_URL}/${db_name}`; // if it gives error try to change the localhost to 127.0.0.1
-const db_url="mongodb://127.0.0.1:27017/SE_Project1";
-// ! Mongoose Driver Connection
+const db_url="mongodb://127.0.0.1:27017/SE_Project1";// ! Mongoose Driver Connection
 
 const connectionOptions = {
     useUnifiedTopology: true,
