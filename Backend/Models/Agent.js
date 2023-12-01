@@ -12,7 +12,7 @@ const agentSchema = new mongoose.Schema(
     user_id: { type: ObjectId, ref: 'userModel' },
     rating: { type: Number },
     resolution_time: { type: Number },
-    ticket_id: { type: ObjectI, ref: 'ticketsModel' },
+    ticket_id: { type: ObjectId, ref: 'ticketsModel' },
   },
   schemaOptions
 );
