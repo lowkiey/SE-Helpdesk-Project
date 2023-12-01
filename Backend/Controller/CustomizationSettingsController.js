@@ -5,7 +5,6 @@ async function createCustomizationSettings(req, res) {
   try {
     const { admin_id, appearance } = req.body;
 
-    // Validation
     if (!admin_id || !appearance) {
       return res.status(400).send("admin_id and appearance are required");
     }
