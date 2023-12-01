@@ -1,10 +1,12 @@
+// FAQController.js
 const FAQModel = require('../Models/FAQModel');
+const userModel = require("../Models/userModel");
 const sessionModel = require("../Models/sessionModel");
 const jwt = require("jsonwebtoken");
 require('dotenv').config();
 const secretKey = process.env.SECRET_KEY;
 const bcrypt = require("bcrypt");
-const { search } = require('../Routes/FAQ');
+
 const FAQController = {
     createFAQ: async (req, res) => {
       try {
@@ -25,12 +27,12 @@ const FAQController = {
     searchFAQ: async (req, res) => {
       try {
         const { title } = req.body;
-        const FAQ = await FAQModel.find({ title });
-        res.status(200).json({ msg: "FAQ found successfully" });
+        const FAQs = await FAQModel.find({ title });
+        res.status(200).json({ msg: "FAQ found successfully", FAQs });
       } catch (error) {
         res.status(500).json({ msg: error.message });
       }
     },
-  };
-  
-  module.exports = FAQController;
+};
+
+module.exports = FAQController;

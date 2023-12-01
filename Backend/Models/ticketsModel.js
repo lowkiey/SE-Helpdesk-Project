@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const userModel = require("./userModels");
+const ticketsModel = require("./ticketsModel");
 const schemaOptions = {
   strict: false,
   timestamps: true,

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const userModel = require("./userModel");
 
 const schemaOptions = {
   strict: false,
