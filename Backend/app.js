@@ -37,7 +37,7 @@ app.use(
 app.use("/api/v1", authRouter);
 app.use(authenticationMiddleware);
 app.use("/api/v1/users", userRouter);
-app.use("api/v1/FAQ", FAQRouter) 
+app.use("api/v1/FAQ", FAQRouter) ;
 const db_name = process.env.DB_NAME;
 // * Cloud Connection
 // const db_url = `mongodb+srv://TestUser:TestPassword@cluster0.lfqod.mongodb.net/${db_name}?retryWrites=true&w=majority`;
