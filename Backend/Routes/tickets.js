@@ -8,7 +8,8 @@ router.post("/", authorizationMiddleware(['user']), ticketsController.createTick
 router.put("/:id", authorizationMiddleware(['agent']), ticketsController.updateTicket);
 router.delete("/:id", authorizationMiddleware(['agent']), ticketsController.deleteticket);
 router.put("/category/:id", authorizationMiddleware(['user']), ticketsController.categoryTicket);
-router.put("/", authorizationMiddleware(['user']), ticketsController.subCategoryPriority);
+router.put("/", authorizationMiddleware(['user']), ticketsController.subCategory);
+router.put("/priorr/:id", authorizationMiddleware(['user']), ticketsController.priorityy);
 router.put("/wfTicket/:id", authorizationMiddleware(['user']), ticketsController.workflowIssue);
 
 module.exports = router; // ! Don't forget to export the router

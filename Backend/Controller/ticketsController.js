@@ -7,7 +7,7 @@ const secretKey = process.env.SECRET_KEY;
 const bcrypt = require("bcrypt");
 // Create a new ticket
 const ticketsController = {
-    createTicket: async (req, res) => {
+createTicket: async (req, res) => {
         try {
             const { user_id,
                 category,
@@ -28,8 +28,6 @@ const ticketsController = {
                 agent_id,
                 workflow
             });
-
-            // Save the ticket to the database
             await newTicket.save();
             res.status(201).json({ message: "ticket created successfully" });
         }
@@ -40,8 +38,8 @@ const ticketsController = {
 
         }
     },
-    //update ticket
-        updateTicket: async (req, res) => {
+//update ticket
+  updateTicket: async (req, res) => {
         try {
             const tickets = await ticketsModel.findByIdAndUpdate(
                 req.params.id,
@@ -56,7 +54,7 @@ const ticketsController = {
         }
     },
 //delete ticket
-    deleteticket: async (req, res) => {
+  deleteticket: async (req, res) => {
         try {
             const ticket = await ticketsModel.findByIdAndDelete(req.params.id);
             return res.status(200).json({ ticket, msg: "ticket deleted successfully" });
@@ -64,73 +62,78 @@ const ticketsController = {
             return res.status(500).json({ message: error.message });
         }
     },
-    //categorize tickets
-categoryTicket : async (req, res) => {
-    try {
-        const tickets = await ticketsModel.findById(
-            req.params.id,
-            { category: req.body.category },
-        )
-        if (tickets.category != 'Software' || tickets.category != 'Hardware' || tickets.category != 'Network') {
-            return res.status(200).json({ message:'please chat with us'});
-         } 
-         else {
-            return res.status(200).json({ message:'choose your sub category'});
-            }          
-        } 
-    catch (error) {
-      return res.status(500).json({ message: 'Error', error: error.message });
-    }
-  },
-  //priority based on sub category
-  subCategoryPriority : async (req, res) => {
+//categorize tickets
+    categoryTicket: async (req, res) => {
+        try {
+          const { category } = req.body;
+      
+          if (category === 'Software' || category === 'Hardware' || category === 'Network') {
+            return res.status(200).json({category, message: 'Choose your sub-category' });
+          } else {
+            return res.status(200).json({ message: 'Please chat with us' });
+          }
+        } catch (error) {
+          return res.status(500).json({ message: 'Error', error: error.message });
+        }
+      },
+      
+      
+//sub category
+  subCategory : async (req, res) => {
     try {
         const { category } = req.body;
-        let priority = 'Low'; 
         if (category === 'Hardware') {        
-            return res.status(200).json({ message:['Desktops', 'Laptops', 'Printers', 'Servers', 'Networking equipment']});
-        }
-             if (subCategory== 'Desktops' || subCategory== 'Desktops'){
-                  priority='high';
-             }
-             else if (subCategory== 'Printers' || subCategory== 'Printers'){
-                priority='Medium';
-           }
-           else if (subCategory== 'Networking equipment'){
-            priority='low';
-       }
-          
+            return res.status(200).json({  message:['Desktops', 'Laptops', 'Printers', 'Servers', 'Networking equipment']});
+        } 
         else if (category === 'Software') {
             return res.status(200).json({ message:['Operating system', 'Application software', 'Custom software', 'Integration issues']});
-          } 
-          if (subCategory== 'Operating system'){
-            priority='high';
-          }
-          else if (subCategory== 'Application software' || subCategory== 'Custom software'){
-          priority='Medium';
-         }
-          else if (subCategory== 'Integration issues'){
-          priority='low';
-         }
+          }      
         else if (category === 'Network') {
-            return res.status(200).json({ message:['Email issues', 'Internet connection problems', 'Website errors']});
-          }
-          if (subCategory== 'Email issues'){
-            priority='high';
-          }
-          else if (subCategory== 'Internet connection problems' ){
-          priority='Medium';
-         }
-          else if (subCategory== 'Website errors'){
-          priority='low';
-         }
+            return res.status(200).json({ message:['Email issues', 'Internet connection problems', 'Website errors']});    
         }
+    }
     catch (error) {
       return res.status(500).json({ message: 'Error'});
     }
   },
-  //workflow
-workflowIssue: async (req, res) => {
+//priority
+  priorityy: async (req, res) => {
+    try {
+        const tickets = await ticketsModel.findByIdAndUpdate(
+            req.params.id,      
+        )
+        const { subCategory } = req.body;
+      if (subCategory == 'Desktops' || subCategory == 'Laptops') {
+        return res.status(200).json({ subCategory, message:'priority = High'})
+      } else if (subCategory == 'Printers' || subCategory == 'Servers') {
+        return res.status(200).json({ subCategory, message:'priority = Medium'})
+      } else if (subCategory == 'Networking equipment') {
+        return res.status(200).json({subCategory, message:'priority = Low'})
+      }
+  
+      if (subCategory == 'Operating system') {
+        return res.status(200).json({ subCategory, message:'priority = High'})
+      } else if (subCategory == 'Application software' || subCategory == 'Custom software') {
+        return res.status(200).json({subCategory, message:'priority = Medium'})
+      } else if (subCategory == 'Integration issues') {
+        return res.status(200).json({ subCategory,message:'priority = Low'})
+      }
+  
+      if (subCategory == 'Email issues') {
+        return res.status(200).json({ subCategory, message:'priority = High'})
+      } else if (subCategory == 'Internet connection problems') {
+        return res.status(200).json({subCategory, message:'priority = Medium'})
+      } else if (subCategory == 'Website errors') {
+        return res.status(200).json({ subCategory, message:'priority = Low'})
+      }
+  return res.status(200).json({ priority });
+    } 
+    catch (error) {
+      return res.status(500).json({ message: 'Error', error: error.message });
+    }
+  }, 
+//workflow
+  workflowIssue: async (req, res) => {
     try {
         const tickets = await ticketsModel.findById(
             req.params.id,
