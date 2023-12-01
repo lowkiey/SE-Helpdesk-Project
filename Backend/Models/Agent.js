@@ -1,26 +1,22 @@
 const mongoose = require('mongoose');
-const userModel = require("./userModels");
+const { ObjectId } = mongoose.Schema.Types;
+const userModel = require('./userModel');
 
 const schemaOptions = {
   strict: false,
   timestamps: true,
 };
-const agentschema = new mongoose.Schemda(
+
+const agentSchema = new mongoose.Schema(
   {
-    id: { type: objectId },
-    user_id: { type: objectId },
-    rating: { type: Int16Array },
-    resolution_time: { type: Int16Array },
-    ticket_id: { type: objectId }
-
-
+    user_id: { type: ObjectId, ref: 'userModel' },
+    rating: { type: Number },
+    resolution_time: { type: Number },
+    ticket_id: { type: ObjectI, ref: 'ticketsModel' },
   },
-  // schemaOptions
-  {
-    strict: false,
-    timestamps: true,
-  }
+  schemaOptions
 );
 
+const AgentModel = mongoose.model('Agent', agentSchema);
 
-module.exports = mongoose.model('agentModel', agentschema);
+module.exports = AgentModel;
