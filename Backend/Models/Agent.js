@@ -10,9 +10,11 @@ const schemaOptions = {
 const agentSchema = new mongoose.Schema(
   {
     user_id: { type: ObjectId, ref: 'userModel' },
-    rating: { type: Number },
-    resolution_time: { type: Number },
-    ticket_id: { type: ObjectId, ref: 'ticketsModel' },
+    rating: { type: Number,default: 0},
+    resolution_time: { type: String, default: 0},
+    ticket_id: { type: ObjectId, ref: 'ticketsModel', default: null },
+    agentAvailability: { type: Boolean, required: true, default: true },
+
   },
   schemaOptions
 );
