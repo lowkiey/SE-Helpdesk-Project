@@ -1,63 +1,101 @@
-const sessionModel = require("../Models/sessionModel");
-const userModel = require("../Models/userModel");
 const CustomizationSettings = require('../Models/CustomizationSettings');
-const jwt = require("jsonwebtoken");
-require('dotenv').config();
-const secretKey = process.env.SECRET_KEY;
-const bcrypt = require("bcrypt");
 
-// CREATE operation
-async function createCustomizationSettings(req, res) {  
+// CREATE operation Done
+async function createCustomizationSettings(req, res) {
   try {
     const { admin_id, appearance } = req.body;
+
+    // Validation
+    if (!admin_id || !appearance) {
+      return res.status(400).send("admin_id and appearance are required");
+    }
+
     const customizationSettings = new CustomizationSettings({
       admin_id: admin_id,
       appearance: appearance,
     });
+
     const result = await customizationSettings.save();
-    return res.status(200).send(customizationSettings);
-  } 
-  catch (error) {
+    return res.status(200).send(result);
+  } catch (error) {
+    console.error(error);
     res.status(500).send(error.message);
   }
 }
-// READ operation
-async function getCustomizationSettingsById(customizationSettingsId) {
+
+// READ operation - Get by ID DONE
+async function getCustomizationSettingsById(req, res) {
+  const customizationSettingsId = req.params.id;
+
   try {
     const customizationSettings = await CustomizationSettings.findById(customizationSettingsId);
-    return customizationSettings;
+
+    if (!customizationSettings) {
+      return res.status(404).send("Customization settings not found");
+    }
+
+    return res.status(200).send(customizationSettings);
   } catch (error) {
-    throw error;
+    console.error(error);
+    res.status(500).send(error.message);
   }
 }
 
-// UPDATE operation
-async function updateCustomizationSettings(customizationSettingsId, appearance) {
+// READ operation - Get all DONE
+async function getAllCustomizationSettings(req, res) {
+  try {
+    const allSettings = await CustomizationSettings.find();
+    return res.status(200).send(allSettings);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send(error.message);
+  }
+}
+
+// UPDATE operation DONE
+async function updateCustomizationSettings(req, res) {
+  const customizationSettingsId = req.params.id;
+  const { appearance } = req.body;
+
   try {
     const result = await CustomizationSettings.findByIdAndUpdate(
       customizationSettingsId,
-      { $set: { appearance: appearance } },
-      { new: true }
+      { $set: { appearance: appearance } }
     );
-    return result;
+
+    if (!result) {
+      return res.status(404).send("Customization settings not found");
+    }
+
+    return res.status(200).send(result);
   } catch (error) {
-    throw error;
+    console.error(error);
+    res.status(500).send(error.message);
   }
 }
 
-// DELETE operation
-async function deleteCustomizationSettings(customizationSettingsId) {
+// DELETE operation DONE
+async function deleteCustomizationSettings(req, res) {
+  const customizationSettingsId = req.params.id;
+
   try {
     const result = await CustomizationSettings.findByIdAndDelete(customizationSettingsId);
-    return result;
+
+    if (!result) {
+      return res.status(404).send("Customization settings not found");
+    }
+
+    return res.status(200).send(result);
   } catch (error) {
-    throw error;
+    console.error(error);
+    res.status(500).send(error.message);
   }
 }
 
 module.exports = {
   createCustomizationSettings,
   getCustomizationSettingsById,
+  getAllCustomizationSettings,
   updateCustomizationSettings,
   deleteCustomizationSettings,
 };

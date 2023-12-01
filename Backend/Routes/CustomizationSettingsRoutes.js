@@ -7,14 +7,17 @@ const router = express.Router();
 // Create new customization settings
 router.post('/', settingsController.createCustomizationSettings);
 
+// Get all customization settings
+router.get('/', settingsController.getAllCustomizationSettings);
+
 // Get customization settings by ID
-router.get('/customization-settings/:id', settingsController.getCustomizationSettingsById);
+router.get('/:id', settingsController.getCustomizationSettingsById);
 
 // Update customization settings by ID
-router.put('/customization-settings/:id', settingsController.updateCustomizationSettings);
+router.put('/:id', settingsController.updateCustomizationSettings);
 
 // Delete customization settings by ID
-router.delete('/customization-settings/:id', settingsController.deleteCustomizationSettings);
+router.delete('/:id', settingsController.deleteCustomizationSettings);
 
 
 

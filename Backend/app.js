@@ -28,7 +28,7 @@ app.use(
     })
 );
 
-app.use("/api", CustomizationSettingsRoute);
+
 
 // app.use((req, res, next) => {
 //   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -45,6 +45,7 @@ app.use("/api/v1", authRouter);
 app.use(authenticationMiddleware);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/tickets", ticketRouter);
+app.use("/api/customization-settings", CustomizationSettingsRoute);
 
 const db_name = process.env.DB_NAME;
 // * Cloud Connection
