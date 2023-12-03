@@ -1,5 +1,6 @@
 const userModel = require("../Models/userModel");
 const sessionModel = require("../Models/sessionModel");
+const AgentModel = require("../Models/Agent");
 const jwt = require("jsonwebtoken");
 require('dotenv').config();
 const secretKey = process.env.SECRET_KEY;
@@ -11,6 +12,7 @@ const userController = {
 
             // Check if the user already exists
             const existingUser = await userModel.findOne({ email });
+
             if (existingUser) {
                 return res.status(409).json({ message: "User already exists" });
             }
@@ -25,10 +27,32 @@ const userController = {
                 displayName,
                 role,
             });
+            const userid = newUser._id.toString();
 
             // Save the user to the database
             await newUser.save();
 
+            // If the registered user is an agent
+            if (role === "agent") {
+                const { rating, resolution_time, ticket_id, agentAvailability } = req.body;
+                const role = "agent";
+                // Create a new agent
+                const newAgent = new AgentModel({
+                    user_id: userid,
+                    rating,
+                    resolution_time,
+                    ticket_id,
+                    agentAvailability,
+                });
+
+                const newUser = new userModel({
+                    email,
+                    password: hashedPassword,
+                    role,
+                });
+                // Save the agent to the database
+                await newAgent.save();
+            }
             res.status(201).json({ message: "User registered successfully" });
         } catch (error) {
             console.error("Error registering user:", error);
@@ -123,7 +147,7 @@ const userController = {
             return res.status(500).json({ message: error.message });
         }
     },
-    
+
 
 };
 module.exports = userController;

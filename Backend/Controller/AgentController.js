@@ -8,41 +8,6 @@ const secretKey = process.env.SECRET_KEY;
 const bcrypt = require("bcrypt");
 
 const AgentController = {
-    createAgent: async (req, res) => {
-        try {
-            const user = await userModel.findOne({ role: "agent" }, '_id').lean(); // Fetches the user with role 'agent' and selects only the _id field
-
-            if (user && user._id) {
-                const userIdString = user._id.toString(); // Convert the _id to a string
-
-                const existingAgent = await AgentModel.findOne({ user_id: userIdString });
-
-                if (existingAgent) {
-                    console.log("Agent already exists for this user");
-                    return res.status(400).json({ message: "Agent already exists for this user" });
-                }
-
-                const { rating, resolution_time, ticket_id, agentAvailability } = req.body;
-
-                const newAgent = new AgentModel({
-                    user_id: userIdString, // Assigning the user_id fetched from userModel
-                    rating,
-                    resolution_time,
-                    ticket_id,
-                    agentAvailability,
-                });
-
-                await newAgent.save();
-                return res.status(201).json({ message: "Agent created successfully" });
-            } else {
-                console.log("No user found with role 'agent' or user ID is undefined");
-                return res.status(404).json({ message: "No user found with role 'agent'" });
-            }
-        } catch (error) {
-            console.error("Error creating agent:", error);
-            return res.status(500).json({ message: "Server error" });
-        }
-    },
     getAllAgents: async (req, res) => {
         try {
             const agents = await AgentModel.find().lean();
@@ -94,7 +59,7 @@ const AgentController = {
             return res.status(500).json({ message: "Server error" });
         }
     },
-    
+
 };
 
 module.exports = AgentController;

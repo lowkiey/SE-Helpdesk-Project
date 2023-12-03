@@ -3,7 +3,6 @@ const router = express.Router();
 const AgentController = require("../Controller/AgentController"); // Fix casing issue
 const authorizationMiddleware = require('../Middleware/autherizationMiddleware');
 
-router.post("/", authorizationMiddleware(['admin']), AgentController.createAgent);
 router.get("/", authorizationMiddleware(['admin']), AgentController.getAllAgents);
 router.get("/:id", authorizationMiddleware(['admin']), AgentController.getAgent);
 router.put("/:id", authorizationMiddleware(['admin']), AgentController.updateAgent);
