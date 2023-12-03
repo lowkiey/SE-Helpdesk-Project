@@ -43,28 +43,21 @@ createTicket: async (req, res) => {
         try {
             const tickets = await ticketsModel.findByIdAndUpdate(
                 req.params.id,
-                { status: req.body.status },
-                {
-                    new: true,
-                }
-            );
-            return res.status(200).json({ tickets, msg: "ticket updated successfully" });
+ );
+                    return res.status(200).json({ tickets });
         } catch (error) {
             return res.status(500).json({ message: error.message });
         }
     },
-//delete ticket
-  deleteticket: async (req, res) => {
-        try {
-            const ticket = await ticketsModel.findByIdAndDelete(req.params.id);
-            return res.status(200).json({ ticket, msg: "ticket deleted successfully" });
-        } catch (error) {
-            return res.status(500).json({ message: error.message });
-        }
-    },
+    //user by create ticket,
+    //mehtag l ticket ID  "DONEEEE"
+    //l agent hy update l ticket ll user 3mlha hyrod be solution w
+    // by update status l ticket tb2a closed b3daha byb3t email ll user
+    // en khalas 3ml l solution w en l ticket is closed
+    
 //categorize tickets
     categoryTicket: async (req, res) => {
-        try {
+        try {   
           const { category } = req.body;
       
           if (category === 'Software' || category === 'Hardware' || category === 'Network') {
@@ -76,8 +69,7 @@ createTicket: async (req, res) => {
           return res.status(500).json({ message: 'Error', error: error.message });
         }
       },
-      
-      
+          
 //sub category
   subCategory : async (req, res) => {
     try {

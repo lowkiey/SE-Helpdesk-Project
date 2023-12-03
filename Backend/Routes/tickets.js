@@ -6,7 +6,6 @@ const authorizationMiddleware = require('../Middleware/autherizationMiddleware')
 
 router.post("/", authorizationMiddleware(['user']), ticketsController.createTicket);
 router.put("/:id", authorizationMiddleware(['agent']), ticketsController.updateTicket);
-router.delete("/:id", authorizationMiddleware(['agent']), ticketsController.deleteticket);
 router.put("/category/:id", authorizationMiddleware(['user']), ticketsController.categoryTicket);
 router.put("/", authorizationMiddleware(['user']), ticketsController.subCategory);
 router.put("/priorr/:id", authorizationMiddleware(['user']), ticketsController.priorityy);
