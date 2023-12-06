@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const userController = require("../Controller/userController"); // Fix casing issue
 const authorizationMiddleware = require('../Middleware/autherizationMiddleware');
+// * OTP verification
+// router.post('/verify-otp', userController.verifyOTP);
 // * Get all users
 router.get("/", authorizationMiddleware(['admin']), userController.getAllUsers);
 // * Get one user
