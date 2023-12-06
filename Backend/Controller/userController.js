@@ -18,7 +18,7 @@ const transporter = nodemailer.createTransport({
   async function sendOtpEmail(user, otp) {
     console.log('Sending OTP email...');
     const mailOptions = {
-        from: '"HELPDESK" <sehelpdeskproject@outlook.com>', // Replace with your email address
+        from: '"" <sehelpdeskproject@outlook.com>', // Replace with your email address
         to: user.email, // User's email address
         subject: 'Your OTP for Login',
         text: `Your one-time password (OTP) is: ${otp}`,
