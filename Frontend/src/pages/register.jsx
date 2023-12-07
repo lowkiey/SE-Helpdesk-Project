@@ -11,7 +11,6 @@ const Signup = () => {
     email: "",
     password: "",
     username: "",
-    role: "",
   });
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -42,6 +41,7 @@ const Signup = () => {
 
       const { status } = response;
       if (status === 201) {
+        console.log("hi");
         setSuccessMessage("Sign up successful!");
         setInputValue({
           email: "",

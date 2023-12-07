@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-// import AppNavBar from "../components/navbar";
+import AppNavBar from "../components/navbar";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
@@ -42,7 +42,7 @@ export default function HomePage() {
   return (
     <>
       <AppNavBar />
-      <h1 style={{ textAlign: "center", margin: "30px",color:'white' }}>
+      <h1 style={{ textAlign: "center", margin: "30px", color: 'white' }}>
         Welcome {userName}
       </h1>
     </>

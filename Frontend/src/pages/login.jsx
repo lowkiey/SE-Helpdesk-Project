@@ -2,7 +2,7 @@ import "../stylesheets/auth.css";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-let backend_url = "http://localhost:3000/api/v1/login";
+let backend_url = "http://localhost:3000/api/v1";
 // import { ToastContainer, toast } from "react-toastify";
 
 const Login = () => {
@@ -22,26 +22,18 @@ const Login = () => {
     }));
   };
 
-  // const handleError = (msg) => setErrorMessage(msg);
-
-  // // toast.error(err, {
-  // //   position: "bottom-left",
-  // // });
-  // const handleSuccess = (msg) => setSucessMessage(msg);
-  // // toast.success(msg, {
-  // //   position: "bottom-left",
-  // // });
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.post(
         `${backend_url}/login`,
         {
-          ...inputValue,
+          email,
+          password,
         },
         { withCredentials: true }
       );
+      console.log("HIIIiiiiiiiiiiiii");
       // console.log(data);
       const { status, data } = response;
       console.log('data', data)
@@ -60,6 +52,7 @@ const Login = () => {
       }
     } catch (error) {
       console.log(error);
+
       // handleError(error.message);
 
     }
