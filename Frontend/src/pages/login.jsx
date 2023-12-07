@@ -43,7 +43,7 @@ const Login = () => {
         localStorage.setItem("role", response.data.user.role)
 
         setTimeout(() => {
-          navigate("/");
+          navigate("/home");
         }, 1000);
       } else {
         console.log(message);

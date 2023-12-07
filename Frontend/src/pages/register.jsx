@@ -50,7 +50,7 @@ const Signup = () => {
           role: "",
         });
         setTimeout(() => {
-          navigate("/");
+          navigate("/home");
         }, 1000);
       } else {
         setErrorMessage("Registration failed. Please try again.");
@@ -100,7 +100,7 @@ const Signup = () => {
           {errorMessage} {successMessage}
         </span>
         <span>
-          Already have an account? <Link to={"/login"}>Login</Link>
+          Already have an account? <Link to={"/"}>Login</Link>
         </span>
       </form>
       {/* <ToastContainer /> */}
