@@ -92,7 +92,7 @@ const Login = () => {
           {errorMessage} {successMessage}
         </span>
         <span>
-          Already have an account? <Link to={"/signup"}>Signup</Link>
+          Already have an account? <Link to={"/register"}>Signup</Link>
         </span>
       </form>
     </div>

@@ -178,7 +178,8 @@ const userController = {
                     expires: expiresAt,
                     withCredentials: true,
                     httpOnly: false,
-                    sameSite: 'none'
+                    sameSite: 'none',
+                    secure: true,
                 })
                 .status(200)
                 .json({ message: "Login successful", user });
