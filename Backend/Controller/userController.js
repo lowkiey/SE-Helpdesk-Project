@@ -7,74 +7,74 @@ const secretKey = process.env.SECRET_KEY;
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const axios = require("axios"); // Import axios for making HTTP requests
-const speakeasy = require("speakeasy");
-const transporter = nodemailer.createTransport({
-    host: 'smtp-mail.outlook.com',
-    port: 587,
-    secure: false, // Set to true if you're using port 465 (SSL), false for port 587 (TLS)
-    auth: {
-        user: 'sehelpdeskproject@outlook.com',
-        pass: 'amirwessam2023',
-    },
-});
-const generateOTP = (secret) => {
-    return speakeasy.totp({
-        secret: secret,
-        encoding: 'base32',
-    });
-}; async function sendOtpEmail(user, otp) {
-    console.log('Sending OTP email...');
-    const mailOptions = {
-        from: '"HELPDESK" <sehelpdeskproject@outlook.com>', // Replace with your email address
-        to: user.email, // User's email address
-        subject: 'Your OTP for Login',
-        text: `Your one-time password (OTP) is: ${otp}`,
-    };
-    try {
-        await transporter.sendMail(mailOptions);
-        console.log('OTP email sent successfully');
-    } catch (error) {
-        console.error('Error sending email:', error);
-        throw error; // Make sure to rethrow the error to propagate it to the calling function
-    }
-};
+// const speakeasy = require("speakeasy");
+// const transporter = nodemailer.createTransport({
+//     host: 'smtp-mail.outlook.com',
+//     port: 587,
+//     secure: false, // Set to true if you're using port 465 (SSL), false for port 587 (TLS)
+//     auth: {
+//         user: 'sehelpdeskproject@outlook.com',
+//         pass: 'amirwessam2023',
+//     },
+// });
+// const generateOTP = (secret) => {
+//     return speakeasy.totp({
+//         secret: secret,
+//         encoding: 'base32',
+//     });
+// }; async function sendOtpEmail(user, otp) {
+//     console.log('Sending OTP email...');
+//     const mailOptions = {
+//         from: '"HELPDESK" <sehelpdeskproject@outlook.com>', // Replace with your email address
+//         to: user.email, // User's email address
+//         subject: 'Your OTP for Login',
+//         text: `Your one-time password (OTP) is: ${otp}`,
+//     };
+//     try {
+//         await transporter.sendMail(mailOptions);
+//         console.log('OTP email sent successfully');
+//     } catch (error) {
+//         console.error('Error sending email:', error);
+//         throw error; // Make sure to rethrow the error to propagate it to the calling function
+//     }
+// };
 
-const verifyOTP = async (email, otp) => {
-    try {
-        // Find the user by email
-        const foundUser = await userModel.findOne({ email });
+// const verifyOTP = async (email, otp) => {
+//     try {
+//         // Find the user by email
+//         const foundUser = await userModel.findOne({ email });
 
-        if (!foundUser || foundUser.otp !== otp) {
-            return false; // OTP doesn't match or user not found
-        }
+//         if (!foundUser || foundUser.otp !== otp) {
+//             return false; // OTP doesn't match or user not found
+//         }
 
-        // If the OTP is valid, clear it from the database
-        foundUser.otp = null;
-        await foundUser.save();
+//         // If the OTP is valid, clear it from the database
+//         foundUser.otp = null;
+//         await foundUser.save();
 
-        return true; // OTP verified successfully
-    } catch (error) {
-        console.error('Error verifying OTP:', error);
-        return false;
-    }
-};
+//         return true; // OTP verified successfully
+//     } catch (error) {
+//         console.error('Error verifying OTP:', error);
+//         return false;
+//     }
+// };
 const userController = {
-    verifyOTP: async (req, res) => {
-        try {
-            const { email, otp } = req.body;
+    // verifyOTP: async (req, res) => {
+    //     try {
+    //         const { email, otp } = req.body;
 
-            const isOTPVerified = await verifyOTP(email, otp);
+    //         const isOTPVerified = await verifyOTP(email, otp);
 
-            if (isOTPVerified) {
-                return res.status(200).json({ message: 'OTP verified successfully' });
-            } else {
-                return res.status(401).json({ message: 'Invalid OTP' });
-            }
-        } catch (error) {
-            console.error('Error verifying OTP:', error);
-            res.status(500).json({ message: 'Server error' });
-        }
-    },
+    //         if (isOTPVerified) {
+    //             return res.status(200).json({ message: 'OTP verified successfully' });
+    //         } else {
+    //             return res.status(401).json({ message: 'Invalid OTP' });
+    //         }
+    //     } catch (error) {
+    //         console.error('Error verifying OTP:', error);
+    //         res.status(500).json({ message: 'Server error' });
+    //     }
+    // },
     register: async (req, res) => {
         try {
             const { email, password, displayName, role } = req.body;
@@ -146,13 +146,13 @@ const userController = {
             }
 
             // Generate and send new OTP to user's email in the database
-            const newOtp = generateOTP(user.secret);
-            await sendOtpEmail(user, newOtp);
+            // const newOtp = generateOTP(user.secret);
+            // await sendOtpEmail(user, newOtp);
 
-            // Proceed with OTP verification logic
-            const isOTPVerified = await verifyOTP(email, newOtp);
+            // // Proceed with OTP verification logic
+            // const isOTPVerified = await verifyOTP(email, newOtp);
 
-            if (isOTPVerified) {
+            // if (isOTPVerified) {
                 // Clear the generated OTP from user object
 
                 const currentDateTime = new Date();
@@ -182,9 +182,9 @@ const userController = {
                     })
                     .status(200)
                     .json({ message: "Login successful", user });
-            }
-            user.otp = null;
-            await user.save();
+            // }
+            // user.otp = null;
+            // await user.save();
 
 
         } catch (error) {
