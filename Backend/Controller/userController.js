@@ -7,7 +7,7 @@ const secretKey = process.env.SECRET_KEY;
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const axios = require("axios"); // Import axios for making HTTP requests
-// const speakeasy = require("speakeasy");
+const speakeasy = require("speakeasy");
 // const transporter = nodemailer.createTransport({
 //     host: 'smtp-mail.outlook.com',
 //     port: 587,
@@ -38,7 +38,7 @@ const axios = require("axios"); // Import axios for making HTTP requests
 //         throw error; // Make sure to rethrow the error to propagate it to the calling function
 //     }
 // };
-
+// 
 // const verifyOTP = async (email, otp) => {
 //     try {
 //         // Find the user by email
@@ -153,35 +153,36 @@ const userController = {
             // const isOTPVerified = await verifyOTP(email, newOtp);
 
             // if (isOTPVerified) {
-                // Clear the generated OTP from user object
+            //     // Clear the generated OTP from user object
 
-                const currentDateTime = new Date();
-                const expiresAt = new Date(+currentDateTime + 1800000); // expire in 3 minutes
-                // Generate a JWT token
-                const token = jwt.sign(
-                    { user: { userId: user._id, role: user.role } },
-                    secretKey,
-                    {
-                        expiresIn: 3 * 60 * 60,
-                    }
-                );
+            const currentDateTime = new Date();
+            const expiresAt = new Date(+currentDateTime + 1800000); // expire in 3 minutes
+            // Generate a JWT token
+            const token = jwt.sign(
+                { user: { userId: user._id, role: user.role } },
+                secretKey,
+                {
+                    expiresIn: 3 * 60 * 60,
+                }
+            );
 
-                let newSession = new sessionModel({
-                    userId: user._id,
-                    token,
-                    expiresAt: expiresAt,
-                });
-                await newSession.save();
+            let newSession = new sessionModel({
+                userId: user._id,
+                token,
+                expiresAt: expiresAt,
+            });
+            await newSession.save();
 
-                return res
-                    .cookie("token", token, {
-                        expires: expiresAt,
-                        withCredentials: true,
-                        httpOnly: false,
-                        sameSite: 'none'
-                    })
-                    .status(200)
-                    .json({ message: "Login successful", user });
+            return res
+                .cookie("token", token, {
+                    expires: expiresAt,
+                    withCredentials: true,
+                    httpOnly: false,
+                    sameSite: 'none',
+                    secure: true,
+                })
+                .status(200)
+                .json({ message: "Login successful", user });
             // }
             // user.otp = null;
             // await user.save();
