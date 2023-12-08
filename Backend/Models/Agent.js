@@ -1,16 +1,19 @@
 const mongoose = require('mongoose');
-const userModel = require("./userModel");
+const { ObjectId } = mongoose.Schema.Types;
+
+const userModel = require("./userModels);
 
 const schemaOptions = {
   strict: false,
   timestamps: true,
 };
-const agentschema = new mongoose.Schema(
+const agentschema = new mongoose.Schemda(
   {
     user_id:{type:mongoose.Schema.Types.ObjectId,required:true,unique:true},
     rating: { type: mongoose.Decimal128  },
     resolution_time: { type: String  },
     ticket_id:{type:mongoose.Schema.Types.ObjectId,required:true,unique:true},
+
 
 
   },
