@@ -9,10 +9,16 @@ export default function AppNavBar() {
       <Container>
         <Nav>
           <Nav.Item>
-            <Link to="/home" style={{ marginLeft: '-130px', fontWeight: 'bold', color: 'rgb(166, 0, 255)', cursor: 'pointer', fontSize: '24px', textDecoration: 'none' }}>Home</Link>
+            <Link to="/home" style={{ marginLeft: '-130px', fontWeight: 'bold', color: 'rgb(209, 151, 240)', cursor: 'pointer', fontSize: '24px', textDecoration: 'none' }}>Home</Link>
           </Nav.Item>
           <Nav.Item>
             <Link to="/" style={{ marginLeft: '1350px', fontWeight: 'bold', color: 'rgb(209, 151, 240)', cursor: 'pointer', fontSize: '24px', textDecoration: 'none' }}>Logout</Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Link to="/tickets" style={{ marginLeft: '-1470px', fontWeight: 'bold', color: 'rgb(209, 151, 240)', cursor: 'pointer', fontSize: '24px', textDecoration: 'none' }}>Tickets</Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Link to="/FAQ" style={{ marginLeft: '-1370px', fontWeight: 'bold', color: 'rgb(209, 151, 240)', cursor: 'pointer', fontSize: '24px', textDecoration: 'none' }}>FAQ</Link>
           </Nav.Item>
         </Nav>
       </Container>
