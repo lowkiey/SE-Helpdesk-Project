@@ -1,24 +1,40 @@
 const mongoose = require('mongoose');
-const { ObjectId } = mongoose.Schema.Types;
-const userModel = require('./userModel');
+const userModel = require("./userModel");
+const ticketsModel = require("./ticketsModel");
 
-const schemaOptions = {
-  strict: false,
-  timestamps: true,
-};
 
-const agentSchema = new mongoose.Schema(
+const agentschema = new mongoose.Schema(
   {
-    user_id: { type: ObjectId, ref: 'userModel' },
-    rating: { type: Number,default: 0},
-    resolution_time: { type: String, default: 0},
-    ticket_id: { type: ObjectId, ref: 'ticketsModel', default: null },
-    agentAvailability: { type: Boolean, required: true, default: true },
-
+    user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'userModel' }, // Reference the 'Users' model
+    rating: { type: Number },
+    resolution_time: { type: String },
+    ticket_id: { type: mongoose.Schema.Types.ObjectId, ref: 'ticketsModel' }, // Reference the 'Tickets' model
+    ticketCount: { type: Number, default: 0, max: 5 },
+    agentType: { type: String, enum: ['agent1', 'agent2', 'agent3'] },
   },
-  schemaOptions
+  {
+    strict: false,
+    timestamps: true,
+  }
 );
 
-const AgentModel = mongoose.model('Agent', agentSchema);
+agentschema.pre('save', async function (next) {
+  try {
+    // Check if the agent has reached the maximum ticket count
+    if (this.ticketCount >= 5) {
+      console.log('Agent has reached the maximum ticket count.');
+      return next(new Error('Agent has reached the maximum ticket count.'));
+    }
 
-module.exports = AgentModel;
+    // Increment the ticket count
+    this.ticketCount += 1;
+
+    // Continue with the save operation
+    return next();
+  } catch (error) {
+    console.error('Error in pre-save hook:', error);
+    return next(error);
+  }
+});
+
+module.exports = mongoose.model('agentModel', agentschema);
