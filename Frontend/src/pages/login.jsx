@@ -1,9 +1,10 @@
-import "../stylesheets/auth.css";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useCookies } from "react-cookie"; // Import useCookies
+import "../stylesheets/auth.css";
+
 let backend_url = "http://localhost:3000/api/v1";
-// import { ToastContainer, toast } from "react-toastify";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -11,9 +12,11 @@ const Login = () => {
     email: "",
     password: "",
   });
-  const [successMessage, setSucessMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const { email, password } = inputValue;
+  const [cookies, setCookie] = useCookies(["token"]); // Use cookies hook
+
   const handleOnChange = (e) => {
     const { name, value } = e.target;
     setInputValue((prevInput) => ({
@@ -33,28 +36,20 @@ const Login = () => {
         },
         { withCredentials: true }
       );
-      console.log("HIIIiiiiiiiiiiiii");
-      // console.log(data);
       const { status, data } = response;
-      console.log('data', data)
-      if (status == 200) {
-        // handleSuccess(message);
-        localStorage.setItem("userId", response.data.user._id)
-        localStorage.setItem("role", response.data.user.role)
-
+      if (status === 200) {
+        // Handle successful login
+        localStorage.setItem("userId", data.user._id);
+        localStorage.setItem("role", data.user.role);
+        setCookie("token", data.token); // Set the token in cookies
         setTimeout(() => {
           navigate("/home");
         }, 1000);
       } else {
-        console.log(message);
-
-        // handleError(message);
+        setErrorMessage(data.message);
       }
     } catch (error) {
-      console.log(error);
-
-      // handleError(error.message);
-
+      setErrorMessage("An error occurred while logging in.");
     }
     setInputValue({
       ...inputValue,
@@ -88,12 +83,8 @@ const Login = () => {
           />
         </div>
         <button type="submit">Submit</button>
-        <span>
-          {errorMessage} {successMessage}
-        </span>
-        <span>
-          Already have an account? <Link to={"/register"}>Signup</Link>
-        </span>
+        <span>{errorMessage} {successMessage}</span>
+        <span>Already have an account? <Link to={"/register"}>Signup</Link></span>
       </form>
     </div>
   );

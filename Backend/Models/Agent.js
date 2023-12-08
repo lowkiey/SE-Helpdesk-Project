@@ -1,13 +1,13 @@
 const mongoose = require('mongoose');
 const { ObjectId } = mongoose.Schema.Types;
 
-const userModel = require("./userModels);
+const userModel = require("./userModel");
 
 const schemaOptions = {
   strict: false,
   timestamps: true,
 };
-const agentschema = new mongoose.Schemda(
+const agentschema = new mongoose.Schema(
   {
     user_id:{type:mongoose.Schema.Types.ObjectId,required:true,unique:true},
     rating: { type: mongoose.Decimal128  },

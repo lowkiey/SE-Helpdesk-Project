@@ -15,12 +15,12 @@ export default function HomePage() {
       try {
         if (!cookies.token) {
           console.log("No token found, redirecting to login");
-          navigate("/login");
+          navigate("/");
           return; // Exit early if there's no token
         }
 
         const uid = localStorage.getItem("userId");
-        // const response = await axios.get(`${backend_url}/users/${uid}`, {
+        // const response = await axios.get(${backend_url}/users/${uid}, {
         //   withCredentials: true,
         // });
 
@@ -28,7 +28,7 @@ export default function HomePage() {
         // setUserName(response.data.displayName);
       } catch (error) {
         console.log("Error fetching user data:", error);
-        navigate("/login"); // Redirect to login page on error
+        navigate("/"); // Redirect to login page on error
       }
     }
 

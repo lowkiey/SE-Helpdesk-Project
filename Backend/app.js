@@ -20,7 +20,7 @@ app.use(cookieParser())
 
 app.use(
     cors({
-        origin: process.env.ORIGIN,
+        origin: 'http://127.0.0.1:5173', // or use '*' to allow any origin
         methods: ["GET", "POST", "DELETE", "PUT"],
         credentials: true,
     })
