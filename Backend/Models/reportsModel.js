@@ -7,8 +7,7 @@ const schemaOptions = {
 
 const reportsschema = new mongoose.Schema(
   {
-    id: { type:mongoose.Schema.Types.ObjectId, required: true, unique: true },
-    manager_id: { type:mongoose.Schema.Types.ObjectId, required: true, unique: true },
+    agent_id: { type:mongoose.Schema.Types.ObjectId, required: true, unique: true },
     ticketStatusReport: { type: String, required: true },
     resoultionTimeReport: { type: String, required: true },
     agentPreformanceReport: { type: String, required: true },

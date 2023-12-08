@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
-const userModel = require("./userModels");
+const userModel = require("./userModel");
 const schemaOptions = {
   strict: false,
   timestamps: true,
 };
 const Ticketschema = new mongoose.Schema(
     {
-        id:{type:mongoose.Schema.Types.ObjectId,required:true,unique:true},
+      id:{type:mongoose.Schema.Types.ObjectId,required:true,unique:true},
       user_id:{type:mongoose.Schema.Types.ObjectId,required:true,unique:true},
       category:{type:String,required:true,minlength:6},
       subCategory:{type:String,required:true,minlength:6} ,

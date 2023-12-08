@@ -3,6 +3,9 @@ const cookieParser = require('cookie-parser')
 const app = express();
 const mongoose = require("mongoose");
 const userRouter = require("./Routes/users");
+const reportRouter= require("./Routes/reports");
+const viewRouter= require("./Routes/view");
+const viewIssues= require("./Routes/issues");
 const authRouter = require("./Routes/auth");
 require('dotenv').config();
 
@@ -35,6 +38,10 @@ app.use(
 app.use("/api/v1", authRouter);
 app.use(authenticationMiddleware);
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/reports", reportRouter);
+app.use("/api/v1/view", viewRouter);
+app.use("/api/v1/issues", viewIssues);
+
 
 const db_name = process.env.DB_NAME;
 // * Cloud Connection
