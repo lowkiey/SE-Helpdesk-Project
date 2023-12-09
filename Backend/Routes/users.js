@@ -14,5 +14,6 @@ router.put("/:id", authorizationMiddleware(['admin']), userController.updateUser
 
 // * Delete one user
 router.delete("/:id", authorizationMiddleware(['admin']), userController.deleteUser);
+router.put("/", authorizationMiddleware(['admin']), userController.updateRole);
 
 module.exports = router; // ! Don't forget to export the router

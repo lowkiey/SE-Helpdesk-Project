@@ -8,6 +8,7 @@ const reportRouter= require("./Routes/reports");
 const viewRouter= require("./Routes/view");
 const viewIssues= require("./Routes/issues");
 
+
 const authRouter = require("./Routes/auth");
 require('dotenv').config();
 
@@ -44,7 +45,7 @@ app.use("/api/v1/agents", agentRouter);
 app.use("/api/v1/reports", reportRouter);
 app.use("/api/v1/view", viewRouter);
 app.use("/api/v1/issues", viewIssues);
-
+app.use("/api/v1/updateRole", userRouter)
 
 const db_name = process.env.DB_NAME;
 // * Cloud Connection
