@@ -53,6 +53,17 @@ app.use(
     })
 );
 
+// app.use((req, res, next) => {
+//   res.setHeader("Access-Control-Allow-Origin", "*");
+//   res.setHeader("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS,HEAD");
+//   res.setHeader(
+//     "Access-Control-Expose-Headers",
+//     "*"
+//   );
+
+//   next();
+// });
+
 app.use("/api/v1", authRouter);
 app.use(authenticationMiddleware);
 app.use("/api/v1/users", userRouter);
@@ -63,7 +74,12 @@ app.use('/api/v1/messages', messagesRoutes);
 
 
 const db_name = process.env.DB_NAME;
-const db_url="mongodb://127.0.0.1:27017/SE_Project1";
+// * Cloud Connection
+// const db_url = `mongodb+srv://TestUser:TestPassword@cluster0.lfqod.mongodb.net/${db_name}?retryWrites=true&w=majority`;
+// * Local connection
+const db_url = `${process.env.DB_URL}/${db_name}`; // if it gives error try to change the localhost to 127.0.0.1
+
+// ! Mongoose Driver Connection
 
 const connectionOptions = {
     useUnifiedTopology: true,
