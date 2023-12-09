@@ -9,6 +9,4 @@ router.put("/:id", authorizationMiddleware(['agent']), ticketsController.updateT
 router.put("/category/:id", authorizationMiddleware(['user']), ticketsController.categoryTicket);
 router.put("/", authorizationMiddleware(['user']), ticketsController.subCategory);
 router.put("/priorr/:id", authorizationMiddleware(['user']), ticketsController.priorityy);
-router.put("/wfTicket/:id", authorizationMiddleware(['user']), ticketsController.workflowIssue);
-
 module.exports = router; // ! Don't forget to export the router

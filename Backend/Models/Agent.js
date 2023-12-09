@@ -1,17 +1,21 @@
 const mongoose = require('mongoose');
-const userModel = require("./userModels");
+
+const userModel = require("./userModel");
+const ticketsModel = require("./ticketsModel");
+const { ObjectId } = require('mongodb');
 
 const schemaOptions = {
   strict: false,
   timestamps: true,
 };
-const agentschema = new mongoose.Schemda(
+const agentschema = new mongoose.Schema(
   {
-    id: { type: objectId },
-    user_id: { type: objectId },
-    rating: { type: Int16Array },
-    resolution_time: { type: Int16Array },
-    ticket_id: { type: objectId }
+    id: { type: ObjectId },
+    user_id: { type: ObjectId },
+    rating: { type: Number },
+    resolution_time: { type: String },
+    ticket_id: { type: ObjectId }, 
+    numberOfTickets:{type: Number, default:5} //dh el hy-minus mno el tickets gowa update tickets
 
 
   },
@@ -23,4 +27,4 @@ const agentschema = new mongoose.Schemda(
 );
 
 
-module.exports = mongoose.model('agentModel', agentschema);
+module.exports = mongoose.model('Agent', agentschema);

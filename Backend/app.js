@@ -38,6 +38,7 @@ app.use(authenticationMiddleware);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/tickets", ticketRouter);
 
+
 const db_name = process.env.DB_NAME;
 // * Cloud Connection
 // const db_url = `mongodb+srv://TestUser:TestPassword@cluster0.lfqod.mongodb.net/${db_name}?retryWrites=true&w=majority`;
