@@ -8,59 +8,6 @@ const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const axios = require("axios"); // Import axios for making HTTP requests
 const speakeasy = require("speakeasy");
-// const transporter = nodemailer.createTransport({
-//     host: 'smtp-mail.outlook.com',
-//     port: 587,
-//     secure: false, // Set to true if you're using port 465 (SSL), false for port 587 (TLS)
-//     auth: {
-//         user: 'sehelpdeskproject@outlook.com',
-//         pass: 'amirwessam2023',
-//     },
-// });
-// const generateOTP = (secret) => {
-//     return speakeasy.totp({
-//         secret: secret,
-//         encoding: 'base32',
-//     });
-// // }; 
-// async function sendOtpEmail(user, otp) {
-//     console.log('Sending OTP email...');
-//     const mailOptions = {
-//         from: '"HELPDESK" <sehelpdeskproject@outlook.com>', // Replace with your email address
-//         to: user.email, // User's email address
-//         subject: 'Your OTP for Login',
-//         text: `Your one-time password (OTP) is: ${otp}`,
-//     };
-//     try {
-//         await transporter.sendMail(mailOptions);
-//         console.log('OTP email sent successfully');
-//     } catch (error) {
-//         console.error('Error sending email:', error);
-//         throw error; // Make sure to rethrow the error to propagate it to the calling function
-//     }
-// };
-// 
-// const verifyOTP = async (email, otp) => {
-//     try {
-//         // Find the user by email
-//         const foundUser = await userModel.findOne({ email });
-
-//         if (!foundUser || foundUser.otp !== otp) {
-//             return false; // OTP doesn't match or user not found
-//         }
-
-//         // If the OTP is valid, clear it from the database
-//         foundUser.otp = null;
-//         await foundUser.save();
-
-//         return true; // OTP verified successfully
-//     } catch (error) {
-//         console.error('Error verifying OTP:', error);
-//         return false;
-//     }
-// // };
-
-
 const userController = {
     register: async (req, res) => {
         try {
@@ -112,57 +59,56 @@ const userController = {
     },
     login: async (req, res) => {
         try {
-            const { email, password } = req.body;
-
-            // Find the user by email
-            const user = await userModel.findOne({ email });
-
-            if (!user) {
-                return res.status(404).json({ message: 'User not found' });
+          const { email, password } = req.body;
+    
+          // Find the user by email
+          const user = await userModel.findOne({ email });
+    
+          if (!user) {
+            return res.status(404).json({ message: "User not found" });
+          }
+    
+          // Check password
+          const passwordMatch = await bcrypt.compare(password, user.password);
+          if (!passwordMatch) {
+            return res.status(405).json({ message: "Incorrect password" });
+          }
+    
+          const currentDateTime = new Date();
+          const expiresAt = new Date(+currentDateTime + 1800000); // expire in 3 minutes
+    
+          // Generate a JWT token
+          const token = jwt.sign(
+            { user: { userId: user._id, role: user.role } },
+            secretKey,
+            {
+              expiresIn: 3 * 60 * 60,
             }
-
-            // Check password
-            const passwordMatch = await bcrypt.compare(password, user.password);
-            if (!passwordMatch) {
-                return res.status(405).json({ message: 'Incorrect password' });
-            }
-
-
-            const currentDateTime = new Date();
-            const expiresAt = new Date(+currentDateTime + 1800000); // expire in 3 minutes
-            // Generate a JWT token
-            const token = jwt.sign(
-                { user: { userId: user._id, role: user.role } },
-                secretKey,
-                {
-                    expiresIn: 3 * 60 * 60,
-                }
-            );
-
-            let newSession = new sessionModel({
-                userId: user._id,
-                token,
-                expiresAt: expiresAt,
-            });
-            await newSession.save();
-
-            return res
-                .cookie("token", token, {
-                    expires: expiresAt,
-                    withCredentials: true,
-                    httpOnly: false,
-                    sameSite: 'none',
-                    secure: true,
-                })
-                .status(200)
-                .json({ message: "Login successful", user });
-
-
+          );
+    
+          let newSession = new sessionModel({
+            userId: user._id,
+            token,
+            expiresAt: expiresAt,
+          });
+          await newSession.save();
+    
+          return res
+            .cookie("token", token, {
+              expires: expiresAt,
+              httpOnly: false, // Set to true if the token should not be accessible via client-side scripts
+              sameSite: "lax", // Use 'none' for cross-origin and ensure using HTTPS
+              secure: false, // Set to true in production if using HTTPS
+            })
+            .status(200)
+            .json({ message: "Login successful", user, token }); // Send the token back to the client
         } catch (error) {
-            console.error("Error logging in:", error);
-            res.status(500).json({ message: "Server error" });
+          console.error("Error logging in:", error);
+          res.status(500).json({ message: "Server error" });
         }
-    },
+      },
+    
+
 
     getAllUsers: async (req, res) => {
         try {
