@@ -1,103 +1,127 @@
 const MessagesModel = require('../Models/Messages');
-const nodemailer = require("nodemailer");
-const axios = require("axios"); // Import axios for making HTTP requests
-const speakeasy = require("speakeasy");
 
-const transporter = nodemailer.createTransport({
-  host: 'smtp-mail.outlook.com',
-  port: 587,
-  secure: false,
-  auth: {
-    user: 'sehelpdeskproject@outlook.com',
-    pass: 'amirwessam2023',
-  },
-});
-async function sendOtpEmail(user, result) {
-  console.log('Sending ticket info ...');
-  const mailOptions = {
-      from: '"HELPDESK" <sehelpdeskproject@outlook.com>', // Replace with your email address
-      to: user.email, // User's email address
-      subject: 'Your ticket info for Login',
-      text: "tickets informstion is: ${result},"
-  };
+// CREATE operation
+async function createMessage(req, res) {
   try {
-      await transporter.sendMail(mailOptions);
-      console.log('email sent successfully');
-  } catch (error) {
-      console.error('Error sending email:', error);
-      throw error; // Make sure to rethrow the error to propagate it to the calling function
-  }
-};
+    const { ticket_id, user_id, message } = req.body;
 
-const messageController = {
-  createMessage: async (req, res) => {
-    try {
-      const { ticket_id, user_id, message } = req.body;
-
-      if (!ticket_id || !user_id || !message) {
-        return res.status(400).json({ error: "ticket_id, user_id, and message are required" });
-      }
-
-      const newMessage = new MessagesModel({
-        ticket_id,
-        user_id,
-        message,
-      });
-
-      const result = await newMessage.save();
-
-      // Notify the user via email
-      await sendEmailNotification(result);
-
-      res.status(200).json(result);
-    } catch (error) {
-      console.error("Error creating message:", error);
-      res.status(500).json({ error: error.message });
+    if (!ticket_id || !user_id || !message) {
+      return res.status(400).send("ticket_id, user_id, and message are required");
     }
-  },
 
-  updateMessage: async (req, res) => {
-    const messageId = req.params.id;
-    const { message } = req.body;
+    const newMessage = new MessagesModel({
+      ticket_id: ticket_id,
+      user_id: user_id,
+      message: message,
+    });
 
+    const result = await newMessage.save();
+    return res.status(200).send(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send(error.message);
+  }
+}
+
+//unlimited messaages
+async function addMessageToArray(req, res) {
     try {
-      const result = await MessagesModel.findByIdAndUpdate(
-        messageId,
-        { $set: { message } },
+      const { ticket_id, user_id, newMessage } = req.body;
+  
+      if (!ticket_id || !user_id || !newMessage) {
+        return res.status(400).send("ticket_id, user_id, and newMessage are required");
+      }
+  
+      const result = await MessagesModel.findOneAndUpdate(
+        { ticket_id: ticket_id, user_id: user_id },
+        { $push: { messages: newMessage } },
         { new: true }
       );
-
+  
       if (!result) {
-        return res.status(404).send("Message not found");
+        return res.status(404).send("Ticket or user not found");
       }
-
-      // Notify the user via email about the message update
-      await sendEmailNotification(result);
-
+  
       return res.status(200).send(result);
     } catch (error) {
       console.error(error);
       res.status(500).send(error.message);
     }
-  },
-};
-
-async function sendEmailNotification(message) {
-  console.log('Sending email notification...');
-  const mailOptions = {
-    from: '"HELPDESK" <sehelpdeskproject@outlook.com>',
-    to: 'georgeyoussef2002@gmail.com', // Replace with the user's email address
-    subject: 'Ticket Update',
-    text: `Your ticket with ID ${message.ticket_id} has been updated: ${message.message}`,
-  };
+  }
+// READ operation - Get by ID
+async function getMessageById(req, res) {
+  const messageId = req.params.id;
 
   try {
-    await transporter.sendMail(mailOptions);
-    console.log('Email notification sent successfully');
+    const message = await MessagesModel.findById(messageId);
+
+    if (!message) {
+      return res.status(404).send("Message not found");
+    }
+
+    return res.status(200).send(message);
   } catch (error) {
-    console.error('Error sending email notification:', error);
-    throw error;
+    console.error(error);
+    res.status(500).send(error.message);
   }
 }
 
-module.exports = messageController;
+// READ operation - Get all
+async function getAllMessages(req, res) {
+  try {
+    const allMessages = await MessagesModel.find();
+    return res.status(200).send(allMessages);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send(error.message);
+  }
+}
+
+// UPDATE operation
+async function updateMessage(req, res) {
+  const messageId = req.params.id;
+  const { message } = req.body;
+
+  try {
+    const result = await MessagesModel.findByIdAndUpdate(
+      messageId,
+      { $set: { message: message } }
+    );
+
+    if (!result) {
+      return res.status(404).send("Message not found");
+    }
+
+    return res.status(200).send(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send(error.message);
+  }
+}
+
+// DELETE operation
+async function deleteMessage(req, res) {
+  const messageId = req.params.id;
+
+  try {
+    const result = await MessagesModel.findByIdAndDelete(messageId);
+
+    if (!result) {
+      return res.status(404).send("Message not found");
+    }
+
+    return res.status(200).send(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send(error.message);
+  }
+}
+
+module.exports = {
+  createMessage,
+  getMessageById,
+  getAllMessages,
+  updateMessage,
+  deleteMessage,
+  addMessageToArray,
+};

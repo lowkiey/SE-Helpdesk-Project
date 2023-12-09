@@ -7,7 +7,7 @@ const agentRouter = require("./Routes/agent");
 const authRouter = require("./Routes/auth");
 const http = require('http');
 const socketIO = require('socket.io');
-const messagesRoutes = require('./Routes/messageRoute');
+const messagesRoutes = require('./Routes/messageController');
 
 
 const server = http.createServer(app);
@@ -68,8 +68,7 @@ app.use("/api/v1", authRouter);
 app.use(authenticationMiddleware);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/agents", agentRouter);
-
-app.use('/api/v1/messages', messagesRoutes);
+app.use('/api', messagesRoutes);
 
 
 
