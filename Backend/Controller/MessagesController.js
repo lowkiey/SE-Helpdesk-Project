@@ -12,7 +12,7 @@ const transporter = nodemailer.createTransport({
     pass: 'amirwessam2023',
   },
 });
-async function sendOtpEmail(user, result) {
+async function sendTicketEmail(user, result) {
   console.log('Sending ticket info ...');
   const mailOptions = {
       from: '"HELPDESK" <sehelpdeskproject@outlook.com>', // Replace with your email address

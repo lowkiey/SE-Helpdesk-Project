@@ -8,10 +8,15 @@ const authRouter = require("./Routes/auth");
 const http = require('http');
 const socketIO = require('socket.io');
 const messagesRoutes = require('./Routes/messageRoute');
+const { join } = require('node:path');
+
+
 
 
 const server = http.createServer(app);
-const io = socketIO(server);
+const io = socketIO(server);{
+    connectionStateRecovery: {}
+};
 
 
 app.get('/', (req, res) => {
@@ -37,6 +42,8 @@ io.on('connection', (socket) => {
         io.emit('user disconnected', 'A user disconnected');
     });
 });
+
+
 
 const authenticationMiddleware = require("./Middleware/authenticationMiddleware");
 const cors = require("cors");
