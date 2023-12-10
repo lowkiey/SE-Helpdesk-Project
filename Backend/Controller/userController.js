@@ -35,7 +35,7 @@ const transporter = nodemailer.createTransport({
 const userController = {
     register: async (req, res) => {
         try {
-            const { email, password, displayName, role } = req.body;
+            const { email, password, displayName} = req.body;
 
             // Check if the user already exists
             const existingUser = await userModel.findOne({ email });
@@ -51,7 +51,6 @@ const userController = {
                 email,
                 password: hashedPassword,
                 displayName,
-                role,
             });
 
             // Save the user to the database
@@ -180,7 +179,44 @@ const userController = {
             return res.status(500).json({ message: error.message });
         }
     },
-
-
+    updateRole: async (req, res) => {
+      const { email, role } = req.body;
+      try {
+        const user = await userModel.findOne({ email });
+    
+        if (!user) {
+          return res.status(404).json({ message: "User not found" });
+        }
+        const updatedUser = await userModel.findOneAndUpdate(
+          { email },
+          { role },
+        );
+    
+        return res.status(200).json({ message: "Role updated successfully", user: updatedUser });
+      } catch (error) {
+        console.error("Error updating user role:", error);
+        res.status(500).json({ message: "Server error" });
+      }
+    },
+    logout: async (req, res) => { 
+       try {
+      // Get the token from the request cookies
+      const token = req.cookies.token;
+  
+      // Delete the session from the database based on the token
+      await sessionModel.findOneAndDelete({ token });
+  
+      // Clear the cookie on the client side
+      res.clearCookie('token', {
+        withCredentials: true,
+        httpOnly: false,
+        sameSite: 'none',
+      });
+      return res.status(200).json({ message: 'Logout successful' });
+    } catch (error) {
+      console.error('Error logging out user:', error);
+      res.status(500).json({ message: 'Server error' });
+    }
+},  
 };
 module.exports = userController;
