@@ -14,14 +14,11 @@ const { join } = require('node:path');
 
 
 const server = http.createServer(app);
-const io = socketIO(server);{
-    connectionStateRecovery: {}
-};
+const io = socketIO(server);
+   
 
 
-app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/index.html');
-});
+
 
 io.on('connection', (socket) => {
     console.log('A user connected');
@@ -42,6 +39,10 @@ io.on('connection', (socket) => {
         io.emit('user disconnected', 'A user disconnected');
     });
 });
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/index.html');
+});
+
 
 
 
@@ -64,8 +65,8 @@ app.use("/api/v1", authRouter);
 app.use(authenticationMiddleware);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/agents", agentRouter);
+app.use("/api/v1/messages", messagesRoutes);
 
-app.use('/api/v1/messages', messagesRoutes);
 
 
 
