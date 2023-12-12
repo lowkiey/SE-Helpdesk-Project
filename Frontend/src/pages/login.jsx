@@ -1,7 +1,15 @@
+<<<<<<< HEAD
 import "../stylesheets/auth.css";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+=======
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useCookies } from "react-cookie"; // Import useCookies
+import "../stylesheets/auth.css";
+>>>>>>> origin/george_new
 
 let backend_url = "http://localhost:3000/api/v1";
 
@@ -11,10 +19,17 @@ const Login = () => {
     email: "",
     password: "",
   });
+<<<<<<< HEAD
   const [showOtpInput, setShowOtpInput] = useState(false);
   const [otp, setOtp] = useState(""); // State to hold OTP value
 
   const { email, password } = inputValue;
+=======
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const { email, password } = inputValue;
+  const [cookies, setCookie] = useCookies(["token"]); // Use cookies hook
+>>>>>>> origin/george_new
 
   const handleOnChange = (e) => {
     const { name, value } = e.target;
@@ -35,6 +50,7 @@ const Login = () => {
         },
         { withCredentials: true }
       );
+<<<<<<< HEAD
 
       if (response.status === 200) {
         setShowOtpInput(true); // Display OTP input modal
@@ -73,6 +89,32 @@ const Login = () => {
   };
   return (
     <div className="form_container" style={{ marginLeft: "35%", marginTop: "5%" }} >
+=======
+      const { status, data } = response;
+      if (status === 200) {
+        // Handle successful login
+        localStorage.setItem("userId", data.user._id);
+        localStorage.setItem("role", data.user.role);
+        setCookie("token", data.token); // Set the token in cookies
+        setTimeout(() => {
+          navigate("/home");
+        }, 1000);
+      } else {
+        setErrorMessage(data.message);
+      }
+    } catch (error) {
+      setErrorMessage("An error occurred while logging in.");
+    }
+    setInputValue({
+      ...inputValue,
+      email: "",
+      password: "",
+    });
+  };
+
+  return (
+    <div className="form_container" style={{ marginLeft: "35%", marginTop: "5%", backgroundColor: "white" }}>
+>>>>>>> origin/george_new
       <h2>Login Account</h2>
       <form onSubmit={handleSubmit}>
         <div>
@@ -95,6 +137,7 @@ const Login = () => {
             onChange={handleOnChange}
           />
         </div>
+<<<<<<< HEAD
         <button type="submit">Get OTP</button>
       </form>
 
@@ -120,6 +163,12 @@ const Login = () => {
       <span>
         Already have an account? <Link to={"/register"}>Signup</Link>
       </span>
+=======
+        <button type="submit">Submit</button>
+        <span>{errorMessage} {successMessage}</span>
+        <span>Already have an account? <Link to={"/register"}>Signup</Link></span>
+      </form>
+>>>>>>> origin/george_new
     </div>
   );
 };

@@ -12,7 +12,10 @@ function App() {
       {/* Other routes */}
       <Route path="/home" element={<Homepage />} />
       <Route path="/register" element={<Signup />} />
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/george_new
     </Routes>
   );
 }

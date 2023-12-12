@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+<<<<<<< HEAD
 // import AppNavBar from "../components/navbar";
 import axios from "axios";
 import Navbar from 'react-bootstrap/Navbar';
@@ -7,6 +8,10 @@ import Nav from 'react-bootstrap/Nav';
 import { Link } from 'react-router-dom';
 import { FaUser } from 'react-icons/fa';
 
+=======
+import AppNavBar from "../components/navbar";
+import axios from "axios";
+>>>>>>> origin/george_new
 import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
 let backend_url = "http://localhost:3000/api/v1";
@@ -15,20 +20,29 @@ export default function HomePage() {
   const navigate = useNavigate();
   const [cookies] = useCookies([]);
   const [userName, setUserName] = useState("");
+<<<<<<< HEAD
   const [isUserTabOpen, setIsUserTabOpen] = useState(false)
   const handleUserIconClick = () => {
     setIsUserTabOpen(!isUserTabOpen);
   };
+=======
+
+>>>>>>> origin/george_new
   useEffect(() => {
     async function fetchUserData() {
       try {
         if (!cookies.token) {
           console.log("No token found, redirecting to login");
+<<<<<<< HEAD
           navigate("/");
+=======
+          navigate("/login");
+>>>>>>> origin/george_new
           return; // Exit early if there's no token
         }
 
         const uid = localStorage.getItem("userId");
+<<<<<<< HEAD
         console.log(uid);
 
         const response = await axios.get(`${backend_url}/users/${uid}`, {
@@ -40,6 +54,17 @@ export default function HomePage() {
       } catch (error) {
         console.log("Error fetching user data:", error);
         navigate("/"); // Redirect to login page on error
+=======
+        // const response = await axios.get(${backend_url}/users/${uid}, {
+        //   withCredentials: true,
+        // });
+
+        // Assuming the user's display name is fetched from response.data.displayName
+        // setUserName(response.data.displayName);
+      } catch (error) {
+        console.log("Error fetching user data:", error);
+        navigate("/login"); // Redirect to login page on error
+>>>>>>> origin/george_new
       }
     }
 
@@ -48,6 +73,7 @@ export default function HomePage() {
 
   return (
     <>
+<<<<<<< HEAD
       <Navbar expand="lg" className="bg-body-tertiary">
         <Container>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -85,6 +111,11 @@ export default function HomePage() {
       </Navbar>
       <h1 style={{ textAlign: "left", margin: "40px", color: 'black', fontFamily: "Times New Roman", fontWeight: "bold" }}>
         {`Hello ${userName}`} {/* Displaying the username */}
+=======
+      <AppNavBar />
+      <h1 style={{ textAlign: "center", margin: "30px", color: 'white' }}>
+        Hello {userName}
+>>>>>>> origin/george_new
       </h1>
     </>
   );
