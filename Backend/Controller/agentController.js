@@ -61,5 +61,4 @@ const AgentController = {
     },
 
 };
-
 module.exports = AgentController;
