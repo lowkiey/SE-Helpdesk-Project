@@ -7,7 +7,6 @@ const agentRouter = require("./Routes/agent");
 const ticketRouter = require("./Routes/tickets");
 const authRouter = require("./Routes/auth");
 const autoRouter=require("./Routes/AutomatedWorkflow");
-const agentRouter =require("./Routes/agent");
 require('dotenv').config();
 const authenticationMiddleware = require("./Middleware/authenticationMiddleware");
 const cors = require("cors");
