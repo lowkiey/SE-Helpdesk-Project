@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-// import AppNavBar from "../components/navbar";
 import axios from "axios";
 import Navbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
@@ -9,16 +8,19 @@ import { FaUser } from 'react-icons/fa';
 
 import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
-let backend_url = "http://localhost:3000/api/v1";
+
+const backend_url = "http://localhost:3000/api/v1";
 
 export default function HomePage() {
   const navigate = useNavigate();
   const [cookies] = useCookies([]);
   const [userName, setUserName] = useState("");
-  const [isUserTabOpen, setIsUserTabOpen] = useState(false)
+  const [isUserTabOpen, setIsUserTabOpen] = useState(false);
+
   const handleUserIconClick = () => {
     setIsUserTabOpen(!isUserTabOpen);
   };
+
   useEffect(() => {
     async function fetchUserData() {
       try {
@@ -31,15 +33,15 @@ export default function HomePage() {
         const uid = localStorage.getItem("userId");
         console.log(uid);
 
-        const response = await axios.get(${backend_url}/users/${uid}, {
+        const response = await axios.get(`${backend_url}/users/${uid}`, {
           withCredentials: true,
         });
-        console.log("response", response);
 
+        console.log("response", response);
         setUserName(response.data.displayName);
       } catch (error) {
         console.log("Error fetching user data:", error);
-        navigate("/"); // Redirect to login page on error
+        navigate("/"); // Redirect to the login page on error
       }
     }
 
@@ -76,7 +78,7 @@ export default function HomePage() {
                 <img src="https://via.placeholder.com/50" alt="Profile" style={{ width: '50px', height: '50px', objectFit: 'cover' }} />
               </div>
               <div>
-                <p style={{ margin: '0', fontWeight: 'bold' }}>User Name</p>
+                <p style={{ margin: '0', fontWeight: 'bold' }}>{userName}</p>
                 <Link to="/" style={{ color: 'rgb(209, 151, 240)', textDecoration: 'none' }}>Logout</Link>
               </div>
             </div>
@@ -84,7 +86,7 @@ export default function HomePage() {
         )}
       </Navbar>
       <h1 style={{ textAlign: "left", margin: "40px", color: 'black', fontFamily: "Times New Roman", fontWeight: "bold" }}>
-        {Hello ${userName}} {/* Displaying the username */}
+        {`Hello ${userName}`} {/* Displaying the username */}
       </h1>
     </>
   );

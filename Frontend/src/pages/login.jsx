@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
-let backend_url = "http://localhost:3000/api/v1";
+const backend_url = "http://localhost:3000/api/v1";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -28,7 +28,7 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        ${backend_url}/login,
+        `${backend_url}/login`,
         {
           email,
           password,
@@ -49,7 +49,7 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        ${backend_url}/login/verify, // Use the verify endpoint
+        `${backend_url}/login/verify`, // Use the verify endpoint
         {
           email,
           otp,
@@ -58,21 +58,21 @@ const Login = () => {
       );
 
       if (response.status === 200) {
-        localStorage.setItem("userId", response.data.user._id)
-        const user = response.data.user
+        localStorage.setItem("userId", response.data.user._id);
+        const user = response.data.user;
         if (user.role === "user") {
           navigate("/home");
         }
-        console.log(response.data)
-
+        console.log(response.data);
       }
     } catch (error) {
       console.error(error);
-
+      // Handle errors
     }
   };
+
   return (
-    <div className="form_container" style={{ marginLeft: "35%", marginTop: "5%" }} >
+    <div className="form_container" style={{ marginLeft: "35%", marginTop: "5%" }}>
       <h2>Login Account</h2>
       <form onSubmit={handleSubmit}>
         <div>
@@ -98,7 +98,7 @@ const Login = () => {
         <button type="submit">Get OTP</button>
       </form>
 
-      {showOtpInput && ( // Display OTP input modal conditionally
+      {showOtpInput && (
         <div className="otp-modal">
           <form onSubmit={handleOtpSubmit}>
             <h3>Enter OTP</h3>
@@ -114,9 +114,7 @@ const Login = () => {
         </div>
       )}
 
-      <span>
-        {/* Error or success messages */}
-      </span>
+      <span>{/* Error or success messages */}</span>
       <span>
         Already have an account? <Link to={"/register"}>Signup</Link>
       </span>
