@@ -1,10 +1,39 @@
 const sessionModel = require("../Models/sessionModel");
 const userModel = require("../Models/userModel");
 const ticketsModel = require("../Models/ticketsModel");
+const Agent = require("../Models/Agent");
 const jwt = require("jsonwebtoken");
 require('dotenv').config();
 const secretKey = process.env.SECRET_KEY;
 const bcrypt = require("bcrypt");
+const nodemailer = require("nodemailer");
+const axios = require("axios"); // Import axios for making HTTP requests
+const speakeasy = require("speakeasy");
+const transporter = nodemailer.createTransport({
+  host: 'smtp-mail.outlook.com',
+  port: 587,
+  secure: false, // Set to true if you're using port 465 (SSL), false for port 587 (TLS)
+  auth: {
+      user: 'sehelpdeskproject@outlook.com',
+      pass: 'amirwessam2023',
+    },
+});
+async function sendEmailNotification(user, subject,emailContent) {
+  console.log('Sending email...');
+  const mailOptions = {
+    from: '"HELPDESK" <sehelpdeskproject@outlook.com>', // Replace with your email address
+    to: user.email, 
+    subject: subject,
+    text: ` ${emailContent}`,
+  };
+  try {
+      await transporter.sendMail(mailOptions);
+      console.log(' email sent successfully');
+  } catch (error) {
+      console.error('Error sending email:', error);
+      throw error;
+    }
+};
 // Create a new ticket
 const ticketsController = {
 createTicket: async (req, res) => {
@@ -38,33 +67,35 @@ createTicket: async (req, res) => {
 
         }
     },
-//update ticket
-  updateTicket: async (req, res) => {
-        try {
-            const tickets = await ticketsModel.findByIdAndUpdate(
-                req.params.id,
-                { status: req.body.status },
-                {
-                    new: true,
-                }
-            );
-            return res.status(200).json({ tickets, msg: "ticket updated successfully" });
-        } catch (error) {
-            return res.status(500).json({ message: error.message });
-        }
+    //update ticket
+    updateTicket: async (req, res) => {
+      console.log("hi");
+      try {
+        const tickets = await ticketsModel.findById(req.params.id);
+      console.log(tickets);
+
+      const assignedAgentId  = await Agent.findById(tickets.agent_id);
+      console.log(assignedAgentId);
+      const { solution } = req.body; 
+      assignedAgentId.numberOfTickets -= 1;
+      await assignedAgentId.save();
+      
+      //notification:to be done in frontend
+      const updatedTicket = await updateTicketAndNotifyUser(tickets._id, solution, tickets.user_id);
+      updatedTicket.status='closed';
+      
+    
+     return res.status(200).json({ message: 'Ticket updated and closed successfully', updatedTicket });
+      } 
+      catch (error) {
+
+        return res.status(500).json({ message: error.message });
+      }
     },
-//delete ticket
-  deleteticket: async (req, res) => {
-        try {
-            const ticket = await ticketsModel.findByIdAndDelete(req.params.id);
-            return res.status(200).json({ ticket, msg: "ticket deleted successfully" });
-        } catch (error) {
-            return res.status(500).json({ message: error.message });
-        }
-    },
+
 //categorize tickets
     categoryTicket: async (req, res) => {
-        try {
+        try {   
           const { category } = req.body;
       
           if (category === 'Software' || category === 'Hardware' || category === 'Network') {
@@ -76,8 +107,7 @@ createTicket: async (req, res) => {
           return res.status(500).json({ message: 'Error', error: error.message });
         }
       },
-      
-      
+          
 //sub category
   subCategory : async (req, res) => {
     try {
@@ -132,21 +162,20 @@ createTicket: async (req, res) => {
       return res.status(500).json({ message: 'Error', error: error.message });
     }
   }, 
-//workflow
-  workflowIssue: async (req, res) => {
-    try {
-        const tickets = await ticketsModel.findById(
-            req.params.id,
-            { workflow: req.body.workflow },
-        )
-
-    await tickets.save();
-    return res.status(200).json({ message: 'Custom workflow assigned successfully', tickets });
-  } 
-  catch (error) {
-    return res.status(500).json({ message: 'Error assigning custom workflow', error: error.message });
-  }
-    }
 };
+const updateTicketAndNotifyUser = async (ticketId, solution, userId) => {
+  try {
+    // Update ticket with solution and change status to 'closed'
+    const updatedTicket = await ticketsModel.findByIdAndUpdate(ticketId); // { new: true } returns the updated ticket
 
+    // Send email notification to the user
+    const user = await userModel.findById(userId); // Assuming user ID is available in the request
+    const emailContent = `Your ticket (ID: ${ticketId}) has been updated. Status: Closed. Solution: ${solution}`;
+    sendEmailNotification(user, 'Ticket Updated and Closed', emailContent);
+
+    return updatedTicket;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
 module.exports = ticketsController;

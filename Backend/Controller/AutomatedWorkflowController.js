@@ -26,6 +26,12 @@ const automatedWorkflowController = {
     return [];
   },
 
+  sleep: (ms) => {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  },
+
+
+
     // Create a new automated workflow
     createAutomatedWorkflow: async (req, res) => {
       console.log("hi");
@@ -620,6 +626,16 @@ catch{
 } 
 }
 }
+startAutomatedWorkflow: async () => {
+  while (true) {
+    try {
+      await automatedWorkflowController.createAutomatedWorkflowWithRouting();
+      await automatedWorkflowController.sleep(10000); // Add delay of 10 seconds before the next iteration
+    } catch (error) {
+      console.error('Error in automated workflow:', error);
+    }
+  }
+},
 
 
  module.exports = automatedWorkflowController;

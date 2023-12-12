@@ -5,7 +5,6 @@ module.exports = function authenticationMiddleware(req, res, next) {
   const cookie = req.cookies;
 
   // console.log(req.headers);
-
   if (!cookie) {
     return res.status(401).json({ message: "No Cookie provided" });
   }
