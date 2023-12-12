@@ -145,18 +145,14 @@ const userController = {
             if (!isOTPVerified) {
                 return res.status(406).json({ message: 'Invalid OTP' });
             }
-
-            // Get the user by email
             const user = await userModel.findOne({ email });
+            const { _id, displayName, role } = user;
 
-            // Generate JWT token
             const token = jwt.sign(
                 { user: { userId: user._id, role: user.role } },
                 secretKey,
                 { expiresIn: 3 * 60 * 60 }
             );
-
-            // Create and save session
             const currentDateTime = new Date();
             const expiresAt = new Date(+currentDateTime + 1800000); // expire in 3 minutes
             let newSession = new sessionModel({
@@ -165,8 +161,7 @@ const userController = {
                 expiresAt,
             });
             await newSession.save();
-
-            // Set cookie and send success response
+            const userId = user._id.toString();
             return res
                 .cookie('token', token, {
                     expires: expiresAt,

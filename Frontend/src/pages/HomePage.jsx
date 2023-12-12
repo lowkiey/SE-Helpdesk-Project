@@ -20,11 +20,13 @@ export default function HomePage() {
         }
 
         const uid = localStorage.getItem("userId");
+        console.log(uid);
+
         const response = await axios.get(`${backend_url}/users/${uid}`, {
           withCredentials: true,
         });
-
-        // Assuming the user's display name is fetched from response.data.displayName
+        console.log("response", response);
+        
         setUserName(response.data.displayName);
       } catch (error) {
         console.log("Error fetching user data:", error);

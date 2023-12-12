@@ -58,6 +58,8 @@ const Login = () => {
       );
 
       if (response.status === 200) {
+        localStorage.setItem("userId", response.data.user._id)
+        console.log(response.data)
         navigate("/home"); // Redirect upon successful login
       }
     } catch (error) {
