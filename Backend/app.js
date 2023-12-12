@@ -4,6 +4,8 @@ const app = express();
 const mongoose = require("mongoose");
 const userRouter = require("./Routes/users");
 const authRouter = require("./Routes/auth");
+const autoRouter=require("./Routes/AutomatedWorkflow");
+const agentRouter =require("./Routes/agent");
 require('dotenv').config();
 
 const authenticationMiddleware = require("./Middleware/authenticationMiddleware");
@@ -35,6 +37,10 @@ app.use(
 app.use("/api/v1", authRouter);
 app.use(authenticationMiddleware);
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/AutomatedWorkflow", autoRouter);
+app.use("/api/v1/agents",agentRouter);
+//app.use("/api/v1/AutomatedWorkflow/",autoRouter);
+
 
 const db_name = process.env.DB_NAME;
 // * Cloud Connection

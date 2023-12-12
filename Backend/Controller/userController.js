@@ -1,9 +1,12 @@
 const userModel = require("../Models/userModel");
 const sessionModel = require("../Models/sessionModel");
+const AgentModel = require("../Models/Agent");
 const jwt = require("jsonwebtoken");
 require('dotenv').config();
 const secretKey = process.env.SECRET_KEY;
 const bcrypt = require("bcrypt");
+
+
 const userController = {
     register: async (req, res) => {
         try {
@@ -11,6 +14,7 @@ const userController = {
 
             // Check if the user already exists
             const existingUser = await userModel.findOne({ email });
+
             if (existingUser) {
                 return res.status(409).json({ message: "User already exists" });
             }
@@ -29,6 +33,24 @@ const userController = {
             // Save the user to the database
             await newUser.save();
 
+            // If the registered user is an agent
+            if (role === "agent") {
+                const { rating, resolution_time, ticket_id, agentType } = req.body;
+
+                // Create a new agent
+                const newAgent = new AgentModel({
+                    user_id: newUser._id,
+                    rating,
+                    resolution_time,
+                    ticket_id,
+                    ticketCount:0,
+                    agentType,
+                });
+
+                // Save the agent to the database
+                await newAgent.save();
+            }
+
             res.status(201).json({ message: "User registered successfully" });
         } catch (error) {
             console.error("Error registering user:", error);
@@ -43,14 +65,15 @@ const userController = {
             const user = await userModel.findOne({ email });
 
             if (!user) {
-                return res.status(404).json({ message: "User not found" });
+                return res.status(404).json({ message: 'User not found' });
             }
 
-            // Check if the password is correct
+            // Check password
             const passwordMatch = await bcrypt.compare(password, user.password);
             if (!passwordMatch) {
-                return res.status(405).json({ message: "Incorrect password" });
+                return res.status(405).json({ message: 'Incorrect password' });
             }
+
 
             const currentDateTime = new Date();
             const expiresAt = new Date(+currentDateTime + 1800000); // expire in 3 minutes
@@ -62,7 +85,6 @@ const userController = {
                     expiresIn: 3 * 60 * 60,
                 }
             );
-
             let newSession = new sessionModel({
                 userId: user._id,
                 token,
@@ -75,10 +97,13 @@ const userController = {
                     expires: expiresAt,
                     withCredentials: true,
                     httpOnly: false,
-                    sameSite: 'none'
+                    sameSite: 'none',
+                    // secure: true,
                 })
                 .status(200)
                 .json({ message: "Login successful", user });
+
+
         } catch (error) {
             console.error("Error logging in:", error);
             res.status(500).json({ message: "Server error" });
