@@ -2,23 +2,19 @@ const express = require("express");
 const cookieParser = require('cookie-parser');
 const app = express();
 const mongoose = require("mongoose");
+const http = require('http');
+const socketIO = require('socket.io');
+const { join } = require('node:path');
+
 const userRouter = require("./Routes/users");
 const agentRouter = require("./Routes/agent");
 const authRouter = require("./Routes/auth");
-const http = require('http');
-const socketIO = require('socket.io');
 const messagesRoutes = require('./Routes/messageRoute');
-const { join } = require('node:path');
-
-
-
+const authenticationMiddleware = require("./Middleware/authenticationMiddleware");
+const cors = require("cors");
 
 const server = http.createServer(app);
 const io = socketIO(server);
-   
-
-
-
 
 io.on('connection', (socket) => {
     console.log('A user connected');
@@ -39,18 +35,13 @@ io.on('connection', (socket) => {
         io.emit('user disconnected', 'A user disconnected');
     });
 });
+
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');
 });
 
-
-
-
-const authenticationMiddleware = require("./Middleware/authenticationMiddleware");
-const cors = require("cors");
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
 app.use(cookieParser());
 
 app.use(
@@ -67,12 +58,7 @@ app.use("/api/v1/users", userRouter);
 app.use("/api/v1/agents", agentRouter);
 app.use("/api/v1/messages", messagesRoutes);
 
-
-
-
-const db_name = process.env.DB_NAME;
-const db_url="mongodb://127.0.0.1:27017/SE_Project1";
-
+const db_url = "mongodb://127.0.0.1:27017/SE_Project1";
 const connectionOptions = {
     useUnifiedTopology: true,
     useNewUrlParser: true,
@@ -80,7 +66,7 @@ const connectionOptions = {
 
 mongoose
     .connect(db_url, connectionOptions)
-    .then(() => console.log("mongoDB connected"))
+    .then(() => console.log("MongoDB connected"))
     .catch((e) => {
         console.log(e);
     });
