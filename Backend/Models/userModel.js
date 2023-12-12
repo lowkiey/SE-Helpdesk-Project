@@ -5,7 +5,8 @@ const userschema = new mongoose.Schema(
         email: { type: String, required: true, unique: true },
         password: { type: String, required: true, minlength: 5 },
         displayName: { type: String },
-        role: { type: String, required: false, default:"user" },
+        role: { type: String, required: true },
+        otp: { type: String }, //s7
     },
     {
         strict: false,
@@ -13,4 +14,4 @@ const userschema = new mongoose.Schema(
     }
 );
 
-module.exports = mongoose.model('userModels', userschema);
+module.exports = mongoose.model('userModel', userschema);
