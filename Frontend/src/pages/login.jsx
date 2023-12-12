@@ -2,8 +2,8 @@ import "../stylesheets/auth.css";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+
 let backend_url = "http://localhost:3000/api/v1";
-// import { ToastContainer, toast } from "react-toastify";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -11,9 +11,11 @@ const Login = () => {
     email: "",
     password: "",
   });
-  const [successMessage, setSucessMessage] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [showOtpInput, setShowOtpInput] = useState(false);
+  const [otp, setOtp] = useState(""); // State to hold OTP value
+
   const { email, password } = inputValue;
+
   const handleOnChange = (e) => {
     const { name, value } = e.target;
     setInputValue((prevInput) => ({
@@ -33,38 +35,38 @@ const Login = () => {
         },
         { withCredentials: true }
       );
-      console.log("HIIIiiiiiiiiiiiii");
-      // console.log(data);
-      const { status, data } = response;
-      console.log('data', data)
-      if (status == 200) {
-        // handleSuccess(message);
-        localStorage.setItem("userId", response.data.user._id)
-        localStorage.setItem("role", response.data.user.role)
 
-        setTimeout(() => {
-          navigate("/home");
-        }, 1000);
-      } else {
-        console.log(message);
-
-        // handleError(message);
+      if (response.status === 200) {
+        setShowOtpInput(true); // Display OTP input modal
       }
     } catch (error) {
-      console.log(error);
-
-      // handleError(error.message);
-
+      console.error(error);
+      // Handle errors
     }
-    setInputValue({
-      ...inputValue,
-      email: "",
-      password: "",
-    });
   };
 
+  const handleOtpSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+        `${backend_url}/login/verify`, // Use the verify endpoint
+        {
+          email,
+          otp,
+        },
+        { withCredentials: true }
+      );
+
+      if (response.status === 200) {
+        navigate("/home"); // Redirect upon successful login
+      }
+    } catch (error) {
+      console.error(error);
+      // Handle errors
+    }
+  };
   return (
-    <div className="form_container" style={{ marginLeft: "35%", marginTop: "5%", backgroundColor: "white" }}>
+    <div className="form_container" style={{ marginLeft: "35%", marginTop: "5%" }} >
       <h2>Login Account</h2>
       <form onSubmit={handleSubmit}>
         <div>
@@ -87,14 +89,31 @@ const Login = () => {
             onChange={handleOnChange}
           />
         </div>
-        <button type="submit">Submit</button>
-        <span>
-          {errorMessage} {successMessage}
-        </span>
-        <span>
-          Already have an account? <Link to={"/register"}>Signup</Link>
-        </span>
+        <button type="submit">Get OTP</button>
       </form>
+
+      {showOtpInput && ( // Display OTP input modal conditionally
+        <div className="otp-modal">
+          <form onSubmit={handleOtpSubmit}>
+            <h3>Enter OTP</h3>
+            <input
+              type="text"
+              name="otp"
+              value={otp}
+              placeholder="Enter OTP"
+              onChange={(e) => setOtp(e.target.value)}
+            />
+            <button type="submit">Verify OTP</button>
+          </form>
+        </div>
+      )}
+
+      <span>
+        {/* Error or success messages */}
+      </span>
+      <span>
+        Already have an account? <Link to={"/register"}>Signup</Link>
+      </span>
     </div>
   );
 };

@@ -8,58 +8,55 @@ const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const axios = require("axios"); // Import axios for making HTTP requests
 const speakeasy = require("speakeasy");
-// const transporter = nodemailer.createTransport({
-//     host: 'smtp-mail.outlook.com',
-//     port: 587,
-//     secure: false, // Set to true if you're using port 465 (SSL), false for port 587 (TLS)
-//     auth: {
-//         user: 'sehelpdeskproject@outlook.com',
-//         pass: 'amirwessam2023',
-//     },
-// });
-// const generateOTP = (secret) => {
-//     return speakeasy.totp({
-//         secret: secret,
-//         encoding: 'base32',
-//     });
-// // }; 
-// async function sendOtpEmail(user, otp) {
-//     console.log('Sending OTP email...');
-//     const mailOptions = {
-//         from: '"HELPDESK" <sehelpdeskproject@outlook.com>', // Replace with your email address
-//         to: user.email, // User's email address
-//         subject: 'Your OTP for Login',
-//         text: `Your one-time password (OTP) is: ${otp}`,
-//     };
-//     try {
-//         await transporter.sendMail(mailOptions);
-//         console.log('OTP email sent successfully');
-//     } catch (error) {
-//         console.error('Error sending email:', error);
-//         throw error; // Make sure to rethrow the error to propagate it to the calling function
-//     }
-// };
-// 
-// const verifyOTP = async (email, otp) => {
-//     try {
-//         // Find the user by email
-//         const foundUser = await userModel.findOne({ email });
+const transporter = nodemailer.createTransport({
+    host: 'smtp-mail.outlook.com',
+    port: 587,
+    secure: false, // Set to true if you're using port 465 (SSL), false for port 587 (TLS)
+    auth: {
+        user: 'sehelpdeskproject@outlook.com',
+        pass: 'amirwessam2023',
+    },
+});
+const generateOTP = (secret) => {
+    return speakeasy.totp({
+        secret: secret,
+        encoding: 'base32',
+    });
+};
+async function sendOtpEmail(user, otp) {
+    console.log('Sending OTP email...');
+    const mailOptions = {
+        from: '"HELPDESK" <sehelpdeskproject@outlook.com>', // Replace with your email address
+        to: user.email, // User's email address
+        subject: 'Your OTP for Login',
+        text: `Your one-time password (OTP) is: ${otp}`,
+    };
+    try {
+        await transporter.sendMail(mailOptions);
+        console.log('OTP email sent successfully');
+    } catch (error) {
+        console.error('Error sending email:', error);
+        throw error; // Make sure to rethrow the error to propagate it to the calling function
+    }
+};
+const verifyOTP = async (email, otp) => {
+    try {
+        const foundUser = await userModel.findOne({ email });
 
-//         if (!foundUser || foundUser.otp !== otp) {
-//             return false; // OTP doesn't match or user not found
-//         }
+        if (!foundUser || foundUser.otp !== otp) {
+            return false;
+        }
 
-//         // If the OTP is valid, clear it from the database
-//         foundUser.otp = null;
-//         await foundUser.save();
+        // Clear OTP after successful verification
+        foundUser.otp = null;
+        await foundUser.save();
 
-//         return true; // OTP verified successfully
-//     } catch (error) {
-//         console.error('Error verifying OTP:', error);
-//         return false;
-//     }
-// // };
-
+        return true;
+    } catch (error) {
+        console.error('Error verifying OTP:', error);
+        return false;
+    }
+};
 
 const userController = {
     register: async (req, res) => {
@@ -127,27 +124,51 @@ const userController = {
                 return res.status(405).json({ message: 'Incorrect password' });
             }
 
+            // Generate and send OTP to user's email
+            const generatedOTP = generateOTP();
+            user.otp = generatedOTP; // Save OTP in user document
+            await user.save();
+            await sendOtpEmail(user, generatedOTP);
 
-            const currentDateTime = new Date();
-            const expiresAt = new Date(+currentDateTime + 1800000); // expire in 3 minutes
-            // Generate a JWT token
+            return res.status(200).json({ message: 'OTP sent to your email', email });
+        } catch (error) {
+            console.error('Error initiating login:', error);
+            res.status(500).json({ message: 'Server error' });
+        }
+    },
+    verify: async (req, res) => {
+        try {
+            const { email, otp } = req.body;
+
+            const isOTPVerified = await verifyOTP(email, otp);
+
+            if (!isOTPVerified) {
+                return res.status(406).json({ message: 'Invalid OTP' });
+            }
+
+            // Get the user by email
+            const user = await userModel.findOne({ email });
+
+            // Generate JWT token
             const token = jwt.sign(
                 { user: { userId: user._id, role: user.role } },
                 secretKey,
-                {
-                    expiresIn: 3 * 60 * 60,
-                }
+                { expiresIn: 3 * 60 * 60 }
             );
 
+            // Create and save session
+            const currentDateTime = new Date();
+            const expiresAt = new Date(+currentDateTime + 1800000); // expire in 3 minutes
             let newSession = new sessionModel({
                 userId: user._id,
                 token,
-                expiresAt: expiresAt,
+                expiresAt,
             });
             await newSession.save();
 
+            // Set cookie and send success response
             return res
-                .cookie("token", token, {
+                .cookie('token', token, {
                     expires: expiresAt,
                     withCredentials: true,
                     httpOnly: false,
@@ -155,15 +176,12 @@ const userController = {
                     secure: true,
                 })
                 .status(200)
-                .json({ message: "Login successful", user });
-
-
+                .json({ message: 'Login successful', user });
         } catch (error) {
-            console.error("Error logging in:", error);
-            res.status(500).json({ message: "Server error" });
+            console.error('Error completing login:', error);
+            res.status(500).json({ message: 'Server error' });
         }
     },
-
     getAllUsers: async (req, res) => {
         try {
             const users = await userModel.find();
@@ -202,7 +220,6 @@ const userController = {
             return res.status(500).json({ message: error.message });
         }
     },
-
 
 };
 module.exports = userController;

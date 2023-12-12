@@ -20,12 +20,12 @@ export default function HomePage() {
         }
 
         const uid = localStorage.getItem("userId");
-        // const response = await axios.get(${backend_url}/users/${uid}, {
-        //   withCredentials: true,
-        // });
+        const response = await axios.get(`${backend_url}/users/${uid}`, {
+          withCredentials: true,
+        });
 
         // Assuming the user's display name is fetched from response.data.displayName
-        // setUserName(response.data.displayName);
+        setUserName(response.data.displayName);
       } catch (error) {
         console.log("Error fetching user data:", error);
         navigate("/"); // Redirect to login page on error
@@ -38,8 +38,8 @@ export default function HomePage() {
   return (
     <>
       <AppNavBar />
-      <h1 style={{ textAlign: "center", margin: "30px", color: 'white' }}>
-        Hello {userName}
+      <h1 style={{ textAlign: "left", margin: "40px", color: 'black', fontFamily: "Times New Roman", fontWeight: "bold" }}>
+        {`Hello ${userName}`} {/* Displaying the username */}
       </h1>
     </>
   );
