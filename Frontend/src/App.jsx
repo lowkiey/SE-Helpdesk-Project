@@ -12,6 +12,7 @@ function App() {
       {/* Other routes */}
       <Route path="/home" element={<Homepage />} />
       <Route path="/register" element={<Signup />} />
+
     </Routes>
   );
 }
