@@ -28,7 +28,7 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        ${backend_url}/login,
+        `${backend_url}/login`,
         {
           email,
           password,
@@ -49,7 +49,7 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        ${backend_url}/login/verify, // Use the verify endpoint
+        `${backend_url}/login/verify`, // Use the verify endpoint
         {
           email,
           otp,
