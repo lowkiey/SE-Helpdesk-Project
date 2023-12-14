@@ -8,9 +8,7 @@ const socketIO = require('socket.io');
 const messagesRoutes = require('./Routes/messageRoute');
 const { join } = require('node:path');
 const authRouter = require("./Routes/auth");
-const userRouter = require("./Routes/users");
 const ticketRouter = require("./Routes/tickets");
-const authRouter = require("./Routes/auth");
 const autoRouter=require("./Routes/AutomatedWorkflow");
 const agentRouter =require("./Routes/agent");
 require('dotenv').config();
@@ -33,24 +31,13 @@ app.use(
     })
 );
 
-// app.use((req, res, next) => {
-//   res.setHeader("Access-Control-Allow-Origin", "*");
-//   res.setHeader("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS,HEAD");
-//   res.setHeader(
-//     "Access-Control-Expose-Headers",
-//     "*"
-//   );
-
-//   next();
-// });
-
 app.use("/api/v1", authRouter);
 app.use(authenticationMiddleware);
-app.use("/api/v1/users", userRouter);
 app.use("/api/v1/tickets", ticketRouter);
 app.use("/api/v1/agents", agentRouter);
 app.use("/api/v1/messages", messagesRoutes);
 app.use("/api/v1/AutomatedWorkflow", autoRouter);
+app.use("/api/v1/users", userRouter);
 
 
 

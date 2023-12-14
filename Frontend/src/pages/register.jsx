@@ -50,11 +50,7 @@ const Signup = () => {
           role: "",
         });
         setTimeout(() => {
-<<<<<<< HEAD
           navigate("/");
-=======
-          navigate("/home");
->>>>>>> origin/george_new
         }, 1000);
       } else {
         setErrorMessage("Registration failed. Please try again.");
