@@ -154,7 +154,7 @@ const userController = {
                 { expiresIn: 3 * 60 * 60 }
             );
             const currentDateTime = new Date();
-            const expiresAt = new Date(+currentDateTime + 1800000); // expire in 3 minutes
+            const expiresAt = new Date(+currentDateTime + 180000000); // 3 hours
             let newSession = new sessionModel({
                 userId: user._id,
                 token,
