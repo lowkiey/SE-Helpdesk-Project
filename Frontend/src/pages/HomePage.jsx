@@ -22,11 +22,13 @@ export default function HomePage() {
   useEffect(() => {
     async function fetchUserData() {
       try {
-        if (!cookies.token) {
+        const token = localStorage.getItem("token")
+        if (!token) {
           console.log("No token found, redirecting to login");
           navigate("/");
           return; // Exit early if there's no token
         }
+        axios.defaults.headers.common["authorization"] = `Bearer ${token}`; // Set the token in headers
 
         const uid = localStorage.getItem("userId");
         console.log(uid);
