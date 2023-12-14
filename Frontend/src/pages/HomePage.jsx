@@ -15,6 +15,7 @@ export default function HomePage() {
   const navigate = useNavigate();
   const [cookies] = useCookies([]);
   const [userName, setUserName] = useState("");
+  const [users, setUsers] = useState([]);
   const [isUserTabOpen, setIsUserTabOpen] = useState(false)
   const handleUserIconClick = () => {
     setIsUserTabOpen(!isUserTabOpen);
@@ -86,6 +87,7 @@ export default function HomePage() {
       <h1 style={{ textAlign: "left", margin: "40px", color: 'black', fontFamily: "Times New Roman", fontWeight: "bold" }}>
         {`Hello ${userName}`} {/* Displaying the username */}
       </h1>
+
     </>
   );
 }

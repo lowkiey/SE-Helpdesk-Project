@@ -11,6 +11,8 @@ const AgentController = {
     getAllAgents: async (req, res) => {
         try {
             const agents = await AgentModel.find().lean();
+            console.log("hi")
+            
             return res.status(200).json({ agents });
         } catch (error) {
             console.error("Error fetching agents:", error);
