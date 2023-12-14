@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const userModel = require("./userModel");
 
 const schemaOptions = {
     strict: true,
@@ -8,11 +7,6 @@ const schemaOptions = {
 
 const CustomizationSettingsSchema = new mongoose.Schema(
     {
-        _id: {
-            type: mongoose.Schema.Types.ObjectId,
-            required: true,
-            unique: true
-        },
         admin_id: {
             type: mongoose.Schema.Types.ObjectId,
             required: true,

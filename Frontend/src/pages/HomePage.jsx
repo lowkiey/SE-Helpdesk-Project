@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
-// import AppNavBar from "../components/navbar";
+import AppNavBar from "../components/navbar";
 import axios from "axios";
 import Navbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import { Link } from 'react-router-dom';
 import { FaUser } from 'react-icons/fa';
-
 import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
 let backend_url = "http://localhost:3000/api/v1";
