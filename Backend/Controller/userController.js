@@ -171,7 +171,7 @@ const userController = {
                     secure: true,
                 })
                 .status(200)
-                .json({ message: 'Login successful', user });
+                .json({ message: 'Login successful', user, token });
         } catch (error) {
             console.error('Error completing login:', error);
             res.status(500).json({ message: 'Server error' });

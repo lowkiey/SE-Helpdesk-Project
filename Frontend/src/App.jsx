@@ -3,6 +3,7 @@ import Homepage from "./pages/HomePage";
 import Login from "./pages/login";
 import Signup from "./pages/register";
 import FAQ from "./pages/FAQs";
+import Reports from "./pages/Reports";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
       <Route path="/home" element={<Homepage />} />
       <Route path="/register" element={<Signup />} />
       <Route path="/faq" element={<FAQ />} />
+      <Route path="/reports" element={<Reports />} />
 
     </Routes>
   );
