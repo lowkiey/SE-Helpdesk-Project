@@ -15,7 +15,7 @@ const agentschema = new mongoose.Schema(
     rating: { type: Number },
     resolution_time: { type: String },
     ticket_id: { type: ObjectId }, 
-    numberOfTickets:{type: Number, default:5} //dh el hy-minus mno el tickets gowa update tickets
+    numberOfTickets:{type: Number, default:5, required: false} //dh el hy-minus mno el tickets gowa update tickets
 
 
   },
