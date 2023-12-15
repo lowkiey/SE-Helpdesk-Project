@@ -16,7 +16,7 @@ const transporter = nodemailer.createTransport({
   auth: {
       user: 'sehelpdeskproject@outlook.com',
       pass: 'amirwessam2023',
-    },
+    },
 });
 async function sendEmailNotification(user, subject,emailContent) {
   console.log('Sending email...');
@@ -32,10 +32,22 @@ async function sendEmailNotification(user, subject,emailContent) {
   } catch (error) {
       console.error('Error sending email:', error);
       throw error;
-    }
+    }
+
 };
-// Create a new ticket
+
 const ticketsController = {
+  getTickets: async (req, res) => {
+    try {
+      // Fetch all tickets from MongoDB
+      const tickets = await ticketsModel.find();
+  
+      res.json(tickets); // Send the fetched tickets as JSON response
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  },  
+  // Create a new ticket
 createTicket: async (req, res) => {
         try {
             const { user_id,
@@ -170,12 +182,13 @@ const updateTicketAndNotifyUser = async (ticketId, solution, userId) => {
 
     // Send email notification to the user
     const user = await userModel.findById(userId); // Assuming user ID is available in the request
-    const emailContent = `Your ticket (ID: ${ticketId}) has been updated. Status: Closed. Solution: ${solution}`;
+    const emailContent = 'Your ticket (ID: ${ticketId}) has been updated. Status: Closed. Solution: ${solution}; ${solution}';
     sendEmailNotification(user, 'Ticket Updated and Closed', emailContent);
 
     return updatedTicket;
   } catch (error) {
     throw new Error(error.message);
   }
+ 
 };
 module.exports = ticketsController;
