@@ -1,79 +1,102 @@
+// Import necessary libraries and components
 import React, { useState, useEffect } from 'react';
 import '../stylesheets/chat.css'; // Replace 'chat.css' with the actual name of your CSS file
 import axios from 'axios';
 
+// Define the Chat component
 const Chat = () => {
+  // State variables
+  const [users, setUsers] = useState([]);
+  const [selectedUserId, setSelectedUserId] = useState(null);
   const [chats, setChats] = useState([]);
-  const [loggedInAgentId, setLoggedInAgentId] = useState(''); // Set the logged-in agent's ID here
-  const [error, setError] = useState(null);
 
+  // Fetch users when the component mounts
   useEffect(() => {
-    // Make an API call to get tickets for the logged-in agent
-    const fetchTickets = async () => {
+    const fetchUsers = async () => {
       try {
-        // Adjust the API endpoint to match your backend route
-        const response = await axios.get('/api/tickets');
-        console.log('API Response:', response.data); // Log the response to the console
-
-        const tickets = response.data.tickets.filter(
-          (ticket) => ticket.AgentId === loggedInAgentId
-        );
-
-        if (tickets.length === 0) {
-          setError('No chats found for the logged-in agent.');
-        } else {
-          setError(null); // Reset error state if there are chats
-        }
-
-        setChats(tickets);
-
-        console.log('Chats:', chats); // Log the chats array
+        const response = await axios.get('http://localhost:3000/api/v1/users'); // Assuming this is the correct endpoint for fetching users
+        console.log('Users response:', response.data);
+        setUsers(response.data);
       } catch (error) {
-        console.error('Error fetching tickets:', error);
-        setError('Error fetching tickets. Please try again.'); // Set error state for network error
+        console.error('Error fetching users:', error);
       }
     };
 
-    if (loggedInAgentId) {
-      fetchTickets();
-    }
-  }, [loggedInAgentId]);
+    fetchUsers();
+  }, []);
 
+  // Fetch all chats when the component mounts or when a user is selected
+  useEffect(() => {
+    const fetchChats = async () => {
+      try {
+        const response = await axios.get('http://localhost:3000/api/v1/tickets/getAllTickets'); // Update the endpoint
+        console.log('Chats response:', response.data);
+        setChats(response.data);
+      } catch (error) {
+        console.error('Error fetching chats:', error);
+      }
+    };
+
+    fetchChats();
+  }, [selectedUserId]);
+
+  // Handle user click event
+  const handleUserClick = (userId) => {
+    console.log('Selected User ID:', userId);
+    setSelectedUserId(String(userId)); // Convert userId to string for consistency
+  };
+
+  // Render the component
   return (
     <>
-      <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+      {/* External CSS */}
+      <link
+        href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+        rel="stylesheet"
+      />
 
+      {/* Main container */}
       <div className="container">
         <div className="row clearfix">
           <div className="col-lg-12">
             <div className="card chat-app">
-              <div id="plist" className="people-list">
-                
-                <div className="input-group">
-                  <div className="input-group-prepend"></div>
-                </div>
+              {/* People list */}
+              <div className="people-list">
+                <ul>
+                  {users.map((user) => (
+                    <li key={user.id} onClick={() => handleUserClick(user.id)}>
+                      {user.name}
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <div className="chat">
-                <div className="chat-header clearfix">
-                  <div className="row">
-                    <div className="col-lg-6">
-                      <a href="javascript:void(0);" data-toggle="modal" data-target="#view_info">
-                        <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="avatar" />
-                      </a>
-                      <div className="chat-about"></div>
+
+              {/* Chats */}
+              <div className="chats">
+                {chats.length === 0 ? (
+                  <p>No chats available.</p>
+                ) : (
+                  chats.map((chat) => (
+                    <div key={chat._id}>
+                      <p>{chat.message}</p>
+                      {/* Add more chat information as needed */}
                     </div>
-                  </div>
-                </div>
-                <div className="chat-history">
-                  {/* Display chats here using the 'chats' state */}
-                  {error ? (
-                    <div className="error-message">{error}</div>
-                  ) : (
-                    chats.map((chat) => (
-                      <div key={chat._id}>{/* Display individual chat items */}</div>
-                    ))
+                  ))
+                )}
+              </div>
+              
+              {/* Chat interface */}
+              <div className="chat">
+                <div className="selected-user">
+                  {selectedUserId && (
+                    <p>Selected User: {users.find(user => user.id === selectedUserId)?.name}</p>
                   )}
                 </div>
+  
+                <div className="chat-history">
+                  {/* The chat history section (if needed) */}
+                </div>
+  
                 <div className="chat-message clearfix">
                   <div className="input-group mb-0">
                     <input type="text" className="form-control" placeholder="Enter text here..." />
@@ -88,4 +111,5 @@ const Chat = () => {
   );
 };
 
+// Export the Chat component
 export default Chat;

@@ -9,7 +9,7 @@ const { join } = require('node:path');
 
 const userRouter = require("./Routes/users");
 const agentRouter = require("./Routes/agent");
-
+const ticketRouter=require ("./Routes/tickets");
 const authRouter = require("./Routes/auth");
 const messagesRoutes = require('./Routes/messageRoute');
 const authenticationMiddleware = require("./Middleware/authenticationMiddleware");
@@ -59,7 +59,7 @@ app.use(authenticationMiddleware);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/agents", agentRouter);
 app.use("/api/v1/messages", messagesRoutes);
-
+app.use("/api/v1/tickets", ticketRouter);
 
 const db_url = "mongodb://127.0.0.1:27017/SE_Project1";
 const connectionOptions = {
