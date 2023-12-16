@@ -54,6 +54,24 @@ async function sendEmailNotification(message) {
 }
 
 const messageController = {
+  getAllChats: async (req, res) => {
+    try {
+      const chats = await ChatModel.find();
+      console.log('Chats from the backend:', chats);
+
+      if (!chats || chats.length === 0) {
+        return res.status(404).json({ error: 'No chats found' });
+      }
+
+      res.status(200).json(chats);
+    } catch (error) {
+      console.error('Error getting chats:', error);
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+
+
   createMessage: async (req, res) => {
     try {
       const { ticket_id, user_id, message } = req.body;

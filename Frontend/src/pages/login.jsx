@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const backend_url = "http://localhost:3000/api/v1";
+let backend_url = "http://localhost:3000/api/v1";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -58,21 +58,20 @@ const Login = () => {
       );
 
       if (response.status === 200) {
-        localStorage.setItem("userId", response.data.user._id);
-        const user = response.data.user;
-        if (user.role === "user") {
-          navigate("/home");
-        }
-        console.log(response.data);
+        localStorage.setItem("userId", response.data.user._id)
+        
+          navigate("/HomePage");
+        
+        console.log(response.data)
+
       }
     } catch (error) {
       console.error(error);
-      // Handle errors
+
     }
   };
-
   return (
-    <div className="form_container" style={{ marginLeft: "35%", marginTop: "5%" }}>
+    <div className="form_container" style={{ marginLeft: "35%", marginTop: "5%" }} >
       <h2>Login Account</h2>
       <form onSubmit={handleSubmit}>
         <div>
@@ -98,7 +97,7 @@ const Login = () => {
         <button type="submit">Get OTP</button>
       </form>
 
-      {showOtpInput && (
+      {showOtpInput && ( // Display OTP input modal conditionally
         <div className="otp-modal">
           <form onSubmit={handleOtpSubmit}>
             <h3>Enter OTP</h3>
@@ -114,7 +113,9 @@ const Login = () => {
         </div>
       )}
 
-      <span>{/* Error or success messages */}</span>
+      <span>
+        {/* Error or success messages */}
+      </span>
       <span>
         Already have an account? <Link to={"/register"}>Signup</Link>
       </span>

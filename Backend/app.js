@@ -2,12 +2,14 @@ const express = require("express");
 const cookieParser = require('cookie-parser');
 const app = express();
 const mongoose = require("mongoose");
+
 const http = require('http');
 const socketIO = require('socket.io');
 const { join } = require('node:path');
 
 const userRouter = require("./Routes/users");
 const agentRouter = require("./Routes/agent");
+
 const authRouter = require("./Routes/auth");
 const messagesRoutes = require('./Routes/messageRoute');
 const authenticationMiddleware = require("./Middleware/authenticationMiddleware");
@@ -57,6 +59,7 @@ app.use(authenticationMiddleware);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/agents", agentRouter);
 app.use("/api/v1/messages", messagesRoutes);
+
 
 const db_url = "mongodb://127.0.0.1:27017/SE_Project1";
 const connectionOptions = {

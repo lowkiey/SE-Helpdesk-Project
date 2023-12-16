@@ -2,6 +2,8 @@ import { Routes, Route } from "react-router-dom";
 import Homepage from "./pages/HomePage";
 import Login from "./pages/login";
 import Signup from "./pages/register";
+import Tickets from "./pages/tickets";
+import Chat from "./components/chat"; // Ensure the correct import for the Chat component
 
 function App() {
   return (
@@ -10,8 +12,12 @@ function App() {
       <Route path="/" element={<Login />} />
 
       {/* Other routes */}
-      <Route path="/home" element={<Homepage />} />
+      <Route path="/HomePage" element={<Homepage />} />
       <Route path="/register" element={<Signup />} />
+      <Route path="/tickets" element={<Tickets />} />
+
+      {/* New route for the chat component */}
+      <Route path="/chat" element={<Chat />} />
     </Routes>
   );
 }

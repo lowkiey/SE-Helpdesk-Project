@@ -1,53 +1,65 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import Navbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import { Link } from 'react-router-dom';
 import { FaUser } from 'react-icons/fa';
+import axios from "axios";
+import Chat from "../components/chat"; // Replace with the correct path
 
-import { useNavigate } from "react-router-dom";
-import { useCookies } from "react-cookie";
 
-const backend_url = "http://localhost:3000/api/v1";
+let backend_url = "http://localhost:3000/api/v1";
 
 export default function HomePage() {
-  const navigate = useNavigate();
-  const [cookies] = useCookies([]);
-  const [userName, setUserName] = useState("");
   const [isUserTabOpen, setIsUserTabOpen] = useState(false);
-
-  const handleUserIconClick = () => {
-    setIsUserTabOpen(!isUserTabOpen);
-  };
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [userName, setUserName] = useState("");
+  const [selectedChat, setSelectedChat] = useState(null);
 
   useEffect(() => {
     async function fetchUserData() {
       try {
-        if (!cookies.token) {
-          console.log("No token found, redirecting to login");
-          navigate("/");
-          return; // Exit early if there's no token
-        }
+        // Include your token logic here
+        // const token = cookies.token;
+        // if (!token) {
+        //   console.log("No token found, redirecting to login");
+        //   navigate("/");
+        //   return;
+        // }
 
+        // Replace with your user data fetching logic
         const uid = localStorage.getItem("userId");
         console.log(uid);
 
         const response = await axios.get(`${backend_url}/users/${uid}`, {
           withCredentials: true,
+          // headers: { Authorization: `Bearer ${token}` }, // Uncomment if using token
         });
 
-        console.log("response", response);
         setUserName(response.data.displayName);
       } catch (error) {
         console.log("Error fetching user data:", error);
-        navigate("/"); // Redirect to the login page on error
+        // Redirect to login page or handle the error accordingly
+        // navigate("/");
       }
     }
 
     fetchUserData();
-  }, [cookies.token, navigate]);
+  }, []); // Empty dependency array to run only once on mount
 
+  const handleUserIconClick = () => {
+    setIsUserTabOpen(!isUserTabOpen);
+  };
+
+  const handleChatButtonClick = () => {
+    setIsChatOpen(!isChatOpen);
+  };
+
+  const handleChatSelect = (chatId) => {
+    setSelectedChat(chatId);
+  };
+
+  
   return (
     <>
       <Navbar expand="lg" className="bg-body-tertiary">
@@ -78,15 +90,30 @@ export default function HomePage() {
                 <img src="https://via.placeholder.com/50" alt="Profile" style={{ width: '50px', height: '50px', objectFit: 'cover' }} />
               </div>
               <div>
-                <p style={{ margin: '0', fontWeight: 'bold' }}>{userName}</p>
+                <p style={{ margin: '0', fontWeight: 'bold' }}>User Name</p>
                 <Link to="/" style={{ color: 'rgb(209, 151, 240)', textDecoration: 'none' }}>Logout</Link>
               </div>
             </div>
           </div>
         )}
       </Navbar>
+
+
+
+
+
+{/* Add the Chat component here */}
+<Chat />
+
+
+
+
+
+
+
+
       <h1 style={{ textAlign: "left", margin: "40px", color: 'black', fontFamily: "Times New Roman", fontWeight: "bold" }}>
-        {`Hello ${userName}`} {/* Displaying the username */}
+        {` ${userName}`} {/* Displaying the username */}
       </h1>
     </>
   );
