@@ -29,7 +29,7 @@ const Chat = () => {
   useEffect(() => {
     const fetchChats = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/v1/tickets/getAllTickets'); // Update the endpoint
+        const response = await axios.get('http://localhost:3000/api/v1/tickets/ids'); // Update the endpoint
         console.log('Chats response:', response.data);
         setChats(response.data);
       } catch (error) {

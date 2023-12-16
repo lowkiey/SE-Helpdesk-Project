@@ -10,4 +10,6 @@ router.put("/category/:id", authorizationMiddleware(['user']), ticketsController
 router.put("/", authorizationMiddleware(['user']), ticketsController.subCategory);
 router.put("/priorr/:id", authorizationMiddleware(['user']), ticketsController.priorityy);
 router.get("/getAllTickets", authorizationMiddleware(['user']), ticketsController.getAllTickets);
+router.get('/tickets/ids', authorizationMiddleware(['user','agent','admin']), ticketsController.getTicketIds);
+
 module.exports = router; // ! Don't forget to export the router

@@ -88,6 +88,22 @@ createTicket: async (req, res) => {
         return res.status(500).json({ message: "Server error" });
       }
     },
+
+    getTicketIds: async (req, res) => {
+      try {
+        // Fetch all tickets from MongoDB
+        const tickets = await ticketsModel.find();
+    
+        // Extract only the IDs from the tickets
+        const ticketIds = tickets.map((ticket) => ticket._id);
+    
+        // Send the list of ticket IDs as JSON response
+        res.json({ ticketIds });
+      } catch (error) {
+        res.status(500).json({ message: error.message });
+      }
+    },
+    
     //update ticket
     updateTicket: async (req, res) => {
       console.log("hi");
@@ -200,4 +216,7 @@ const updateTicketAndNotifyUser = async (ticketId, solution, userId) => {
   }
  
 };
+
+
+
 module.exports = ticketsController;

@@ -53,7 +53,7 @@ export default function Reports() {
       try {
         if (!cookies.token) {
           console.log("No token found, redirecting to login");
-        //  navigate("/");
+          //navigate("/");
           return; // Exit early if there's no token
         }
 
@@ -66,13 +66,13 @@ export default function Reports() {
         setUserName(response.data.displayName);
       } catch (error) {
         console.log("Error fetching user data:", error);
-        //navigate("/"); // Redirect to login page on error
+       // navigate("/"); // Redirect to login page on error
       }
     }
 
     async function fetchTickets() {
       try {
-        const response = await axios.get(`${backend_url}/tickets`, {
+        const response = await axios.get(`${backend_url}/tickets/getAllTickets`, {
           withCredentials: true,
         });
 
@@ -102,13 +102,14 @@ export default function Reports() {
     const buttonStyle = {
       fontSize: '16px',
       padding: '10px 20px',
-      backgroundColor: isHovered ? '#3498db' : '#2980b9', // Blue colors
+      backgroundColor: isHovered ? '#8a2be2' : '#800080', // Purple colors
       color: 'white',
-      border: '2px solid #3498db', // Blue border
+      border: '2px solid #8a2be2', // Purple border
       borderRadius: '5px',
       cursor: 'pointer',
       transition: 'background-color 0.3s, color 0.3s',
     };
+    
 
     return (
       <button
