@@ -70,6 +70,8 @@ const Login = () => {
       }
     } catch (error) {
       console.error(error);
+      navigate("/login");
+        
 
     }
   };
@@ -120,7 +122,7 @@ const Login = () => {
         {/* Error or success messages */}
       </span>
       <span>
-        Already have an account? <Link to={"/register"}>Signup</Link>
+        Dont have an account? <Link to={"/register"}>Signup</Link>
       </span>
     </div>
   );

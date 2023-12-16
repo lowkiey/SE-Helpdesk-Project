@@ -44,7 +44,7 @@ export default function HomePage() {
         setUserName(response.data.displayName);
       } catch (error) {
         console.log("Error fetching user data:", error);
-        navigate("/"); // Redirect to login page on error
+        // navigate("/"); // uncomment later
       }
     }
 
