@@ -35,7 +35,7 @@ export default function Reports() {
   };
   const handleReportSubmit = async () => {
     try {
-      const response = await axios.post(`${backend_url}/reports/${ticket._id}`, reportForm, {
+      const response = await axios.post(`${backend_url}/reports/${tickets._id}`, reportForm, {
         withCredentials: true,
       });
 

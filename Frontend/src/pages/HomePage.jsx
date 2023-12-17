@@ -29,7 +29,7 @@ export default function HomePage() {
       try {
         if (!cookies.token) {
           console.log("No token found, redirecting to login");
-          navigate("/");
+          //navigate("/");
           return; // Exit early if there's no token
         }
 
@@ -44,7 +44,7 @@ export default function HomePage() {
         setUserName(response.data.displayName);
       } catch (error) {
         console.log("Error fetching user data:", error);
-        navigate("/"); // Redirect to login page on error
+        //navigate("/"); // Redirect to login page on error
       }
     }
 
