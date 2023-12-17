@@ -147,11 +147,12 @@ app.use(
 app.use("/api/v1", authRouter);
 app.use(authenticationMiddleware);
 
-// Apply the cors middleware only to specific routes
-app.use("/api/v1/users", cors(), userRouter);
-app.use("/api/v1/agents", cors(), agentRouter);
-app.use("/api/v1/messages", cors(), messagesRoutes);
-app.use("/api/v1/tickets", cors(), ticketRouter);
+app.use("/api/v1", authRouter);
+app.use(authenticationMiddleware);
+app.use("/api/v1/users", userRouter);
+app.use("/api/v1/agents", agentRouter);
+app.use("/api/v1/messages", messagesRoutes);
+app.use("/api/v1/tickets", ticketRouter);
 
 const db_url = "mongodb://127.0.0.1:27017/SE_Project1";
 const connectionOptions = {
