@@ -58,6 +58,14 @@ const reportController = {
         }
     
     },
+    viewAllReports: async(req,res)=>{
+      try {
+        const reports = await reportsModel.find();
+        return res.status(200).json(reports);
+    } catch (e) {
+        return res.status(500).json({ message: e.message });
+    }
+    },
      viewIssues :async (req, res) => {
         try {
             // Define an object to store the counts for each category and subcategory

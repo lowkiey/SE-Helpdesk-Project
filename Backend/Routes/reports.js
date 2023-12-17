@@ -4,5 +4,5 @@ const reportController = require("../Controller/reportController"); // Fix casin
 const authorizationMiddleware = require('../Middleware/autherizationMiddleware');
 
 router.post("/:id", authorizationMiddleware(['manager']), reportController.createReport);
-
+router.get("/",authorizationMiddleware(['manager']), reportController.viewAllReports)
 module.exports = router; // ! Don't forget to export the router

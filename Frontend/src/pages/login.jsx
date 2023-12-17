@@ -64,6 +64,8 @@ const Login = () => {
         const user = response.data.user
         if (user.role === "user") {
           navigate("/home");
+        }else if(user.role==="manager"){
+          navigate("/home");
         }
         console.log(response.data)
 
