@@ -32,6 +32,9 @@ export default function Reports() {
     agentPreformanceReport: "",
   });
   const [agents, setAgents] = useState([]);
+  const [selectedAgentId, setSelectedAgentId] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState('');
 
   const handleUserIconClick = () => {
     setIsUserTabOpen(!isUserTabOpen);
@@ -55,6 +58,14 @@ export default function Reports() {
     } catch (error) {
       console.error("Error creating report:", error);
     }
+  };
+
+  const handleChatAgentSelect = (agentId) => {
+    setSelectedAgentId(agentId);
+  };
+
+  const handleChatClose = () => {
+    setSelectedAgentId(null);
   };
 
   useEffect(() => {
@@ -94,13 +105,15 @@ export default function Reports() {
       try {
         const response = await axios.get(`${backend_url}/agents/getAll`,{
           withCredentials: true,
+        });
 
-        });        console.log("Agents response:", response.data); // Add this line to check the agents' response
+        console.log("Agents response:", response.data);
         setAgents(response.data.agents);
       } catch (error) {
         console.error("Error fetching agents:", error);
       }
     }
+
     fetchTickets();
     fetchUserData();
     fetchAgents();
@@ -138,6 +151,7 @@ export default function Reports() {
       </button>
     );
   };
+
   return (
     <>
       <Navbar expand="lg" className="bg-body-tertiary">
@@ -184,7 +198,7 @@ export default function Reports() {
         <DropdownButton id="chat-dropdown" title="Chat">
           {agents.length > 0 ? (
             agents.map((agent) => (
-              <Dropdown.Item key={agent._id} onClick={() => setReportForm({ ...reportForm, agent_id: agent._id })}>
+              <Dropdown.Item key={agent._id} onClick={() => handleChatAgentSelect(agent._id)}>
                 Agent ID: {agent._id}
               </Dropdown.Item>
             ))
@@ -256,6 +270,12 @@ export default function Reports() {
         </Modal.Footer>
       </Modal>
   
+      {selectedAgentId && (
+        <div style={{ marginTop: '20px', padding: '10px', border: '1px solid #ccc', borderRadius: '5px' }}>
+          <ChatArea agentId={selectedAgentId} messages={messages} onSendMessage={setMessages} />
+        </div>
+      )}
+  
       <table className="table" style={{ marginTop: '80px', width: '90%', margin: 'auto' }}>
         <thead>
           <tr>
@@ -284,5 +304,36 @@ export default function Reports() {
       </table>
     </>
   );
-  
 }
+
+const ChatArea = ({ agentId, messages, onSendMessage }) => {
+  const [newMessage, setNewMessage] = useState('');
+
+  const handleSendMessage = () => {
+    onSendMessage([...messages, { sender: 'user', text: newMessage }]);
+    setNewMessage('');
+  };
+
+  return (
+    <div>
+      <h5>Chat with Agent {agentId}</h5>
+      <div style={{ maxHeight: '200px', overflowY: 'auto', marginBottom: '10px', border: '1px solid #ddd', padding: '10px', borderRadius: '5px' }}>
+        {messages.map((message, index) => (
+          <div key={index} style={{ marginBottom: '5px' }}>
+            <strong>{message.sender}:</strong> {message.text}
+          </div>
+        ))}
+      </div>
+      <div style={{ display: 'flex' }}>
+        <input
+          type="text"
+          value={newMessage}
+          onChange={(e) => setNewMessage(e.target.value)}
+          placeholder="Type your message"
+          style={{ flex: '1', marginRight: '10px' }}
+        />
+        <button onClick={handleSendMessage}>Send</button>
+      </div>
+    </div>
+  );
+};
