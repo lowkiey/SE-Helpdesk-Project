@@ -14,6 +14,7 @@ const agentSchema = new mongoose.Schema(
     resolution_time: { type: String, default: 0},
     ticket_id: { type: ObjectId, ref: 'ticketsModel', default: null },
     agentAvailability: { type: Boolean, required: true, default: true },
+    role: { type: String },
 
   },
   schemaOptions

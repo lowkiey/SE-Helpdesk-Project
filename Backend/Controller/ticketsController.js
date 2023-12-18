@@ -130,6 +130,10 @@ createTicket: async (req, res) => {
       }
     },
 
+
+
+    
+
 //categorize tickets
     categoryTicket: async (req, res) => {
         try {   

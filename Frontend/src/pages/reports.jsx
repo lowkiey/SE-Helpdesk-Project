@@ -1,3 +1,5 @@
+// ... (your existing imports)
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Navbar from 'react-bootstrap/Navbar';
@@ -10,6 +12,8 @@ import { useCookies } from "react-cookie";
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import DropdownButton from 'react-bootstrap/DropdownButton';
+import Dropdown from 'react-bootstrap/Dropdown';
 
 let backend_url = "http://localhost:3000/api/v1";
 
@@ -19,9 +23,6 @@ export default function Reports() {
   const [userName, setUserName] = useState("");
   const [tickets, setTickets] = useState([]);
   const [isUserTabOpen, setIsUserTabOpen] = useState(false);
-  const handleUserIconClick = () => {
-    setIsUserTabOpen(!isUserTabOpen);
-  };
   const [showModal, setShowModal] = useState(false);
   const [reportForm, setReportForm] = useState({
     agent_id: "",
@@ -29,10 +30,17 @@ export default function Reports() {
     resoultionTimeReport: "",
     agentPreformanceReport: "",
   });
+  const [agents, setAgents] = useState([]);
+
+  const handleUserIconClick = () => {
+    setIsUserTabOpen(!isUserTabOpen);
+  };
+
   const handleFormFieldChange = (e) => {
     const { name, value } = e.target;
     setReportForm({ ...reportForm, [name]: value });
   };
+
   const handleReportSubmit = async () => {
     try {
       const response = await axios.post(`${backend_url}/reports/${tickets._id}`, reportForm, {
@@ -53,7 +61,6 @@ export default function Reports() {
       try {
         if (!cookies.token) {
           console.log("No token found, redirecting to login");
-          //navigate("/");
           return; // Exit early if there's no token
         }
 
@@ -66,7 +73,6 @@ export default function Reports() {
         setUserName(response.data.displayName);
       } catch (error) {
         console.log("Error fetching user data:", error);
-       // navigate("/"); // Redirect to login page on error
       }
     }
 
@@ -79,16 +85,25 @@ export default function Reports() {
         console.log("response", response);
         setTickets(response.data.tickets);
       } catch (error) {
-        console.log("Error fetching user data:", error);
-       // navigate("/"); // Redirect to login page on error
+        console.log("Error fetching tickets data:", error);
       }
     }
 
+    async function fetchAgents() {
+      try {
+        const response = await axios.get(`${backend_url}/api/v1/agents/getAll`);
+        console.log("Agents response:", response.data); // Add this line to check the agents' response
+        setAgents(response.data.agents);
+      } catch (error) {
+        console.error("Error fetching agents:", error);
+      }
+    }
     fetchTickets();
     fetchUserData();
+    fetchAgents();
   }, [cookies.token, navigate]);
 
-  const Button = ({ text }) => {
+  const CustomButton = ({ text }) => {
     const [isHovered, setIsHovered] = useState(false);
 
     const handleMouseEnter = () => {
@@ -102,14 +117,13 @@ export default function Reports() {
     const buttonStyle = {
       fontSize: '16px',
       padding: '10px 20px',
-      backgroundColor: isHovered ? '#8a2be2' : '#800080', // Purple colors
+      backgroundColor: isHovered ? '#8a2be2' : '#800080',
       color: 'white',
-      border: '2px solid #8a2be2', // Purple border
+      border: '2px solid #8a2be2',
       borderRadius: '5px',
       cursor: 'pointer',
       transition: 'background-color 0.3s, color 0.3s',
     };
-    
 
     return (
       <button
@@ -121,7 +135,6 @@ export default function Reports() {
       </button>
     );
   };
-
   return (
     <>
       <Navbar expand="lg" className="bg-body-tertiary">
@@ -143,45 +156,60 @@ export default function Reports() {
             </Nav>
           </Navbar.Collapse>
         </Container>
-        {isUserTabOpen && (
-          <div style={{ position: 'absolute', top: '50px', right: '10px', zIndex: 100, backgroundColor: 'white', boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)', borderRadius: '5px', padding: '10px' }}>
-            {/* User tab content */}
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <div style={{ marginRight: '10px', borderRadius: '50%', overflow: 'hidden' }}>
-                {/* Placeholder image */}
-                <img src="https://via.placeholder.com/50" alt="Profile" style={{ width: '50px', height: '50px', objectFit: 'cover' }} />
-              </div>
-              <div>
-                <p style={{ margin: '0', fontWeight: 'bold' }}>User Name</p>
-                <Link to="/" style={{ color: 'rgb(209, 151, 240)', textDecoration: 'none' }}>Logout</Link>
-              </div>
+      </Navbar>
+  
+      {isUserTabOpen && (
+        <div style={{ position: 'absolute', top: '50px', right: '10px', zIndex: 100, backgroundColor: 'white', boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)', borderRadius: '5px', padding: '10px' }}>
+          {/* User tab content */}
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{ marginRight: '10px', borderRadius: '50%', overflow: 'hidden' }}>
+              {/* Placeholder image */}
+              <img src="https://via.placeholder.com/50" alt="Profile" style={{ width: '50px', height: '50px', objectFit: 'cover' }} />
+            </div>
+            <div>
+              <p style={{ margin: '0', fontWeight: 'bold' }}>{userName}</p>
+              <Link to="/" style={{ color: 'rgb(209, 151, 240)', textDecoration: 'none' }}>Logout</Link>
             </div>
           </div>
-        )}
-      </Navbar>
-      
-      {/* Buttons */}
+        </div>
+      )}
+  
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '40px', marginInlineEnd: '140px' }}>
-        <Button text="View Issues" />
+        <CustomButton text="View Issues" />
         <div style={{ marginLeft: '20px' }} />
-        <Button text="View All Reports" />
+        <CustomButton text="View All Reports" />
+        <DropdownButton id="chat-dropdown" title="Chat">
+          {agents.length > 0 ? (
+            agents.map((agent) => (
+              <Dropdown.Item key={agent._id} onClick={() => setReportForm({ ...reportForm, agent_id: agent._id })}>
+                Agent ID: {agent._id}, Name: {agent.name}
+              </Dropdown.Item>
+            ))
+          ) : (
+            <Dropdown.Item disabled>No agents available</Dropdown.Item>
+          )}
+        </DropdownButton>
       </div>
+  
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Create Report</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
-            {/* Form fields for creating reports */}
             <Form.Group controlId="agent_id">
               <Form.Label>Agent ID</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter Agent ID"
-                name="agent_id"
-                value={reportForm.agent_id}
-                onChange={handleFormFieldChange}
-              />
+              <DropdownButton id="agent-dropdown" title="Select Agent">
+                {agents.length > 0 ? (
+                  agents.map((agent) => (
+                    <Dropdown.Item key={agent._id} onClick={() => setReportForm({ ...reportForm, agent_id: agent._id })}>
+                      {agent.name}
+                    </Dropdown.Item>
+                  ))
+                ) : (
+                  <Dropdown.Item disabled>No agents available</Dropdown.Item>
+                )}
+              </DropdownButton>
             </Form.Group>
             <Form.Group controlId="ticketStatusReport">
               <Form.Label>Ticket Status Report</Form.Label>
@@ -224,8 +252,7 @@ export default function Reports() {
           </Button>
         </Modal.Footer>
       </Modal>
-      
-
+  
       <table className="table" style={{ marginTop: '80px', width: '90%', margin: 'auto' }}>
         <thead>
           <tr>
@@ -234,19 +261,19 @@ export default function Reports() {
             <th>Category</th>
             <th>Status</th>
             <th>Subcategory</th>
-            <th>Action</th> {/* New column for the "Create Report" button */}
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
           {tickets.map((ticket, index) => (
             <tr key={ticket._id}>
-              <td>{index + 1}</td> {/* Display index + 1 to start from 1 instead of 0 */}
+              <td>{index + 1}</td>
               <td>{ticket._id}</td>
               <td>{ticket.category}</td>
               <td>{ticket.status}</td>
               <td>{ticket.subCategory}</td>
               <td>
-              <button onClick={() => setShowModal(true)}>Create Report</button>
+                <button onClick={() => setShowModal(true)}>Create Report</button>
               </td>
             </tr>
           ))}
@@ -254,4 +281,5 @@ export default function Reports() {
       </table>
     </>
   );
+  
 }
