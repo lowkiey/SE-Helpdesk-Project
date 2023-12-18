@@ -15,6 +15,7 @@ import Form from 'react-bootstrap/Form';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 
+
 let backend_url = "http://localhost:3000/api/v1";
 
 export default function Reports() {
@@ -91,7 +92,7 @@ export default function Reports() {
 
     async function fetchAgents() {
       try {
-        const response = await axios.get(`${backend_url}/api/v1/agents/getAll`,{
+        const response = await axios.get(`${backend_url}/agents/getAll`,{
           withCredentials: true,
 
         });        console.log("Agents response:", response.data); // Add this line to check the agents' response
@@ -184,7 +185,7 @@ export default function Reports() {
           {agents.length > 0 ? (
             agents.map((agent) => (
               <Dropdown.Item key={agent._id} onClick={() => setReportForm({ ...reportForm, agent_id: agent._id })}>
-                Agent ID: {agent._id}, Name: {agent.name}
+                Agent ID: {agent._id}
               </Dropdown.Item>
             ))
           ) : (
