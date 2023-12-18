@@ -91,8 +91,10 @@ export default function Reports() {
 
     async function fetchAgents() {
       try {
-        const response = await axios.get(`${backend_url}/api/v1/agents/getAll`);
-        console.log("Agents response:", response.data); // Add this line to check the agents' response
+        const response = await axios.get(`${backend_url}/api/v1/agents/getAll`,{
+          withCredentials: true,
+
+        });        console.log("Agents response:", response.data); // Add this line to check the agents' response
         setAgents(response.data.agents);
       } catch (error) {
         console.error("Error fetching agents:", error);
