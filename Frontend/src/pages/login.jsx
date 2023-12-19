@@ -59,12 +59,13 @@ const Login = () => {
 
       if (response.status === 200) {
         localStorage.setItem("userId", response.data.user._id)
+        localStorage.setItem("name", response.data.user.displayName)
         const user = response.data.user
         localStorage.setItem("token", response.data.token)
         console.log(response.data.token)
-        if (user.role === "user") {
-          navigate("/home");
-        }
+        // if (user.role === "user") {
+        navigate("/home");
+        // }
         console.log(response.data)
 
       }

@@ -29,9 +29,10 @@ export default function HomePage() {
       try {
         if (!cookies.token) {
           console.log("No token found, redirecting to login");
-          navigate("/");
+          // navigate("/");
           return; // Exit early if there's no token
         }
+
 
         const uid = localStorage.getItem("userId");
         console.log(uid);
@@ -67,58 +68,71 @@ export default function HomePage() {
               <Nav.Link as={Link} to="/faq" style={{ fontSize: '24px', cursor: 'pointer', color: 'rgb(166, 0, 255)', marginLeft: '50px' }}>
                 FAQs
               </Nav.Link>
-              </Nav>
-              <Nav className="ms-auto" style={{ display: 'flex', alignItems: 'center' }}>
-                {/* User Icon */}
+            </Nav>
+            <Nav className="ms-auto" style={{ display: 'flex', alignItems: 'center' }}>
+              {/* User Icon */}
 
-                {/* Notification Icon */}
-                <Nav.Item>
-                  <div style={{ position: 'relative' }}>
-                    <FaBell
-                      onClick={() => setShowNotification(!showNotification)}
-                      style={{ fontSize: '24px', cursor: 'pointer', color: 'rgb(166, 0, 255)', marginRight: '20px' }}
-                    />
-                    {showNotification && (
-                      <div style={{ position: 'absolute', top: '30px', right: '20px', width: '200px', height: '300px', backgroundColor: 'white', boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)', borderRadius: '5px', padding: '10px' }}>
-                        {/* notification tab content */}
+              {/* Notification Icon */}
+              <Nav.Item>
+                <div style={{ position: 'relative' }}>
+                  <FaBell
+                    onClick={() => setShowNotification(!showNotification)}
+                    style={{ fontSize: '24px', cursor: 'pointer', color: 'rgb(166, 0, 255)', marginRight: '20px' }}
+                  />
+                  {showNotification && (
+                    <div style={{ position: 'absolute', top: '30px', right: '20px', width: '200px', height: '300px', backgroundColor: 'white', boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)', borderRadius: '5px', padding: '10px' }}>
+                      {/* notification tab content */}
+                      <div>
+                        <p style={{ margin: '0', fontWeight: 'bold', fontSize: '20px' }}>Notifications:</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </Nav.Item>
+              <Nav.Item>
+                <div style={{ position: 'relative' }}>
+                  <FaUser
+                    onClick={handleUserIconClick}
+                    style={{ fontSize: '24px', cursor: 'pointer', color: 'rgb(166, 0, 255)', marginRight: '-40px' }}
+                  />
+                  {isUserTabOpen && (
+                    <div style={{ position: 'absolute', top: '30px', right: '-200px', width: '200px', height: '100px', backgroundColor: 'white', boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)', borderRadius: '0px', padding: '10px' }}>
+                      {/* User tab content */}
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <div style={{ marginRight: '10px', borderRadius: '50%', overflow: 'hidden' }}>
+                          {/* Placeholder image */}
+                          <img src="https://via.placeholder.com/50" alt="Profile" style={{ width: '50px', height: '50px', objectFit: 'cover' }} />
+                        </div>
                         <div>
-                          <p style={{ margin: '0', fontWeight: 'bold', fontSize: '20px' }}>Notifications:</p>
+                          <p style={{ margin: '0', fontWeight: 'bold', marginTop: '0' }}>User Name</p>
+                          <br />
+                          <Link to="/" style={{ color: 'rgb(209, 151, 240)', textDecoration: 'none' }}>Logout</Link>
                         </div>
                       </div>
-                    )}
-                  </div>
-                </Nav.Item>
-                <Nav.Item>
-                  <div style={{ position: 'relative' }}>
-                    <FaUser
-                      onClick={handleUserIconClick}
-                      style={{ fontSize: '24px', cursor: 'pointer', color: 'rgb(166, 0, 255)', marginRight: '-40px' }}
-                    />
-                    {isUserTabOpen && (
-                      <div style={{ position: 'absolute', top: '30px', right: '-200px', width: '200px', height: '100px', backgroundColor: 'white', boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)', borderRadius: '0px', padding: '10px' }}>
-                        {/* User tab content */}
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                          <div style={{ marginRight: '10px', borderRadius: '50%', overflow: 'hidden' }}>
-                            {/* Placeholder image */}
-                            <img src="https://via.placeholder.com/50" alt="Profile" style={{ width: '50px', height: '50px', objectFit: 'cover' }} />
-                          </div>
-                          <div>
-                            <p style={{ margin: '0', fontWeight: 'bold', marginTop: '0' }}>User Name</p>
-                            <br />
-                            <Link to="/" style={{ color: 'rgb(209, 151, 240)', textDecoration: 'none' }}>Logout</Link>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </Nav.Item>
-              </Nav>
+                    </div>
+                  )}
+                </div>
+              </Nav.Item>
+            </Nav>
           </Navbar.Collapse>
         </Container>
       </Navbar>
-      <h1 style={{ textAlign: "left", margin: "40px", color: 'black', fontFamily: "Times New Roman", fontWeight: "bold" }}>
-        {`Hello ${userName}`} {/* Displaying the username */}
+      <h1 style={{ textAlign: "center", margin: "40px", color: 'purple', fontFamily: "Sans-Serif", fontWeight: "bold" }}>
+        {`Hello ${userName}, What are you trying to do today?`} {/* Displaying the username */}
       </h1>
+
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <button className="create" onClick={() => navigate("/tickets")} style={{ fontFamily: "sans-serif", fontWeight: "bold", backgroundColor: 'purple', color: 'white', border: 'white', borderRadius: '5px', width: '15%', padding: '8px', }}>Create a new support ticket</button><button className="activity" onClick={() => navigate("/tickets")} style={{ marginTop: '25px', fontFamily: "sans-serif", fontWeight: "bold", backgroundColor: 'purple', color: 'white', border: 'white', borderRadius: '5px', width: '15%', padding: '8px', }}>Recent Activity</button>
+      </div>
+      <div className="about us">
+        <h1 style={{ textAlign: "center", marginTop: '90px', color: 'purple', fontFamily: "Sans-Serif", fontWeight: "bold", marginLeft: 'auto', marginRight: 'auto', width: 'fit-content' }}>
+          About Us
+        </h1>
+        <p style={{ textAlign: "center", marginTop: '10px', marginRight: "1650px", color: 'purple', fontFamily: "Sans-Serif", fontWeight: "bold", width: '1500px', padding: '20px' }}>
+          Our mission at Helpdesk is to revolutionize support services through our cutting-edge ticketing system. We are dedicated to streamlining communication between users and support teams, ensuring swift and efficient resolution of issues. Our commitment lies in empowering both clients and businesses by providing a seamless, user-friendly platform that fosters clarity, transparency, and satisfaction. We strive to be the catalyst for exceptional customer experiences, offering reliable solutions that elevate the standards of support services in the digital age.
+        </p>
+      </div>
+
 
     </>
   );

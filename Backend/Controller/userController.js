@@ -194,6 +194,7 @@ const userController = {
             });
             await newSession.save();
             const userId = user._id.toString();
+
             return res
                 .cookie('token', token, {
                     expires: expiresAt,
