@@ -214,6 +214,16 @@ const userController = {
             return res.status(500).json({ message: error.message });
         }
     },
+    getAllUserIds: async (req, res) => {
+        try {
+            const users = await userModel.find({}, '_id'); // Only retrieve the _id field
+            const userIds = users.map(user => user._id);
+            return res.status(200).json(userIds);
+        } catch (error) {
+            console.error('Error getting user IDs:', error);
+            return res.status(500).json({ message: 'Server error' });
+        }
+    },
 
 };
 module.exports = userController;

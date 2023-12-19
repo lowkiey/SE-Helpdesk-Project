@@ -13,4 +13,6 @@ router.put("/:id", authorizationMiddleware(['user','admin', "agent"]), userContr
 // * Delete one user
 router.delete("/:id", authorizationMiddleware(['user','admin', "agent"]), userController.deleteUser);
 
+router.get("/users/id",authorizationMiddleware(['user','admin', "agent"]), userController.getAllUserIds);
+
 module.exports = router; // ! Don't forget to export the router
