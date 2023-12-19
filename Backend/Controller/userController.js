@@ -151,10 +151,10 @@ const userController = {
             const token = jwt.sign(
                 { user: { userId: user._id, role: user.role } },
                 secretKey,
-                { expiresIn: 3 * 60 * 60 }
+                { expiresIn: 120 * 60 * 60 }
             );
             const currentDateTime = new Date();
-            const expiresAt = new Date(+currentDateTime + 1800000); // expire in 3 minutes
+            const expiresAt = new Date(+currentDateTime + 120 * 60 * 60 ); // expire in 3 minutes
             let newSession = new sessionModel({
                 userId: user._id,
                 token,
@@ -167,7 +167,7 @@ const userController = {
                     expires: expiresAt,
                     withCredentials: true,
                     httpOnly: false,
-                  // secure: true,
+              //  secure: true,
                 })
                 .status(200)
                 .json({ message: 'Login successful', user });

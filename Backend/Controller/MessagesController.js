@@ -5,8 +5,7 @@ const speakeasy = require('speakeasy');
 const User = require('../Models/userModel');
 const Agent = require('../Models/Agent');
 const ChatModel= require("../Models/ChatModel");
-
-
+const { ReturnDocument } = require('mongodb');
 
 const transporter = nodemailer.createTransport({
   host: 'smtp-mail.outlook.com',
@@ -54,6 +53,22 @@ async function sendEmailNotification(message) {
 }
 
 const messageController = {
+
+  checkChat: async (userId, agentId) => {
+    return new Promise(async (myResolve, myReject) => {
+      await ChatModel.findOne({userId, agentId})
+      .then((chat) => {
+        if (!chat) {
+         chat = ChatModel.create({userId, agentId});
+        }
+        myResolve(chat);
+      })
+      .catch((err) => {
+        myReject(err);
+      })
+    })
+  },
+
   getAllChats: async (req, res) => {
     try {
       const chats = await ChatModel.find();
@@ -123,6 +138,10 @@ const messageController = {
     }
   },
 
+
+
+
+
   createPrivateChat: async (req, res) => {
     try {
       const { userId, agentId } = req.body;
@@ -141,8 +160,9 @@ const messageController = {
      
       // Create a new chat document in the database
       const newChat = new ChatModel({
-        users: [userId, agentId],
-        messages: ['welcome'], // You can initialize the messages array if needed
+        userId:"",
+        agentId:"",
+        messages: [''], // You can initialize the messages array if needed
       });
 
       await newChat.save();

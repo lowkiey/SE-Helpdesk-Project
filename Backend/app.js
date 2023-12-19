@@ -96,6 +96,8 @@ const http = require("http");
 const socketIO = require("socket.io");
 const { createServer } = require('node:http');
 
+const {checkChat}=require("./Controller/MessagesController")
+
 
 
 const userRouter = require("./Routes/users");
@@ -117,6 +119,7 @@ const io = socketIO(server, {
 });
 
 io.on('connection', (socket) => {
+  
     console.log('A user connected');
   
       // Notify all clients that a user has connected
