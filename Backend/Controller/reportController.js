@@ -67,66 +67,63 @@ const reportController = {
     }
     },
      viewIssues :async (req, res) => {
-        try {
-            // Define an object to store the counts for each category and subcategory
-            const counts = {
-              Hardware: {
-               
-                'Desktops': 0,
-                'Laptops': 0,
-                'Printers': 0,
-                'Servers': 0,
-                'Networking equipment': 0,
-                total: 0,
-              },
-              Software: {
-                'Operating system': 0,
-                'Application software': 0,
-                'Custom software': 0,
-                'Integration issues': 0,
-                total: 0,
-              },
-              Network: {
-                'Email issues': 0,
-                'Internet connection problems': 0,
-                'Website errors': 0,
-                total: 0,
-              },
-            };
-        
-            // Get all documents from the database (replace 'ticketsModel' with your model)
-            const allIssues = await ticketsModel.find();
-        
-            // Loop through each issue and update the counts
-            allIssues.forEach((issue) => {
-              // Check if the issue has category and subCategory fields
-              if (issue && issue.category && issue.subCategory) {
-                // Check if the category is one of the expected ones
-                if (counts[issue.category]) {
-                  // Check if the subcategory is one of the expected ones
-                  if (counts[issue.category][issue.subCategory] !== undefined) {
-                    // Increment the count for the specific subcategory
-                    counts[issue.category][issue.subCategory]++;
-                    // Increment the total count for the category
-                    counts[issue.category].total++;
-                  } else {
-                    // Log subcategories that are not expected for debugging
-                    console.log(`Unexpected subcategory: ${issue.subCategory}`);
-                  }
-                } else {
-                  // Log categories that are not expected for debugging
-                  console.log(`Unexpected category: ${issue.category}`);
-                }
-              } 
-            });
-        
-            // Return the counts as a JSON response
-            res.status(200).json(counts);
-          } catch (err) {
-            // Handle any errors that occur during the database query or processing
-            console.error(err);
-            res.status(500).json({ error: 'Internal server error' });
-          }
+      const counts = {
+        Hardware: {
+          'Desktops': 0,
+          'Laptops': 0,
+          'Printers': 0,
+          'Servers': 0,
+          'Networking equipment': 0,
+          total: 0,
+        },
+        Software: {
+          'Operating system': 0,
+          'Application software': 0,
+          'Custom software': 0,
+          'Integration issues': 0,
+          total: 0,
+        },
+        Network: {
+          'Email issues': 0,
+          'Internet connection problems': 0,
+          'Website errors': 0,
+          total: 0,
+        },
+      };
+      
+      try {
+        const allIssues = await ticketsModel.find();
+      
+        // Loop through each issue and update the counts
+        allIssues.forEach((issue) => {
+          // Check if the issue has category and subCategory fields
+          if (issue && issue.category && issue.subCategory) {
+            // Check if the category is one of the expected ones
+            if (counts[issue.category]) {
+              // Check if the subcategory is one of the expected ones
+              if (counts[issue.category][issue.subCategory] !== undefined) {
+                // Increment the count for the specific subcategory
+                counts[issue.category][issue.subCategory]++;
+                // Increment the total count for the category
+                counts[issue.category].total++;
+              } else {
+                // Log subcategories that are not expected for debugging
+                console.log(`Unexpected subcategory: ${issue.subCategory}`);
+              }
+            } else {
+              // Log categories that are not expected for debugging
+              console.log(`Unexpected category: ${issue.category}`);
+            }
+          } 
+        });
+      
+        // Return the counts as a JSON response
+        res.status(200).json(counts);
+      } catch (err) {
+        // Handle any errors that occur during the database query or processing
+        console.error(err);
+        res.status(500).json({ error: 'Internal server error' });
+      }
         }
       
   

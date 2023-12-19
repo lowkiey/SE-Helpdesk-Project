@@ -3,6 +3,7 @@ import Homepage from "./pages/HomePage";
 import Login from "./pages/login";
 import Signup from "./pages/register";
 import Report from "./pages/ReportPage";
+import Issues from "./pages/IssuePage";
 
 function App() {
   return (
@@ -14,6 +15,8 @@ function App() {
       <Route path="/home" element={<Homepage />} />
       <Route path="/register" element={<Signup />} />
       <Route path = "/ReportPage" element= {<Report />}/> 
+      <Route path = "/IssuePage" element= {<Issues />}/> 
+
     </Routes>
   );
 }
