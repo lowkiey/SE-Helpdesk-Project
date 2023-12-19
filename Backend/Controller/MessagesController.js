@@ -147,13 +147,16 @@ const messageController = {
 
       await newChat.save();
 
-      //io.emit('newPrivateChat', { chatId, userId, agentId });
+      io.emit('newPrivateChat', {chatId: chatId, userId, agentId });
 
       res.status(200).json({ message: "Chat saved successfully" });
     } catch (error) {
       console.error('Error creating private chat:', error);
       res.status(500).json({ error: error.message });
     }
+    module.exports = {
+      createPrivateChat,
+    };
   },
 };
 

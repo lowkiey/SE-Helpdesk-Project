@@ -21,6 +21,7 @@
         "mongoose": "^7.5.3",
         "nodemailer": "^6.9.7",
         "react-bootstrap": "^2.9.1",
+        "react-router-dom": "^6.21.0",
         "socket.io": "^4.7.2",
         "socket.io-client": "^4.7.2",
         "speakeasy": "^2.0.0"

@@ -14,6 +14,8 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
+import ChatArea from '../components/ChatArea'; // Import the ChatArea component
+//import socketManager from '../i/SocketManager'; // Import the SocketManager
 
 
 let backend_url = "http://localhost:3000/api/v1";
@@ -39,6 +41,7 @@ export default function Reports() {
   const handleUserIconClick = () => {
     setIsUserTabOpen(!isUserTabOpen);
   };
+  
 
   const handleFormFieldChange = (e) => {
     const { name, value } = e.target;
@@ -306,34 +309,34 @@ export default function Reports() {
   );
 }
 
-const ChatArea = ({ agentId, messages, onSendMessage }) => {
-  const [newMessage, setNewMessage] = useState('');
+// const ChatArea = ({ agentId, messages, onSendMessage }) => {
+//   const [newMessage, setNewMessage] = useState('');
 
-  const handleSendMessage = () => {
-    onSendMessage([...messages, { sender: 'user', text: newMessage }]);
-    setNewMessage('');
-  };
+//   const handleSendMessage = () => {
+//     onSendMessage([...messages, { sender: 'user', text: newMessage }]);
+//     setNewMessage('');
+//   };
 
-  return (
-    <div>
-      <h5>Chat with Agent {agentId}</h5>
-      <div style={{ maxHeight: '200px', overflowY: 'auto', marginBottom: '10px', border: '1px solid #ddd', padding: '10px', borderRadius: '5px' }}>
-        {messages.map((message, index) => (
-          <div key={index} style={{ marginBottom: '5px' }}>
-            <strong>{message.sender}:</strong> {message.text}
-          </div>
-        ))}
-      </div>
-      <div style={{ display: 'flex' }}>
-        <input
-          type="text"
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          placeholder="Type your message"
-          style={{ flex: '1', marginRight: '10px' }}
-        />
-        <button onClick={handleSendMessage}>Send</button>
-      </div>
-    </div>
-  );
-};
+//   return (
+//     <div>
+//       <h5>Chat with Agent {agentId}</h5>
+//       <div style={{ maxHeight: '200px', overflowY: 'auto', marginBottom: '10px', border: '1px solid #ddd', padding: '10px', borderRadius: '5px' }}>
+//         {messages.map((message, index) => (
+//           <div key={index} style={{ marginBottom: '5px' }}>
+//             <strong>{message.sender}:</strong> {message.text}
+//           </div>
+//         ))}
+//       </div>
+//       <div style={{ display: 'flex' }}>
+//         <input
+//           type="text"
+//           value={newMessage}
+//           onChange={(e) => setNewMessage(e.target.value)}
+//           placeholder="Type your message"
+//           style={{ flex: '1', marginRight: '10px' }}
+//         />
+//         <button onClick={handleSendMessage}>Send</button>
+//       </div>
+//     </div>
+//   );
+// };

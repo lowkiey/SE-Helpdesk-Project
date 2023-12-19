@@ -1,37 +1,94 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>Socket.IO chat</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Socket.IO Chat</title>
     <style>
-      body { margin: 0; padding-bottom: 3rem; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+      body {
+        margin: 0;
+        padding-bottom: 3rem;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      }
 
-      #form { background: rgba(0, 0, 0, 0.15); padding: 0.25rem; position: fixed; bottom: 0; left: 0; right: 0; display: flex; height: 3rem; box-sizing: border-box; backdrop-filter: blur(10px); }
-      #input { border: none; padding: 0 1rem; flex-grow: 1; border-radius: 2rem; margin: 0.25rem; }
-      #input:focus { outline: none; }
-      #form > button { background: #333; border: none; padding: 0 1rem; margin: 0.25rem; border-radius: 3px; outline: none; color: #fff; }
+      #form {
+        background: rgba(0, 0, 0, 0.15);
+        padding: 0.25rem;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        height: 3rem;
+        box-sizing: border-box;
+        backdrop-filter: blur(10px);
+      }
 
-      #messages { list-style-type: none; margin: 0; padding: 0; }
-      #messages > li { padding: 0.5rem 1rem; }
-      #messages > li:nth-child(odd) { background: #efefef; }
+      #input {
+        border: none;
+        padding: 0 1rem;
+        flex-grow: 1;
+        border-radius: 2rem;
+        margin: 0.25rem;
+      }
+
+      #input:focus {
+        outline: none;
+      }
+
+      #form > button {
+        background: #333;
+        border: none;
+        padding: 0 1rem;
+        margin: 0.25rem;
+        border-radius: 3px;
+        outline: none;
+        color: #fff;
+      }
+
+      #messages {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      #messages > li {
+        padding: 1rem;
+        border-bottom: 1px solid #ddd;
+      }
+
+      #messages > li:last-child {
+        border-bottom: none;
+      }
+
+      #messages .meta {
+        font-size: 0.8rem;
+        color: #777;
+      }
+
+      #messages .typing-indicator {
+        color: #aaa;
+      }
     </style>
   </head>
   <body>
-    
+
     <ul id="messages"></ul>
     <form id="form" action="">
       <input id="input" autocomplete="off" /><button>Send</button>
       <button id="toggle-btn">Disconnect</button>
     </form>
-    
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
     <script>
       const socket = io();
+      const typingTimeout = 500; // milliseconds
 
       const toggleButton = document.getElementById('toggle-btn');
       const form = document.getElementById('form');
       const input = document.getElementById('input');
       const messages = document.getElementById('messages');
+      let typingIndicatorTimeout;
 
       toggleButton.addEventListener('click', (e) => {
         e.preventDefault();
@@ -52,12 +109,56 @@
         }
       });
 
+      input.addEventListener('input', () => {
+        clearTimeout(typingIndicatorTimeout);
+        socket.emit('typing');
+        typingIndicatorTimeout = setTimeout(() => {
+          socket.emit('stop typing');
+        }, typingTimeout);
+      });
+
       socket.on('chat message', (msg) => {
+        appendMessage(msg);
+      });
+
+      socket.on('typing', (user) => {
+        showTypingIndicator(user);
+      });
+
+      socket.on('stop typing', () => {
+        hideTypingIndicator();
+      });
+
+      function appendMessage(msg) {
         const item = document.createElement('li');
+        const meta = document.createElement('div');
+        meta.classList.add('meta');
+        meta.textContent = getFormattedTime();
         item.textContent = msg;
+        item.appendChild(meta);
         messages.appendChild(item);
         window.scrollTo(0, document.body.scrollHeight);
-      });
+      }
+
+      function showTypingIndicator(user) {
+        const indicator = document.createElement('li');
+        indicator.classList.add('typing-indicator');
+        indicator.textContent = `${user} is typing...`;
+        messages.appendChild(indicator);
+        window.scrollTo(0, document.body.scrollHeight);
+      }
+
+      function hideTypingIndicator() {
+        const indicators = document.querySelectorAll('.typing-indicator');
+        indicators.forEach((indicator) => indicator.remove());
+      }
+
+      function getFormattedTime() {
+        const now = new Date();
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        return `${hours}:${minutes}`;
+      }
     </script>
   </body>
 </html>
