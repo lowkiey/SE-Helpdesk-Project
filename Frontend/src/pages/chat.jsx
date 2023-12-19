@@ -1,7 +1,7 @@
 // ... (previous imports)
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import ChatArea from '../components/ChatArea'; // Import the ChatArea component
+//import ChatArea from '../components/ChatArea'; // Import the ChatArea component
 
 //import socketManager from '../i/SocketManager'; // Import the SocketManager
 
@@ -55,7 +55,7 @@ const Chat = ({ agentId }) => {
               <td>{index + 1}</td>
               <td>{user._id}</td>
               <td>
-                <button onClick={(event) => handleSelectUser(user._id, event)}>
+                <button >
                   Start Chat
                 </button>
               </td>
@@ -64,11 +64,9 @@ const Chat = ({ agentId }) => {
         </tbody>
       </table>
 
-      {selectedUserId && (
-        <div style={{ marginTop: '20px', padding: '10px', border: '1px solid #ccc', borderRadius: '5px' }}>
-          <ChatArea userId={selectedUserId} />
-        </div>
-      )}
+      
+        
+    
     </div>
   );
 };

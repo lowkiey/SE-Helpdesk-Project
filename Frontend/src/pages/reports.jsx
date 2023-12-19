@@ -14,7 +14,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
-import ChatArea from '../components/ChatArea'; // Import the ChatArea component
+//import ChatArea from '../components/ChatArea'; // Import the ChatArea component
 //import socketManager from '../i/SocketManager'; // Import the SocketManager
 
 
@@ -201,7 +201,7 @@ export default function Reports() {
         <DropdownButton id="chat-dropdown" title="Chat">
           {agents.length > 0 ? (
             agents.map((agent) => (
-              <Dropdown.Item key={agent._id} onClick={() => handleChatAgentSelect(agent._id)}>
+              <Dropdown.Item key={agent._id} >
                 Agent ID: {agent._id}
               </Dropdown.Item>
             ))
@@ -273,11 +273,8 @@ export default function Reports() {
         </Modal.Footer>
       </Modal>
   
-      {selectedAgentId && (
-        <div style={{ marginTop: '20px', padding: '10px', border: '1px solid #ccc', borderRadius: '5px' }}>
-          <ChatArea agentId={selectedAgentId} messages={messages} onSendMessage={setMessages} />
-        </div>
-      )}
+     
+    
   
       <table className="table" style={{ marginTop: '80px', width: '90%', margin: 'auto' }}>
         <thead>
