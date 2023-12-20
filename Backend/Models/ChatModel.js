@@ -12,7 +12,8 @@ const chatSchema = new mongoose.Schema({
     },
     senderId:String
   }], 
-
+  createdAt: {type: Date, default: new Date()},
+  closedAt: Date
 
 });
 

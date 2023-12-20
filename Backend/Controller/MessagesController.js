@@ -4,7 +4,7 @@ const axios = require('axios');
 const speakeasy = require('speakeasy');
 const User = require('../Models/userModel');
 const Agent = require('../Models/Agent');
-const ChatModel= require("../Models/ChatModel");
+const ChatModel = require("../Models/ChatModel");
 const { ReturnDocument } = require('mongodb');
 
 const transporter = nodemailer.createTransport({
@@ -53,39 +53,46 @@ async function sendEmailNotification(message) {
 }
 
 const messageController = {
-
   checkChat: async (userId, agentId) => {
-    return new Promise(async (myResolve, myReject) => {
-      await ChatModel.findOne({userId, agentId})
-      .then((chat) => {
-        if (!chat) {
-         chat = ChatModel.create({userId, agentId});
-        }
-        myResolve(chat);
-      })
-      .catch((err) => {
-        myReject(err);
-      })
-    })
-  },
-
-  getAllChats: async (req, res) => {
     try {
-      const chats = await ChatModel.find();
-      console.log('Chats from the backend:', chats);
+      let chat = await Agent.findOne({ userId, agentId });
 
-      if (!chats || chats.length === 0) {
-        return res.status(404).json({ error: 'No chats found' });
+      if (!chat) {
+        chat = await ChatModel.create({ userId, agentId });
       }
 
-      res.status(200).json(chats);
-    } catch (error) {
-      console.error('Error getting chats:', error);
-      res.status(500).json({ error: error.message });
+      return chat;
+    } catch (err) {
+      console.error('Error checking chat:', err);
+      throw err;
     }
   },
 
+  getAgent: async (type) => {
+    try {
+      const agent = await Agent.findOne({ type });
 
+      if (!agent) {
+        return 'not available';
+      } else {
+        return agent;
+      }
+    } catch (err) {
+      console.error('Error getting agent:', err);
+      throw err;
+    }
+  },
+
+  getChat: async (req, res) => {
+    try {
+      res.status(200).json({
+        agentId: req.cookies["token"]
+      });
+    } catch (err) {
+      console.error('Error getting chat:', err);
+      res.status(500).json({ error: err.message });
+    }
+  },
 
   createMessage: async (req, res) => {
     try {
@@ -138,10 +145,6 @@ const messageController = {
     }
   },
 
-
-
-
-
   createPrivateChat: async (req, res) => {
     try {
       const { userId, agentId } = req.body;
@@ -150,33 +153,30 @@ const messageController = {
       if (!userId || !agentId) {
         return res.status(400).json({ error: 'userId and agentId are required' });
       }
+
       const user = await User.findById(userId);
       const agent = await Agent.findById(agentId);
 
-      if (!user|| !agent) {
-        return res.status(400).json({ error: ' el ids msh fl db ' });
+      if (!user || !agent) {
+        return res.status(400).json({ error: 'User or Agent not found in the database' });
       }
 
-     
       // Create a new chat document in the database
       const newChat = new ChatModel({
-        userId:"",
-        agentId:"",
+        userId: "",
+        agentId: "",
         messages: [''], // You can initialize the messages array if needed
       });
 
       await newChat.save();
 
-      io.emit('newPrivateChat', {chatId: chatId, userId, agentId });
+      io.emit('newPrivateChat', { chatId: chatId, userId, agentId });
 
       res.status(200).json({ message: "Chat saved successfully" });
     } catch (error) {
       console.error('Error creating private chat:', error);
       res.status(500).json({ error: error.message });
     }
-    module.exports = {
-      createPrivateChat,
-    };
   },
 };
 

@@ -96,8 +96,7 @@ const http = require("http");
 const socketIO = require("socket.io");
 const { createServer } = require('node:http');
 
-const {checkChat}=require("./Controller/MessagesController")
-
+const {checkChat, getAgent} = require("./Controller/MessagesController")
 
 
 const userRouter = require("./Routes/users");
@@ -107,8 +106,10 @@ const authRouter = require("./Routes/auth");
 const messagesRoutes = require("./Routes/messageRoute");
 const authenticationMiddleware = require("./Middleware/authenticationMiddleware");
 const cors = require("cors");
+const { get } = require("lodash");
 
 const server = http.createServer(app);
+
 
 // Add Socket.IO configuration here
 const io = socketIO(server, {
@@ -118,10 +119,20 @@ const io = socketIO(server, {
   }
 });
 
-io.on('connection', (socket) => {
-  
-    console.log('A user connected');
-  
+ 
+
+
+io.on('connection', async (socket) => {
+
+  const userId =  socket.handshake.query.userId;
+  await getAgent('network')
+  .then(async (agent) => {
+    if (agent !== 'not available') {
+      const chat = await checkChat(userId,agent._id);
+      console.log(chat);
+    }
+  })
+
       // Notify all clients that a user has connected
       io.emit('user connected', 'A user connected');
   

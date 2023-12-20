@@ -33,8 +33,8 @@ export default function HomePage() {
           return; // Exit early if there's no token
         }
 
-        const uid = localStorage.getItem("userId");
-        console.log(uid);
+         const uid = localStorage.getItem("userId");
+        // console.log(uid);
 
         const response = await axios.get(`${backend_url}/users/${uid}`, {
           withCredentials: true,
@@ -64,8 +64,13 @@ export default function HomePage() {
               <Nav.Link as={Link} to="/tickets" style={{ fontSize: '24px', cursor: 'pointer', color: 'rgb(166, 0, 255)', marginLeft: '50px' }}>
                 Tickets
               </Nav.Link>
+              
               <Nav.Link as={Link} to="/faq" style={{ fontSize: '24px', cursor: 'pointer', color: 'rgb(166, 0, 255)', marginLeft: '50px' }}>
                 FAQs
+              </Nav.Link>
+
+              <Nav.Link as={Link} to="/chats" style={{ fontSize: '24px', cursor: 'pointer', color: 'rgb(166, 0, 255)', marginLeft: '50px' }}>
+                my chats
               </Nav.Link>
               </Nav>
               <Nav className="ms-auto" style={{ display: 'flex', alignItems: 'center' }}>
