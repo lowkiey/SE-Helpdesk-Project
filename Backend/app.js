@@ -125,7 +125,7 @@ const io = socketIO(server, {
 io.on('connection', async (socket) => {
 
   const userId =  socket.handshake.query.userId;
-  await getAgent('network')
+  await getAgent('hardware')
   .then(async (agent) => {
     if (agent !== 'not available') {
       const chat = await checkChat(userId,agent._id);

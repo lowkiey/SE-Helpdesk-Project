@@ -6,6 +6,7 @@ const User = require('../Models/userModel');
 const Agent = require('../Models/Agent');
 const ChatModel = require("../Models/ChatModel");
 const { ReturnDocument } = require('mongodb');
+const userModel = require('../Models/userModel');
 
 const transporter = nodemailer.createTransport({
   host: 'smtp-mail.outlook.com',
@@ -54,33 +55,36 @@ async function sendEmailNotification(message) {
 
 const messageController = {
   checkChat: async (userId, agentId) => {
-    try {
-      let chat = await Agent.findOne({ userId, agentId });
-
-      if (!chat) {
-        chat = await ChatModel.create({ userId, agentId });
-      }
-
-      return chat;
-    } catch (err) {
-      console.error('Error checking chat:', err);
-      throw err;
-    }
+    return new Promise(async (myResolve, myReject) => {
+      await ChatModel.findOne({userId, agentId})
+      .then((chat) => {
+        if (!chat) {
+         chat = ChatModel.create({userId, agentId});
+        }
+        myResolve(chat);
+      })
+      .catch((err) => {
+        myReject(err);
+      })
+    })
   },
 
   getAgent: async (type) => {
-    try {
-      const agent = await Agent.findOne({ type });
 
-      if (!agent) {
-        return 'not available';
-      } else {
-        return agent;
-      }
-    } catch (err) {
-      console.error('Error getting agent:', err);
-      throw err;
-    }
+    return new Promise(async (myResolve, myReject) => {
+      await userModel.findOne({ type , role: 'agent'})
+      .then((agent) => {
+        if (!agent) {
+          myResolve('not available');
+        } else {
+          myResolve(agent);
+        }
+      })
+      .catch((err) => {
+        myReject(err);
+      })
+      
+    })
   },
 
   getChat: async (req, res) => {
@@ -93,6 +97,8 @@ const messageController = {
       res.status(500).json({ error: err.message });
     }
   },
+   
+
 
   createMessage: async (req, res) => {
     try {

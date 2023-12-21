@@ -59,6 +59,8 @@ const Login = () => {
 
       if (response.status === 200) {
         localStorage.setItem("userId", response.data.user._id)
+        localStorage.setItem("role", response.data.role)
+
         
           navigate("/HomePage");
         

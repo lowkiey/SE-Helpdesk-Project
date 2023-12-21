@@ -204,6 +204,7 @@ const userController = {
             let newSession = new sessionModel({
                 userId: user._id,
                 token,
+                role: user.role,
                 expiresAt,
             });
             await newSession.save();
