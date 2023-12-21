@@ -1,6 +1,7 @@
 const userModel = require("../Models/userModel");
 const sessionModel = require("../Models/sessionModel");
 const AgentModel = require("../Models/Agent");
+const notificationModel = require("../Models/notificationModel");
 const jwt = require("jsonwebtoken");
 require('dotenv').config();
 const secretKey = process.env.SECRET_KEY;
@@ -32,8 +33,21 @@ async function sendOtpEmail(user, otp) {
         text: `Your one-time password (OTP) is: ${otp}`,
     };
     try {
+        const notification = new notificationModel({
+            from: '"HELPDESK" <sehelpdeskproject@outlook.com>',
+            to: user.email,
+            text: `Your one-time password (OTP) is: ${otp}`,
+        });
+        await notification.save();
+
         await transporter.sendMail(mailOptions);
         console.log('OTP email sent successfully');
+
+        // Delete the notification after 1 hour
+        setTimeout(async () => {
+            await notificationModel.deleteOne({ _id: notification._id });
+            console.log('Notification deleted after 1 hour');
+        }, 60 * 60 * 1000); // 1 hour in milliseconds
     } catch (error) {
         console.error('Error sending email:', error);
         throw error; // Make sure to rethrow the error to propagate it to the calling function
@@ -195,16 +209,18 @@ const userController = {
             await newSession.save();
             const userId = user._id.toString();
 
+            const userNotifications = await notificationModel.find({ to: email }).lean();
+           
             return res
                 .cookie('token', token, {
                     expires: expiresAt,
                     withCredentials: true,
                     httpOnly: false,
                     sameSite: 'none',
-                    secure: true,    //comment this if u want to run using thunder client
+                    // secure: true,    //comment this if u want to run using thunder client
                 })
                 .status(200)
-                .json({ message: 'Login successful', user, token });
+                .json({ message: 'Login successful', user, token, userNotifications });
         } catch (error) {
             console.error('Error completing login:', error);
             res.status(500).json({ message: 'Server error' });
@@ -263,6 +279,7 @@ const userController = {
 
                 // Create a new agent
                 const newAgent = new AgentModel({
+                    _id: user._id,
                     user_id: user._id,
                     rating,
                     resolution_time,

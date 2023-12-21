@@ -20,10 +20,22 @@ export default function HomePage() {
   const [users, setUsers] = useState([]);
   const [isUserTabOpen, setIsUserTabOpen] = useState(false)
   const [showNotification, setShowNotification] = useState(false); // New state for notification
+  const [notifications, setNotifications] = useState([]);
+
 
   const handleUserIconClick = () => {
     setIsUserTabOpen(!isUserTabOpen);
   };
+  async function fetchNotifications() {
+    try {
+      const userEmail = localStorage.getItem("email");
+      const response = await axios.get(`${backend_url}/notification/?email=${userEmail}`);
+      return response.data; // Assuming the response contains an array of notifications
+    } catch (error) {
+      console.log("Error fetching notifications:", error.response); // Log the error response
+      return []; // Return an empty array if there's an error
+    }
+  }
   useEffect(() => {
     async function fetchUserData() {
       try {
@@ -42,15 +54,22 @@ export default function HomePage() {
         });
         console.log("response", response);
 
-        setUserName(response.data.displayName);
-      } catch (error) {
+        setUserName(response.data.displayName);      //di btgib el esm lw 3aiza 7aga tani b3d kda b3mlha display
+        } catch (error) {
         console.log("Error fetching user data:", error);
         navigate("/"); // Redirect to login page on error
       }
     }
 
     fetchUserData();
-  }, [cookies.token, navigate]);
+    
+    if (showNotification) {
+      fetchNotifications().then(data => {
+        setNotifications(data);
+      });
+    }
+  
+  }, [cookies.token, navigate,showNotification]);
 
   return (
     <>
@@ -84,6 +103,14 @@ export default function HomePage() {
                       {/* notification tab content */}
                       <div>
                         <p style={{ margin: '0', fontWeight: 'bold', fontSize: '20px' }}>Notifications:</p>
+                        {notifications.map(notification=>(
+                           <div key={notification.id}>
+                           <p>From: {notification.from}</p>
+                           <p>{notification.text}</p>
+                           <hr style={{ margin: '5px 0' }} />
+                         </div>
+                          
+                        ))}
                       </div>
                     </div>
                   )}
@@ -99,13 +126,12 @@ export default function HomePage() {
                     <div style={{ position: 'absolute', top: '30px', right: '-200px', width: '200px', height: '100px', backgroundColor: 'white', boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)', borderRadius: '0px', padding: '10px' }}>
                       {/* User tab content */}
                       <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <div style={{ marginRight: '10px', borderRadius: '50%', overflow: 'hidden' }}>
+                        {/* <div style={{ marginRight: '10px', borderRadius: '50%', overflow: 'hidden' }}> */}
                           {/* Placeholder image */}
-                          <img src="https://via.placeholder.com/50" alt="Profile" style={{ width: '50px', height: '50px', objectFit: 'cover' }} />
-                        </div>
+                          {/* <img src="https://via.placeholder.com/50" alt="Profile" style={{ width: '50px', height: '50px', objectFit: 'cover' }} /> */}
+                        {/* </div> */}
                         <div>
-                          <p style={{ margin: '0', fontWeight: 'bold', marginTop: '0' }}>User Name</p>
-                          <br />
+                          <p style={{ margin: '10px', fontSize:'20px', fontWeight: 'bold', marginTop: '-0.5vh ' }}>{`hello ${userName}`}</p>
                           <Link to="/" style={{ color: 'rgb(209, 151, 240)', textDecoration: 'none' }}>Logout</Link>
                         </div>
                       </div>

@@ -59,7 +59,14 @@ const Login = () => {
 
       if (response.status === 200) {
         localStorage.setItem("userId", response.data.user._id)
+        //
+        localStorage.setItem("role", response.data.user.role)
+        //
         localStorage.setItem("name", response.data.user.displayName)
+        //
+        localStorage.setItem("email", response.data.user.email)
+        //
+        
         const user = response.data.user
         localStorage.setItem("token", response.data.token)
         console.log(response.data.token)
