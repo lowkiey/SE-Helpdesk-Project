@@ -1,18 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const userController = require("../Controller/userController"); // Fix casing issue
-const authorizationMiddleware = require('../Middleware/autherizationMiddleware');
-// * Get all users
-router.get("/", authorizationMiddleware(['user','admin',"agent"]), userController.getAllUsers);
-// * Get one user
-router.get("/:id", authorizationMiddleware(['user','admin', "agent"]), userController.getUser);
 
-// * Update one user
-router.put("/:id", authorizationMiddleware(['user','admin', "agent"]), userController.updateUser);
+const userController = require("../Controller/userController");
 
-// * Delete one user
-router.delete("/:id", authorizationMiddleware(['user','admin', "agent"]), userController.deleteUser);
+// * login
+router.post("/login", userController.login);
+router.post("/login/verify", userController.verify);
 
-router.get("/users/id",authorizationMiddleware(['user','admin', "agent"]), userController.getAllUserIds);
+// * register
+router.post("/register", userController.register);
 
-module.exports = router; // ! Don't forget to export the router
+module.exports = router; // ! Don't forget to export the rout
