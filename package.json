@@ -10,6 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "mongodb": "^6.3.0"
+    "@mui/material": "^5.15.1",
+    "mongodb": "^6.3.0",
+    "styled-components": "^6.1.3"
   }
 }

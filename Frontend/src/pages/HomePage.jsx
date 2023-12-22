@@ -7,6 +7,7 @@ import Nav from 'react-bootstrap/Nav';
 import { Link, NavLink } from 'react-router-dom';
 import { FaUser } from 'react-icons/fa';
 import { FaBell } from 'react-icons/fa';
+import styled, { createGlobalStyle } from 'styled-components';
 
 
 import { useNavigate } from "react-router-dom";
@@ -21,8 +22,80 @@ export default function HomePage() {
   const [isUserTabOpen, setIsUserTabOpen] = useState(false)
   const [showNotification, setShowNotification] = useState(false); // New state for notification
   const [notifications, setNotifications] = useState([]);
+  const [theme, setTheme] = useState("light");
 
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    localStorage.setItem('theme', newTheme);
+  };
+  const handleToggleChange = () => {
+    toggleTheme();
+  };
 
+  const GlobalStyle = createGlobalStyle`
+    body {
+      background-color: ${theme === 'light' ? 'white' : '#333'};
+      
+    }
+  `;
+
+  // Light Mode styles
+  const LightMode = styled.div`
+  background-color: white;
+    color: black;
+`;
+
+  // Dark Mode styles
+  const DarkMode = styled.div`
+  background-color: #333;
+  color: white;
+
+  .toggle-container {
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+  }
+
+  .toggle-label {
+    margin-right: 10px;
+  }
+
+  .toggle {
+    appearance: none;
+    width: 50px;
+    height: 25px;
+    background-color: #777;
+    border-radius: 25px;
+    position: relative;
+    cursor: pointer;
+    outline: none;
+    transition: background-color 0.3s ease;
+  }
+
+  .toggle::before {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: white;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: transform 0.3s ease;
+  }
+
+  .toggle:checked {
+    background-color: #52d869; /* Change color to match your theme */
+  }
+
+  .toggle:checked::before {
+    transform: translateX(25px) translateY(-50%);
+  }
+`;
   const handleUserIconClick = () => {
     setIsUserTabOpen(!isUserTabOpen);
   };
@@ -39,6 +112,10 @@ export default function HomePage() {
     }
   }
   useEffect(() => {
+    const storedTheme = localStorage.getItem('theme');
+    if (storedTheme) {
+      setTheme(storedTheme);
+    }
     async function fetchUserData() {
       try {
         if (!cookies.token) {
@@ -64,12 +141,6 @@ export default function HomePage() {
     }
 
     fetchUserData();
-
-    // if (showNotification) {
-    //   fetchNotifications().then(data => {
-    //     setNotifications(data);
-    //   });
-    // }
     fetchNotifications()
 
 
@@ -77,6 +148,17 @@ export default function HomePage() {
 
   return (
     <>
+      <GlobalStyle />
+      {theme === 'light' ? (
+        <LightMode>
+          {/* Content for light mode */}
+        </LightMode>
+      ) : (
+        <DarkMode>
+          {/* Content for dark mode */}
+        </DarkMode>
+      )}
+
       <Navbar expand="lg" className="bg-body-tertiary">
         <Container>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -130,20 +212,32 @@ export default function HomePage() {
                 <div style={{ position: 'relative' }}>
                   <FaUser
                     onClick={handleUserIconClick}
-                    style={{ fontSize: '24px', cursor: 'pointer', color: 'purple', marginRight: '-40px' }}
+                    style={{ fontSize: '24px', cursor: 'pointer', color: 'purple', marginRight: '20px' }}
                   />
-                  {isUserTabOpen && (
-                    <div style={{ position: 'absolute', top: '30px', right: '-190px', width: '200px', height: '100px', backgroundColor: 'white', boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)', borderRadius: '0px', padding: '10px' }}>
-                      {/* User tab content */}
+                  {/* User tab content */}
+                  <div style={{ position: 'absolute', top: '30px', right: '-190px', width: '200px', height: '150px', backgroundColor: 'white', boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)', borderRadius: '0px', padding: '10px', visibility: isUserTabOpen ? 'visible' : 'hidden' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column', visibility: isUserTabOpen ? 'visible' : 'hidden' }}>
+                      <p style={{ margin: '10px', fontSize: '20px', fontWeight: 'bold' }}>{`${userName}`}</p>
+                      {/* Toggle switch for both modes */}
                       <div style={{ display: 'flex', alignItems: 'center' }}>
-
-                        <div>
-                          <p style={{ margin: '10px', fontSize: '20px', fontWeight: 'bold', marginTop: '-0.5vh ' }}>{`${userName}`}</p>
-                          <Link to="/" style={{ color: 'rgb(209, 151, 240)', textDecoration: 'none' }}>Logout</Link>
-                        </div>
+                        <span style={{ marginRight: '10px', visibility: isUserTabOpen ? 'visible' : 'hidden' }}>
+                          {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+                        </span>
+                        <label className="switch" style={{ position: 'relative', display: 'inline-block', width: '80px', height: '25px', visibility: isUserTabOpen ? 'visible' : 'hidden' }}>
+                          <input
+                            className="toggle"
+                            type="checkbox"
+                            checked={theme === 'dark'}
+                            onChange={toggleTheme}
+                            style={{ display: 'none' }}
+                          />
+                          <span className="slider" style={{ position: 'absolute', cursor: 'pointer', top: '0', left: '0', right: '0', bottom: '0', backgroundColor: '#ccc', borderRadius: '25px', transition: 'background-color 0.3s ease' }}></span>
+                          <span className="slider-thumb" style={{ position: 'absolute', cursor: 'pointer', top: '3px', left: theme === 'light' ? '3px' : '53px', width: '19px', height: '19px', backgroundColor: 'white', borderRadius: '50%', transition: 'transform 0.3s ease' }}></span>
+                        </label>
                       </div>
+                      <Link to="/" style={{ color: 'rgb(209, 151, 240)', textDecoration: 'none', visibility: isUserTabOpen ? 'visible' : 'hidden' }}>Logout</Link>
                     </div>
-                  )}
+                  </div>
                 </div>
               </Nav.Item>
             </Nav>
