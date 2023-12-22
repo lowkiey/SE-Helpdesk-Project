@@ -115,7 +115,7 @@ const server = http.createServer(app);
 const io = socketIO(server, {
   cors: {
     origin: "http://localhost:5173", // Adjust the origin to your frontend URL
-    methods: ["GET", "POST"]
+    methods: ["GET", "POST", "PUT", "DELETE"]
   }
 });
 

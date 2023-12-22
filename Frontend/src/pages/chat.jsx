@@ -1,7 +1,7 @@
 // ... (previous imports)
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; // Import useNavigate from react-router-dom
+import { useNavigate } from "react-router-dom";
 
 const backend_url = "http://localhost:3000/api/v1";
 
@@ -9,24 +9,32 @@ const Chat = ({ agentId }) => {
   const [users, setUsers] = useState([]);
   const [selectedUserId, setSelectedUserId] = useState(null);
 
-  const navigate = useNavigate(); // Create a navigate function
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchUsers() {
       try {
-        const response = await axios.get(`${backend_url}/users/users/id`, {
+        const uid = localStorage.getItem("userId");
+        const response = await axios.get(`${backend_url}/users/users/${uid}`, {
           withCredentials: true,
         });
-
+    
         console.log("Users response:", response.data);
-
-        if (Array.isArray(response.data)) {
-          setUsers(response.data.map((userId) => ({ _id: userId })));
+        
+        // Check for errors in the response
+        if (response.data.error) {
+          console.error("Server error:", response.data.error);
         } else {
-          console.error("Invalid response structure:", response.data);
+          setUsers(response.data.map((userId) => ({ _id: userId })));
         }
       } catch (error) {
         console.error("Error fetching users:", error);
+    
+        // Log the response status and any data received
+        if (error.response) {
+          console.error("Response status:", error.response.status);
+          console.error("Response data:", error.response.data);
+        }
       }
     }
 

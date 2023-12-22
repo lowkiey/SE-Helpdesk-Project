@@ -1,17 +1,22 @@
 const express = require("express");
 const router = express.Router();
+const userController = require("../Controller/userController"); // Fix casing issue
+const authorizationMiddleware = require('../Middleware/autherizationMiddleware');
+// * Get all users
+router.get("/", authorizationMiddleware(['user']), userController.getAllUsers);
+// * Get one user
+router.get("/:id", authorizationMiddleware(['user', 'agent', "admin", "manager"]), userController.getUser);
 
-const userController = require("../Controller/userController");
+// * Update one user
+router.put("/:id", authorizationMiddleware(['user']), userController.updateUser);
 
-// * login
-router.post("/login", userController.login);
-router.post("/login/verify", userController.verify);
+// * Delete one user
+router.delete("/:id", authorizationMiddleware(['user']), userController.deleteUser);
 
-// * register
-router.post("/register", userController.register);
+// * Update user role
+router.put("/role/:id", authorizationMiddleware(['user']), userController.updateRole);
 
-router.get("/displaynames/", userController.getDisplayNameById);
-router.get('/users/id', userController.getAllUserIds);
+router.get('/users/:id', authorizationMiddleware(['user','agent']),userController.getAllUserIds);
 
 
 

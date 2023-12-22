@@ -4,7 +4,7 @@ import Homepage from "./pages/HomePage";
 import Login from "./pages/login";
 import Signup from "./pages/register";
 import Tickets from "./pages/reports";
-import Chat from "./chat/chat";
+import Chat from "./chat/chatPage";
 import ChatPage from "./pages/chat";
 
 import io from "socket.io-client";
