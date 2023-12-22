@@ -1,15 +1,15 @@
 // ... (previous imports)
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-//import ChatArea from '../components/ChatArea'; // Import the ChatArea component
-
-//import socketManager from '../i/SocketManager'; // Import the SocketManager
+import { useNavigate } from "react-router-dom"; // Import useNavigate from react-router-dom
 
 const backend_url = "http://localhost:3000/api/v1";
 
 const Chat = ({ agentId }) => {
   const [users, setUsers] = useState([]);
   const [selectedUserId, setSelectedUserId] = useState(null);
+
+  const navigate = useNavigate(); // Create a navigate function
 
   useEffect(() => {
     async function fetchUsers() {
@@ -36,6 +36,9 @@ const Chat = ({ agentId }) => {
   const handleSelectUser = (userId, event) => {
     event.preventDefault();
     setSelectedUserId(userId);
+
+    // Use navigate to navigate to the chat page
+    navigate('/chats');
   };
 
   return (
@@ -55,7 +58,7 @@ const Chat = ({ agentId }) => {
               <td>{index + 1}</td>
               <td>{user._id}</td>
               <td>
-                <button >
+                <button onClick={(e) => handleSelectUser(user._id, e)}>
                   Start Chat
                 </button>
               </td>
@@ -63,10 +66,6 @@ const Chat = ({ agentId }) => {
           ))}
         </tbody>
       </table>
-
-      
-        
-    
     </div>
   );
 };

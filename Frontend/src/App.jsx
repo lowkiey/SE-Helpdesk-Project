@@ -46,7 +46,7 @@ const App = () => {
 
       {/* Pass the socket instance as a prop to the Chat component */}
       <Route
-        path="/chat"
+        path="/chats"
         element={<Chat socket={socket} />}
       />
     </Routes>

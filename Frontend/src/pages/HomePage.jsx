@@ -29,7 +29,7 @@ export default function HomePage() {
 
   
     const handleStartChat = () => {
-      navigate('/chat');
+      navigate('/chats');
     };
 
   useEffect(() => {
@@ -100,7 +100,7 @@ export default function HomePage() {
                 FAQs
               </Nav.Link>
 
-              <Nav.Link as={Link} to="/chats" style={{ fontSize: '24px', cursor: 'pointer', color: 'rgb(166, 0, 255)', marginLeft: '50px' }}>
+              <Nav.Link as={Link} to="/chat" style={{ fontSize: '24px', cursor: 'pointer', color: 'rgb(166, 0, 255)', marginLeft: '50px' }}>
                 my chats
               </Nav.Link>
             </Nav>
