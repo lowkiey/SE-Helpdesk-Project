@@ -235,6 +235,25 @@ const userController = {
             return res.status(500).json({ message: e.message });
         }
     },
+
+
+    getDisplayNameById: async (req, res) => {
+        const userId = req.params.id;
+    
+        try {
+          const user = await userModel.findById(userId, "displayName");
+    
+          if (!user) {
+            return res.status(404).json({ message: "User not found" });
+          }
+    
+          res.json({ displayName: user.displayName });
+        } catch (error) {
+          console.error("Error fetching display name:", error);
+          res.status(500).json({ message: "Server error" });
+        }
+      },
+    
     getUser: async (req, res) => {
         try {
             const user = await userModel.findById(req.params.id);
