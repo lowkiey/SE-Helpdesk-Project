@@ -78,11 +78,10 @@ const ChatComponent = ({ socket }) => {
     // Fetch the user information, including the display name, from the server
     const fetchUserInformation = async () => {
       try {
-        const response = await fetch("/api/v1/users/getDisplayNameById"); // Replace with your actual API endpoint
-        const data = await response.json();
+        const userId = localStorage.getItem("userId");
 
         // Set the display name in the state
-        setDisplayName(data.displayName || "User"); // Default to "User" if display name is not available
+        setDisplayName(userId || "User"); // Default to "User" if display name is not available
       } catch (error) {
         console.error("Error fetching user information:", error);
       }
@@ -157,7 +156,9 @@ ChatComponent.propTypes = {
     emit: PropTypes.func,
     on: PropTypes.func,
     disconnect: PropTypes.func,
+    connect: PropTypes.func, // Add this line to include the 'connect' method
   }),
 };
+
 
 export default ChatComponent;

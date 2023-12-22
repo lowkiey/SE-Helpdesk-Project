@@ -11,6 +11,9 @@ router.post("/login/verify", userController.verify);
 router.post("/register", userController.register);
 
 router.get("/displaynames/", userController.getDisplayNameById);
+router.get('/users/id', userController.getAllUserIds);
+
+
 
 
 module.exports = router; // ! Don't forget to export the rout

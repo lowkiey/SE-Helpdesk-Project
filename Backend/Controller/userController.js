@@ -205,6 +205,7 @@ const userController = {
                 userId: user._id,
                 token,
                 role: user.role,
+                displayName: user.displayName,
                 expiresAt,
             });
             await newSession.save();
@@ -218,7 +219,7 @@ const userController = {
                     withCredentials: true,
                     httpOnly: false,
                     sameSite: 'none',
-                    // secure: true,    //comment this if u want to run using thunder client
+                     secure: true,    //comment this if u want to run using thunder client
                 })
                 .status(200)
                 .json({ message: 'Login successful', user, token, userNotifications });
@@ -284,6 +285,19 @@ const userController = {
             return res.status(500).json({ message: error.message });
         }
     },
+
+    getAllUserIds: async (req, res) => {
+        try {
+            const users = await userModel.find({}, '_id'); // Fetch all users and only return the '_id' field
+            const userIds = users.map(user => user._id);
+            return res.status(200).json(userIds);
+        } catch (error) {
+            console.error('Error fetching user IDs:', error);
+            res.status(500).json({ message: 'Server error' });
+        }
+    },
+
+
     updateRole: async (req, res) => {
         const { displayName, role } = req.body;
         try {
