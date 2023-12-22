@@ -79,7 +79,6 @@ const ChatComponent = ({ socket }) => {
     const fetchUserInformation = async () => {
       try {
         const userId = localStorage.getItem("userId");
-        const role = localStorage.getItem("role");
 
         // Set the display name in the state
         setDisplayName( "User"); // Default to "User" if display name is not available

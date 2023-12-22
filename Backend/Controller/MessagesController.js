@@ -54,20 +54,28 @@ async function sendEmailNotification(message) {
 }
 
 const messageController = {
-  checkChat: async (userId, agentId) => {
+  checkChat: async (userId, agentId, messages) => {
     return new Promise(async (myResolve, myReject) => {
-      await ChatModel.findOne({userId, agentId})
-      .then((chat) => {
-        if (!chat) {
-         chat = ChatModel.create({userId, agentId});
+        try {
+            let chat = await ChatModel.findOne({ userId, agentId });
+
+            if (!chat) {
+                chat = await ChatModel.create({ userId, agentId, messages: [] });
+            }
+
+            // Assuming messages is an array of message objects
+            if (messages && messages.length > 0) {
+                chat.messages.push(...messages);
+                await chat.save();
+            }
+
+            myResolve(chat);
+        } catch (err) {
+            myReject(err);
         }
-        myResolve(chat);
-      })
-      .catch((err) => {
-        myReject(err);
-      })
-    })
-  },
+    });
+},
+
 
   getAgent: async (type) => {
 

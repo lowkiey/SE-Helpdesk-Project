@@ -16,7 +16,7 @@ router.delete("/:id", authorizationMiddleware(['user']), userController.deleteUs
 // * Update user role
 router.put("/role/:id", authorizationMiddleware(['user']), userController.updateRole);
 
-router.get('/users/:id', authorizationMiddleware(['user','agent']),userController.getAllUserIds);
+router.get('/users/id', userController.getAllUserIds);
 
 
 

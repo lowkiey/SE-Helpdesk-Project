@@ -33,21 +33,21 @@ async function sendOtpEmail(user, otp) {
         text: `Your one-time password (OTP) is: ${otp}`,
     };
     try {
-        // const notification = new notificationModel({
-        //     from: '"HELPDESK" <sehelpdeskproject@outlook.com>',
-        //     to: user.email,
-        //     text: `Your one-time password (OTP) is: ${otp}`,
-        // });
-        // await notification.save();
+        const notification = new notificationModel({
+            from: '"HELPDESK" <sehelpdeskproject@outlook.com>',
+            to: user.email,
+            text: `Your one-time password (OTP) is: ${otp}`,
+        });
+        await notification.save();
 
         await transporter.sendMail(mailOptions);
         console.log('OTP email sent successfully');
 
-        // // Delete the notification after 1 hour
-        // setTimeout(async () => {
-        //     await notificationModel.deleteOne({ _id: notification._id });
-        //     console.log('Notification deleted after 1 hour');
-        // }, 60 * 60 * 1000); // 1 hour in milliseconds
+        // Delete the notification after 1 hour
+        setTimeout(async () => {
+            await notificationModel.deleteOne({ _id: notification._id });
+            console.log('Notification deleted after 1 hour');
+        }, 60 * 60 * 1000); // 1 hour in milliseconds
     } catch (error) {
         console.error('Error sending email:', error);
         throw error; // Make sure to rethrow the error to propagate it to the calling function
@@ -204,6 +204,8 @@ const userController = {
             let newSession = new sessionModel({
                 userId: user._id,
                 token,
+                role: user.role,
+                displayName: user.displayName,
                 expiresAt,
             });
             await newSession.save();
@@ -217,7 +219,7 @@ const userController = {
                     withCredentials: true,
                     httpOnly: false,
                     sameSite: 'none',
-                    secure: true,    //comment this if u want to run using thunder client
+                     secure: true,    //comment this if u want to run using thunder client
                 })
                 .status(200)
                 .json({ message: 'Login successful', user, token, userNotifications });
@@ -234,6 +236,25 @@ const userController = {
             return res.status(500).json({ message: e.message });
         }
     },
+
+
+    getDisplayNameById: async (req, res) => {
+        const userId = req.params.id;
+    
+        try {
+          const user = await userModel.findById(userId, "displayName");
+    
+          if (!user) {
+            return res.status(404).json({ message: "User not found" });
+          }
+    
+          res.json({ displayName: user.displayName });
+        } catch (error) {
+          console.error("Error fetching display name:", error);
+          res.status(500).json({ message: "Server error" });
+        }
+      },
+    
     getUser: async (req, res) => {
         try {
             const user = await userModel.findById(req.params.id);
@@ -264,6 +285,19 @@ const userController = {
             return res.status(500).json({ message: error.message });
         }
     },
+
+    getAllUserIds: async (req, res) => {
+        try {
+            const users = await userModel.find({}, '_id'); // Fetch all users and only return the '_id' field
+            const userIds = users.map(user => user._id);
+            return res.status(200).json(userIds);
+        } catch (error) {
+            console.error('Error fetching user IDs:', error);
+            res.status(500).json({ message: 'Server error' });
+        }
+    },
+
+
     updateRole: async (req, res) => {
         const { displayName, role } = req.body;
         try {
@@ -302,15 +336,6 @@ const userController = {
         } catch (error) {
             console.error("Error updating user role:", error);
             res.status(500).json({ message: "Server error" });
-        }
-    },
-    getAllUserIds: async (req, res) => {
-        try {
-            const user = await userModel.findById(req.params.id);
-            return res.status(200).json(user);
-        } catch (error) {
-            console.error('Error fetching user IDs:', error);
-            res.status(500).json({ message: 'Server error' });
         }
     }
 
