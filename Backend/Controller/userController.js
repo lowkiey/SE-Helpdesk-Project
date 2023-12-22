@@ -33,21 +33,21 @@ async function sendOtpEmail(user, otp) {
         text: `Your one-time password (OTP) is: ${otp}`,
     };
     try {
-        const notification = new notificationModel({
-            from: '"HELPDESK" <sehelpdeskproject@outlook.com>',
-            to: user.email,
-            text: `Your one-time password (OTP) is: ${otp}`,
-        });
-        await notification.save();
+        // const notification = new notificationModel({
+        //     from: '"HELPDESK" <sehelpdeskproject@outlook.com>',
+        //     to: user.email,
+        //     text: `Your one-time password (OTP) is: ${otp}`,
+        // });
+        // await notification.save();
 
         await transporter.sendMail(mailOptions);
         console.log('OTP email sent successfully');
 
-        // Delete the notification after 1 hour
-        setTimeout(async () => {
-            await notificationModel.deleteOne({ _id: notification._id });
-            console.log('Notification deleted after 1 hour');
-        }, 60 * 60 * 1000); // 1 hour in milliseconds
+        // // Delete the notification after 1 hour
+        // setTimeout(async () => {
+        //     await notificationModel.deleteOne({ _id: notification._id });
+        //     console.log('Notification deleted after 1 hour');
+        // }, 60 * 60 * 1000); // 1 hour in milliseconds
     } catch (error) {
         console.error('Error sending email:', error);
         throw error; // Make sure to rethrow the error to propagate it to the calling function
@@ -217,7 +217,7 @@ const userController = {
                     withCredentials: true,
                     httpOnly: false,
                     sameSite: 'none',
-                    // secure: true,    //comment this if u want to run using thunder client
+                    secure: true,    //comment this if u want to run using thunder client
                 })
                 .status(200)
                 .json({ message: 'Login successful', user, token, userNotifications });

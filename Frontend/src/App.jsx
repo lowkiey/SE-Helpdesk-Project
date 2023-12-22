@@ -4,6 +4,7 @@ import Login from "./pages/login";
 import Signup from "./pages/register";
 import FAQ from "./pages/FAQs";
 import Reports from "./pages/Reports";
+import Tickets from "./pages/tickets";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
       <Route path="/register" element={<Signup />} />
       <Route path="/faq" element={<FAQ />} />
       <Route path="/reports" element={<Reports />} />
+      <Route path="/tickets" element={<Tickets />} />
 
     </Routes>
   );

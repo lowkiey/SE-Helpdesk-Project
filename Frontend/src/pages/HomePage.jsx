@@ -29,7 +29,9 @@ export default function HomePage() {
   async function fetchNotifications() {
     try {
       const userEmail = localStorage.getItem("email");
-      const response = await axios.get(`${backend_url}/notification/?email=${userEmail}`);
+      const response = await axios.get(`${backend_url}/notification/?email=${userEmail}`, { withCredentials: true, });
+      setNotifications(response.data.notificationsCombined);
+      console.log("response", response.data);
       return response.data; // Assuming the response contains an array of notifications
     } catch (error) {
       console.log("Error fetching notifications:", error.response); // Log the error response
@@ -55,21 +57,23 @@ export default function HomePage() {
         console.log("response", response);
 
         setUserName(response.data.displayName);      //di btgib el esm lw 3aiza 7aga tani b3d kda b3mlha display
-        } catch (error) {
+      } catch (error) {
         console.log("Error fetching user data:", error);
         navigate("/"); // Redirect to login page on error
       }
     }
 
     fetchUserData();
-    
-    if (showNotification) {
-      fetchNotifications().then(data => {
-        setNotifications(data);
-      });
-    }
-  
-  }, [cookies.token, navigate,showNotification]);
+
+    // if (showNotification) {
+    //   fetchNotifications().then(data => {
+    //     setNotifications(data);
+    //   });
+    // }
+    fetchNotifications()
+
+
+  }, [cookies.token, navigate, showNotification]);
 
   return (
     <>
@@ -87,9 +91,14 @@ export default function HomePage() {
               <Nav.Link as={Link} to="/faq" style={{ fontSize: '24px', cursor: 'pointer', color: 'purple', marginLeft: '50px' }}>
                 FAQs
               </Nav.Link>
+              <Nav.Link as={Link} to="/reports" style={{ fontSize: '24px', cursor: 'pointer', color: 'purple', marginLeft: '50px' }}>
+                Reports
+              </Nav.Link>
             </Nav>
             <Nav className="ms-auto" style={{ display: 'flex', alignItems: 'center' }}>
               {/* User Icon */}
+
+              {/* //listgroup use  */}
 
               {/* Notification Icon */}
               <Nav.Item>
@@ -99,18 +108,19 @@ export default function HomePage() {
                     style={{ fontSize: '24px', cursor: 'pointer', color: 'purple', marginRight: '20px' }}
                   />
                   {showNotification && (
-                    <div style={{ position: 'absolute', top: '30px', right: '20px', width: '200px', height: '300px', backgroundColor: 'white', boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)', borderRadius: '5px', padding: '10px' }}>
+                    <div style={{ position: 'absolute', top: '30px', right: '20px', width: '300px', maxHeight: '400px', backgroundColor: 'white', boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)', borderRadius: '5px', padding: '10px', overflowY: 'auto' }}>
                       {/* notification tab content */}
-                      <div>
+                      <div style={{ marginTop: '5px' }}>
                         <p style={{ margin: '0', fontWeight: 'bold', fontSize: '20px' }}>Notifications:</p>
-                        {notifications.map(notification=>(
-                           <div key={notification.id}>
-                           <p>From: {notification.from}</p>
-                           <p>{notification.text}</p>
-                           <hr style={{ margin: '5px 0' }} />
-                         </div>
-                          
-                        ))}
+                        <ul style={{ listStyleType: 'none', padding: '0', maxHeight: '300px', overflowY: 'auto', marginTop: '5px' }}>
+                          {notifications.map(notification => (
+                            <li key={notification._id}>
+                              <p>From: {notification.from}</p>
+                              <p>{notification.text}</p>
+                              <hr style={{ margin: '5px 0' }} />
+                            </li>
+                          ))}
+                        </ul>
                       </div>
                     </div>
                   )}
@@ -123,15 +133,12 @@ export default function HomePage() {
                     style={{ fontSize: '24px', cursor: 'pointer', color: 'purple', marginRight: '-40px' }}
                   />
                   {isUserTabOpen && (
-                    <div style={{ position: 'absolute', top: '30px', right: '-200px', width: '200px', height: '100px', backgroundColor: 'white', boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)', borderRadius: '0px', padding: '10px' }}>
+                    <div style={{ position: 'absolute', top: '30px', right: '-190px', width: '200px', height: '100px', backgroundColor: 'white', boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)', borderRadius: '0px', padding: '10px' }}>
                       {/* User tab content */}
                       <div style={{ display: 'flex', alignItems: 'center' }}>
-                        {/* <div style={{ marginRight: '10px', borderRadius: '50%', overflow: 'hidden' }}> */}
-                          {/* Placeholder image */}
-                          {/* <img src="https://via.placeholder.com/50" alt="Profile" style={{ width: '50px', height: '50px', objectFit: 'cover' }} /> */}
-                        {/* </div> */}
+
                         <div>
-                          <p style={{ margin: '10px', fontSize:'20px', fontWeight: 'bold', marginTop: '-0.5vh ' }}>{`hello ${userName}`}</p>
+                          <p style={{ margin: '10px', fontSize: '20px', fontWeight: 'bold', marginTop: '-0.5vh ' }}>{`${userName}`}</p>
                           <Link to="/" style={{ color: 'rgb(209, 151, 240)', textDecoration: 'none' }}>Logout</Link>
                         </div>
                       </div>
@@ -144,18 +151,20 @@ export default function HomePage() {
         </Container>
       </Navbar>
       <h1 style={{ textAlign: "center", margin: "40px", color: 'purple', fontFamily: "Sans-Serif", fontWeight: "bold" }}>
-        {`Hello ${userName}, What are you trying to do today?`} {/* Displaying the username */}
+        {`Hello ${userName}, What are you trying to do today?`} {/* by3rfni 3aleh w y2oli ezayik ya latifa */}
       </h1>
 
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <button className="create" onClick={() => navigate("/tickets")} style={{ fontFamily: "sans-serif", fontWeight: "bold", backgroundColor: 'purple', color: 'white', border: 'white', borderRadius: '5px', width: '15%', padding: '8px', }}>Create a new support ticket</button><button className="activity" onClick={() => navigate("/tickets")} style={{ marginTop: '25px', fontFamily: "sans-serif", fontWeight: "bold", backgroundColor: 'purple', color: 'white', border: 'white', borderRadius: '5px', width: '15%', padding: '8px', }}>Recent Activity</button>
+        <button className="create" onClick={() => navigate("/tickets")} style={{ fontFamily: "sans-serif", fontWeight: "bold", backgroundColor: 'purple', color: 'white', border: 'white', borderRadius: '5px', width: '15%', padding: '8px', }}>Create a new support ticket</button>
+        <button className="activity" onClick={() => navigate("/tickets")} style={{ marginTop: '25px', fontFamily: "sans-serif", fontWeight: "bold", backgroundColor: 'purple', color: 'white', border: 'white', borderRadius: '5px', width: '15%', padding: '8px', }}>Recent Activity</button>
       </div>
       <div style={{ display: 'flex', justifyContent: 'center', marginTop: '50px' }}>
-    <img
-    src="Frontend/public/gg.jpg"
-    alt="Image Description"
-  />
-    </div>
+        <img
+          src="/gg.jpg"
+          alt="Image Description"
+          style={{ width: '25%', height: '25%' }}
+        />
+      </div>
       <div className="about us">
         <h1 style={{ textAlign: "left", marginTop: '90px', color: 'purple', fontFamily: "Sans-Serif", fontWeight: "bold", marginLeft: '35px', marginRight: 'auto', width: 'fit-content' }}>
           About Us
@@ -167,10 +176,9 @@ export default function HomePage() {
           Our Services
         </h1>
         <p style={{ textAlign: "left", marginTop: '10px', marginLeft: "15px", color: 'black', fontFamily: "Sans-Serif", fontWeight: "bold", width: '1500px', padding: '20px' }}>
-        Our services are tailored to provide efficient solutions for your needs. Need help? Simply open a ticket with us, and rest assured that a specialized agent, skilled in hardware, software, or network-related issues, will promptly address your concern. Our priority ticketing system ensures that urgent matters receive immediate attention, while our live chat functionality enables real-time communication for quick resolutions. Experience reliable support catered specifically to your technical requirements, making your experience with us smooth and hassle-free.
+          Our services are tailored to provide efficient solutions for your needs. Need help? Simply open a ticket with us, and rest assured that a specialized agent, skilled in hardware, software, or network-related issues, will promptly address your concern. Our priority ticketing system ensures that urgent matters receive immediate attention, while our live chat functionality enables real-time communication for quick resolutions. Experience reliable support catered specifically to your technical requirements, making your experience with us smooth and hassle-free.
         </p>
       </div>
-
 
     </>
   );

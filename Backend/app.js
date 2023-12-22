@@ -7,6 +7,7 @@ const agentRouter = require("./Routes/agent");
 const ticketRouter = require("./Routes/tickets");
 const authRouter = require("./Routes/auth");
 const notificationRouter = require("./Routes/notification");
+const FAQRouter = require("./Routes/FAQ");
 require('dotenv').config();
 const authenticationMiddleware = require("./Middleware/authenticationMiddleware");
 const cors = require("cors");
@@ -30,6 +31,7 @@ app.use("/api/v1/users", userRouter);
 app.use("/api/v1/agents", agentRouter);
 app.use("/api/v1/tickets", ticketRouter);
 app.use("/api/v1/notification", notificationRouter);
+app.use("/api/v1/FAQ", FAQRouter);
 
 const db_name = 'SE_Project1';
 const db_url = `${"mongodb://127.0.0.1:27017"}/${db_name}`;

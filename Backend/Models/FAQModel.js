@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const userModel = require("./userModel");
 
 const schemaOptions = {
   strict: false,
@@ -7,11 +8,10 @@ const schemaOptions = {
 
 const FAQschema = new mongoose.Schema(
   {
-    _id: { type:mongoose.Schema.Types.ObjectId, required: true, unique:true },
-    title: { type: String, required: true, minlength:6 },
-    content: { type: String, required: true,minlength:6 },
-    category: { type: String, required: true,minlength:6  },
-    subCategory: { type: String, required: true,minlength:6  }
+    title: { type: String, required: true},
+    content: { type: String, required: true},
+    category: { type: String, required: true  },
+    subCategory: { type: String, required: true }
   },schemaOptions);
 
 module.exports = mongoose.model('FAQModel', FAQschema);
