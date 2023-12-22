@@ -3,8 +3,9 @@ import Homepage from "./pages/HomePage";
 import Login from "./pages/login";
 import Signup from "./pages/register";
 import Tickets from "./pages/reports";
-import Chat from "./pages/chat";
 import io from "socket.io-client";
+import Chat from "./chat/chat";
+
 
 import React, { useEffect, useState } from "react";
 
@@ -61,7 +62,7 @@ function App() {
       <Route path="/HomePage" element={<Homepage />} />
       <Route path="/register" element={<Signup />} />
       <Route path="/reports" element={<Tickets />} />
-      <Route path="/chats" element={<Chat/>} />
+      <Route path="/HomePage/chat" element={<Chat />} />
 
 
       {/* New route for the chat component */}

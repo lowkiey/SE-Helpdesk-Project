@@ -27,13 +27,10 @@ export default function HomePage() {
     setSelectedOption(option);
   };
 
-  const handleStartChat = () => {
-    
-   navigate('./chat.jsx');
-
-
-
-  };
+  
+    const handleStartChat = () => {
+      navigate('/chat');
+    };
 
   useEffect(() => {
      
