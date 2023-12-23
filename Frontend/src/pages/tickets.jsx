@@ -79,6 +79,8 @@ const handleCloseModal = () => {
 const handleSaveTicket = () => {
   setShowWorkflowSteps(true);
 };
+
+
   const handleCategoryChange = (e) => {
     const selectedCategory = e.target.value;
     setSelectedCategory(selectedCategory);
@@ -86,21 +88,33 @@ const handleSaveTicket = () => {
     switch (selectedCategory) {
       case '1': // Hardware
         setSubCategoryOptions(['Desktops', 'Laptops', 'Printers', 'Servers', 'Networking equipment']);
+        setShowWorkflowSteps(true);
         break;
       case '2': // Software
         setSubCategoryOptions(['Operating system', 'Application software', 'Custom software', 'Integration issues']);
+        setShowWorkflowSteps(true);
         break;
       case '3': // Network
         setSubCategoryOptions(['Email issues', 'Internet connection problems', 'Website errors']);
+        setShowWorkflowSteps(true);
         break;
         case '4': // others
-        setShowChatAlert(true);
+        setSubCategoryOptions([]);
+        setShowWorkflowSteps(true);
+        handleStartChat(); // Trigger the chat alert
         break;
       default:
         setSubCategoryOptions([]);
+        setShowWorkflowSteps(true);
         break;
     }
-  }
+   
+  };
+  const handleStartChat = () => {
+    alert('Please chat with us');
+    setShowChatAlert(true);
+  };
+
   const handleSubCategoryChange = (e) => {
     const selectedSubCategory = e.target.value;
     setSelectedSubCategory(selectedSubCategory);
@@ -472,11 +486,9 @@ const handleSaveTicket = () => {
   ></textarea>
   <label htmlFor="floatingTextarea2">Comments</label>
 </div>
-<div class="d-grid gap-2 d-md-flex justify-content-md-end">
-            <button onClick={handleSaveTicket} className="btn btn-success" btn-sm>Save</button>
-            <button onClick={handleCloseModal} className="btn btn-danger" btn-sm>Cancel</button>
-      </div>
-      <button className="btn btn-primary" style={{backgroundColor:'purple', outlineColor:'purple'}}btn-sm>start chat</button>
+      <button className="btn btn-primary start-chat-btn" onClick={() => handleSelectUser()}>
+                    Start Chat
+                  </button>
             <div className="workflow-steps">     
             {selectedCategory && selectedSubCategory && showWorkflowSteps && (
     <div className="workflow-steps">
