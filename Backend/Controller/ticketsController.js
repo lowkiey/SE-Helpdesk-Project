@@ -33,9 +33,21 @@ async function sendEmailNotification(user, subject,emailContent) {
       console.error('Error sending email:', error);
       throw error;
     }
+
 };
-// Create a new ticket
+
 const ticketsController = {
+  getTickets: async (req, res) => {
+    try {
+      // Fetch all tickets from MongoDB
+      const tickets = await ticketsModel.find();
+  
+      res.status(201).json({ message: "tickets successfully", tickets });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  },  
+  // Create a new ticket
 createTicket: async (req, res) => {
         try {
             const { user_id,
@@ -177,5 +189,6 @@ const updateTicketAndNotifyUser = async (ticketId, solution, userId) => {
   } catch (error) {
     throw new Error(error.message);
   }
+ 
 };
 module.exports = ticketsController;

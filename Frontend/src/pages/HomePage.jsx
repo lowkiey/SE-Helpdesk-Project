@@ -56,6 +56,9 @@ export default function HomePage() {
               <Nav.Link as={Link} to="/home" style={{ fontSize: '24px', cursor: 'pointer', color: 'rgb(166, 0, 255)' }}>
                 HelpDesk
               </Nav.Link>
+              <Nav.Link as={Link} to="/tickets" style={{ fontSize: '24px', cursor: 'pointer', color: 'rgb(166, 0, 255)' }}>
+                Tickets
+              </Nav.Link>
             </Nav>
             <Nav className="ms-auto">
               <Nav.Item>

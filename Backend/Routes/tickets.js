@@ -5,6 +5,7 @@ const userController = require("../Controller/userController"); // Fix casing is
 const authorizationMiddleware = require('../Middleware/autherizationMiddleware');
 
 router.post("/", authorizationMiddleware(['user']), ticketsController.createTicket);
+router.get("/getTickets",authorizationMiddleware(['user']), ticketsController.getTickets);
 router.put("/:id", authorizationMiddleware(['agent']), ticketsController.updateTicket);
 router.put("/category/:id", authorizationMiddleware(['user']), ticketsController.categoryTicket);
 router.put("/", authorizationMiddleware(['user']), ticketsController.subCategory);
