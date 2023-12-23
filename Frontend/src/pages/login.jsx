@@ -13,6 +13,8 @@ const Login = () => {
   });
   const [showOtpInput, setShowOtpInput] = useState(false);
   const [otp, setOtp] = useState(""); // State to hold OTP value
+  const [error, setError] = useState(""); // State to hold error message
+
 
   const { email, password } = inputValue;
 
@@ -64,7 +66,15 @@ const Login = () => {
       }
     } catch (error) {
       console.error(error);
-      // Handle errors
+      if (error.response) {
+        if (error.response.status === 404) {
+          setError("Email Not Found.");
+        } else if (error.response.status === 405) {
+          setError("Incorrect password.");
+        }
+      } else {
+        setError("Server error. Please try again later.");
+      }
     }
   };
 
@@ -130,6 +140,7 @@ const Login = () => {
         </div>
         <button type="submit">Login</button>
       </form>
+      {error && <span className="error-message">{error}</span>} {/* Display error message */}
 
       {showOtpInput && ( // Display OTP input modal conditionally
         <div className="otp-modal">

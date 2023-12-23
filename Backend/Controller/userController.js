@@ -62,8 +62,8 @@ const verifyOTP = async (email, otp) => {
         }
 
         // Clear OTP after successful verification
-        // foundUser.otp = null;
-        // await foundUser.save();
+        foundUser.otp = null;
+        await foundUser.save();
 
         return true;
     } catch (error) {

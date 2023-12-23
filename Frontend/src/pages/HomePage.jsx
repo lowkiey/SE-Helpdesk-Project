@@ -97,6 +97,7 @@ export default function HomePage() {
   async function fetchNotifications() {
     try {
       const userEmail = localStorage.getItem("email");
+      console.log(userEmail);
       const response = await axios.get(`${backend_url}/notification/?email=${userEmail}`, { withCredentials: true, });
       setNotifications(response.data.notificationsCombined);
       console.log("response", response.data);
@@ -178,13 +179,19 @@ export default function HomePage() {
                           <div style={{ marginTop: '5px' }}>
                             <p style={{ margin: '0', fontWeight: 'bold', fontSize: '20px' }}>Notifications:</p>
                             <ul style={{ listStyleType: 'none', padding: '0', maxHeight: '300px', overflowY: 'auto', marginTop: '5px' }}>
-                              {notifications.map(notification => (
-                                <li key={notification._id}>
-                                  <p>From: {notification.from}</p>
-                                  <p>{notification.text}</p>
-                                  <hr style={{ margin: '5px 0' }} />
+                              {notifications.length === 0 ? (
+                                <li>
+                                  <p style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center', color: 'purple', marginTop: '20px' }}>No notifications</p>
                                 </li>
-                              ))}
+                              ) : (
+                                notifications.map(notification => (
+                                  <li key={notification._id}>
+                                    <p>From: {notification.from}</p>
+                                    <p>{notification.text}</p>
+                                    <hr style={{ margin: '5px 0' }} />
+                                  </li>
+                                ))
+                              )}
                             </ul>
                           </div>
                         </div>
@@ -292,15 +299,21 @@ export default function HomePage() {
                         <div style={{ position: 'absolute', top: '30px', right: '20px', width: '300px', maxHeight: '400px', backgroundColor: 'white', boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)', borderRadius: '5px', padding: '10px', overflowY: 'auto' }}>
                           {/* notification tab content */}
                           <div style={{ marginTop: '5px' }}>
-                            <p style={{ margin: '0', fontWeight: 'bold', fontSize: '20px' }}>Notifications:</p>
-                            <ul style={{ listStyleType: 'none', padding: '0', maxHeight: '300px', overflowY: 'auto', marginTop: '5px' }}>
-                              {notifications.map(notification => (
-                                <li key={notification._id}>
-                                  <p>From: {notification.from}</p>
-                                  <p>{notification.text}</p>
-                                  <hr style={{ margin: '5px 0' }} />
+                            <p style={{ margin: '0', fontWeight: 'bold', fontSize: '20px', color: 'black' }}>Notifications:</p>
+                            <ul style={{ listStyleType: 'none', padding: '0', maxHeight: '300px', overflowY: 'auto', marginTop: '5px', color: 'black' }}>
+                              {notifications.length === 0 ? (
+                                <li>
+                                  <p style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center', color: 'purple', marginTop: '20px' }}>No notifications</p>
                                 </li>
-                              ))}
+                              ) : (
+                                notifications.map(notification => (
+                                  <li key={notification._id}>
+                                    <p>From: {notification.from}</p>
+                                    <p>{notification.text}</p>
+                                    <hr style={{ margin: '5px 0' }} />
+                                  </li>
+                                ))
+                              )}
                             </ul>
                           </div>
                         </div>
