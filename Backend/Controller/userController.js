@@ -171,7 +171,7 @@ const userController = {
                 return res.status(405).json({ message: 'Incorrect password' });
             }
 
-            // Generate and send OTP to user's email
+            // Generate and send OTP to user's email 
             if(user.mfa === true){
 
             const generatedOTP = generateOTP();

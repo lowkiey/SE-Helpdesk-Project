@@ -2,21 +2,28 @@ const express = require("express");
 const cookieParser = require('cookie-parser')
 const app = express();
 const mongoose = require("mongoose");
+const socketIO = require("socket.io");
+const { createServer } = require('node:http');
+const http = require('http');
+
 const userRouter = require("./Routes/users");
 const agentRouter = require("./Routes/agent");
 const ticketRouter = require("./Routes/tickets");
 const authRouter = require("./Routes/auth");
 const notificationRouter = require("./Routes/notification");
+const messagesRouter = require("./Routes/messages");
 const FAQRouter = require("./Routes/FAQ");
 require('dotenv').config();
+const server = http.createServer(app);
 const authenticationMiddleware = require("./Middleware/authenticationMiddleware");
 const cors = require("cors");
 const { backupAndSaveLocally } = require('./backup');
-
+const {checkChat, getAgent} = require("./Controller/messagesController")
+const {get} = require("lodash")
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-
+app.use(express.static("public"));
 app.use(
     cors({
         origin: 'http://localhost:5173',
@@ -33,7 +40,46 @@ app.use("/api/v1/agents", agentRouter);
 app.use("/api/v1/tickets", ticketRouter);
 app.use("/api/v1/notification", notificationRouter);
 app.use("/api/v1/FAQ", FAQRouter);
+app.use("/api/v1/messages", messagesRouter);
 
+// Add Socket.IO configuration here
+const io = socketIO(server, {
+    cors: {
+      origin: "http://localhost:5173", // Adjust the origin to your frontend URL
+      methods: ["GET", "POST", "PUT", "DELETE"]
+    }
+  });
+  
+   
+  
+  
+  io.on('connection', async (socket) => {
+  
+    const userId =  socket.handshake.query.userId;
+    await getAgent('hardware')
+    .then(async (agent) => {
+      if (agent !== 'not available') {
+        const chat = await checkChat(userId,agent._id);
+        console.log(chat);
+      }
+    })
+  
+        // Notify all clients that a user has connected
+        io.emit('user connected', 'A user connected');
+    
+        // Handle chat messages
+        socket.on('chat message', (msg) => {
+            console.log('Message: ' + msg);
+            io.emit('chat message', msg); // Broadcast the message to all connected clients
+        });
+    
+        // Handle disconnections
+        socket.on('disconnect', () => {
+            console.log('User disconnected');
+            // Notify all clients that a user has disconnected
+            io.emit('user disconnected', 'A user disconnected');
+        });
+    });
 
 const db_name = 'SE_Project1';
 const db_url = `${"mongodb://127.0.0.1:27017"}/${db_name}`;
@@ -55,4 +101,8 @@ app.use(function (req, res, next) {
     return res.status(404).send("404");
 });
 
-app.listen(process.env.PORT, () => console.log("Server started"));
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+  
+});
