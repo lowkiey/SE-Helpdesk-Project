@@ -72,15 +72,6 @@ export default function Reports() {
 const handleCreateTicketClick = () => {
     setTicketModalVisible(true);
 };
-const handleCloseModal = () => {
-  setTicketModalVisible(false);
-  setShowWorkflowSteps(false);
-};
-const handleSaveTicket = () => {
-  setShowWorkflowSteps(true);
-};
-
-
   const handleCategoryChange = (e) => {
     const selectedCategory = e.target.value;
     setSelectedCategory(selectedCategory);
@@ -101,7 +92,7 @@ const handleSaveTicket = () => {
         case '4': // others
         setSubCategoryOptions([]);
         setShowWorkflowSteps(true);
-        handleStartChat(); // Trigger the chat alert
+        handleStartChat();
         break;
       default:
         setSubCategoryOptions([]);
@@ -458,7 +449,7 @@ const handleSaveTicket = () => {
                 <option value="1">Hardware</option>
                 <option value="2">Software</option>
                 <option value="3">Network</option>
-                <option value="3">others...</option>           
+                <option value="4">others...</option>           
               </select>
             </div>
 )}
@@ -500,17 +491,3 @@ const handleSaveTicket = () => {
         </>
 
 )}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
