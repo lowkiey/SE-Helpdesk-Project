@@ -37,7 +37,30 @@ const Login = () => {
       );
 
       if (response.status === 200) {
-        setShowOtpInput(true); // Display OTP input modal
+        console.log(response.data)
+        if (response.data.user.mfa) {
+          // If MFA is enabled, display OTP input modal
+          setShowOtpInput(true);
+          return;
+        } else {
+          localStorage.setItem("userId", response.data.user._id)
+          //
+          localStorage.setItem("role", response.data.user.role)
+          //
+          localStorage.setItem("name", response.data.user.displayName)
+          //
+          localStorage.setItem("email", response.data.user.email)
+          //
+
+          const user = response.data.user
+          localStorage.setItem("token", response.data.token)
+          console.log(response.data.token)
+          // if (user.role === "user") {
+          navigate("/home");
+          // }
+          console.log(response.data)
+        }
+
       }
     } catch (error) {
       console.error(error);
@@ -66,7 +89,7 @@ const Login = () => {
         //
         localStorage.setItem("email", response.data.user.email)
         //
-        
+
         const user = response.data.user
         localStorage.setItem("token", response.data.token)
         console.log(response.data.token)
@@ -105,7 +128,7 @@ const Login = () => {
             onChange={handleOnChange}
           />
         </div>
-        <button type="submit">Get OTP</button>
+        <button type="submit">Login</button>
       </form>
 
       {showOtpInput && ( // Display OTP input modal conditionally

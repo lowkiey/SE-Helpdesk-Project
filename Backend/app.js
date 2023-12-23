@@ -33,6 +33,7 @@ app.use("/api/v1/tickets", ticketRouter);
 app.use("/api/v1/notification", notificationRouter);
 app.use("/api/v1/FAQ", FAQRouter);
 
+
 const db_name = 'SE_Project1';
 const db_url = `${"mongodb://127.0.0.1:27017"}/${db_name}`;
 

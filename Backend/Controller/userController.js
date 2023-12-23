@@ -125,7 +125,7 @@ const userController = {
 
     register: async (req, res) => {
         try {
-            const { email, password, displayName } = req.body;
+            const { email, password, displayName, mfa } = req.body;
 
             // Check if the user already exists
             const existingUser = await userModel.findOne({ email });
@@ -141,6 +141,7 @@ const userController = {
                 email,
                 password: hashedPassword,
                 displayName,
+                mfa
             });
 
             // Save the user to the database
@@ -171,12 +172,47 @@ const userController = {
             }
 
             // Generate and send OTP to user's email
+            if(user.mfa === true){
+
             const generatedOTP = generateOTP();
             user.otp = generatedOTP; // Save OTP in user document
             await user.save();
             await sendOtpEmail(user, generatedOTP);
+            return res.status(200).json({ message: 'OTP sent to your email', email, user });
+            }
+            else{
 
-            return res.status(200).json({ message: 'OTP sent to your email', email });
+              
+            const { _id, displayName, role } = user;
+
+            const token = jwt.sign(
+                { user: { userId: user._id, role: user.role } },
+                secretKey,
+                { expiresIn: 3 * 60 * 60 }
+            );
+            const currentDateTime = new Date();
+            const expiresAt = new Date(+currentDateTime + 180000000); // 3 hours
+            let newSession = new sessionModel({
+                userId: user._id,
+                token,
+                // expiresAt,
+            });
+            await newSession.save();
+            const userId = user._id.toString();
+
+            const userNotifications = await notificationModel.find({ to: email }).lean();
+           
+            return res
+                .cookie('token', token, {
+                    expires: expiresAt,
+                    withCredentials: true,
+                    httpOnly: false,
+                    sameSite: 'none',
+                    secure: true,    //comment this if u want to run using thunder client
+                })
+                .status(200)
+                .json({ message: 'Login successful', user, token, userNotifications });
+            }
         } catch (error) {
             console.error('Error initiating login:', error);
             res.status(500).json({ message: 'Server error' });
@@ -204,7 +240,7 @@ const userController = {
             let newSession = new sessionModel({
                 userId: user._id,
                 token,
-                expiresAt,
+                // expiresAt,
             });
             await newSession.save();
             const userId = user._id.toString();
@@ -303,7 +339,8 @@ const userController = {
             console.error("Error updating user role:", error);
             res.status(500).json({ message: "Server error" });
         }
-    }
+    },
+    
 
 };
 
