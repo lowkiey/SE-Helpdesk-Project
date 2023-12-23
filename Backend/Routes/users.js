@@ -14,11 +14,6 @@ router.put("/:id", authorizationMiddleware(['user']), userController.updateUser)
 router.delete("/:id", authorizationMiddleware(['user']), userController.deleteUser);
 
 // * Update user role
-router.put("/role/:id", authorizationMiddleware(['user']), userController.updateRole);
+router.post("/assign", authorizationMiddleware(['user']), userController.updateRole);
 
-router.get('/users/id', userController.getAllUserIds);
-
-
-
-
-module.exports = router; // ! Don't forget to export the rout
+module.exports = router; // ! Don't forget to export the router

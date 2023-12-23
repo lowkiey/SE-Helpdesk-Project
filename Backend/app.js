@@ -178,6 +178,11 @@ app.use("/api/v1/users", userRouter);
 app.use("/api/v1/agents", agentRouter);
 app.use("/api/v1/messages", messagesRoutes);
 app.use("/api/v1/tickets", ticketRouter);
+// app.use(authenticationMiddleware);
+
+// // Authorization middleware
+//  app.use(autherizationMiddleware);
+
 
 const db_url = "mongodb://127.0.0.1:27017/SE_Project1";
 const connectionOptions = {

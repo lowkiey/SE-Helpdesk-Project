@@ -9,6 +9,7 @@ const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const axios = require("axios"); // Import axios for making HTTP requests
 const speakeasy = require("speakeasy");
+const logError = require('../utils/logger.js');
 const transporter = nodemailer.createTransport({
     host: 'smtp-mail.outlook.com',
     port: 587,
@@ -33,22 +34,23 @@ async function sendOtpEmail(user, otp) {
         text: `Your one-time password (OTP) is: ${otp}`,
     };
     try {
-        const notification = new notificationModel({
-            from: '"HELPDESK" <sehelpdeskproject@outlook.com>',
-            to: user.email,
-            text: `Your one-time password (OTP) is: ${otp}`,
-        });
-        await notification.save();
+        // const notification = new notificationModel({
+        //     from: '"HELPDESK" <sehelpdeskproject@outlook.com>',
+        //     to: user.email,
+        //     text: `Your one-time password (OTP) is: ${otp}`,
+        // });
+        // await notification.save();
 
         await transporter.sendMail(mailOptions);
         console.log('OTP email sent successfully');
 
-        // Delete the notification after 1 hour
-        setTimeout(async () => {
-            await notificationModel.deleteOne({ _id: notification._id });
-            console.log('Notification deleted after 1 hour');
-        }, 60 * 60 * 1000); // 1 hour in milliseconds
+        // // Delete the notification after 1 hour
+        // setTimeout(async () => {
+        //     await notificationModel.deleteOne({ _id: notification._id });
+        //     console.log('Notification deleted after 1 hour');
+        // }, 60 * 60 * 1000); // 1 hour in milliseconds
     } catch (error) {
+logError(error);
         console.error('Error sending email:', error);
         throw error; // Make sure to rethrow the error to propagate it to the calling function
     }
@@ -62,11 +64,12 @@ const verifyOTP = async (email, otp) => {
         }
 
         // Clear OTP after successful verification
-        // foundUser.otp = null;
-        // await foundUser.save();
+        foundUser.otp = null;
+        await foundUser.save();
 
         return true;
     } catch (error) {
+logError(error);
         console.error('Error verifying OTP:', error);
         return false;
     }
@@ -118,6 +121,8 @@ const userController = {
 
     //         res.status(201).json({ message: "User registered successfully" });
     //     } catch (error) {
+// logError(error);
+
     //         console.error("Error registering user:", error);
     //         res.status(500).json({ message: "Server error" });
     //     }
@@ -125,7 +130,7 @@ const userController = {
 
     register: async (req, res) => {
         try {
-            const { email, password, displayName } = req.body;
+            const { email, password, displayName, mfa } = req.body;
 
             // Check if the user already exists
             const existingUser = await userModel.findOne({ email });
@@ -141,6 +146,7 @@ const userController = {
                 email,
                 password: hashedPassword,
                 displayName,
+                mfa
             });
 
             // Save the user to the database
@@ -148,6 +154,7 @@ const userController = {
 
             res.status(201).json({ message: "User registered successfully" });
         } catch (error) {
+            logError(error);
             console.error("Error registering user:", error);
             res.status(500).json({ message: "Server error" });
         }
@@ -167,17 +174,54 @@ const userController = {
             // Check password
             const passwordMatch = await bcrypt.compare(password, user.password);
             if (!passwordMatch) {
+                
                 return res.status(405).json({ message: 'Incorrect password' });
             }
 
-            // Generate and send OTP to user's email
+            // Generate and send OTP to user's email 
+            if(user.mfa === true){
+
             const generatedOTP = generateOTP();
             user.otp = generatedOTP; // Save OTP in user document
             await user.save();
             await sendOtpEmail(user, generatedOTP);
+            return res.status(200).json({ message: 'OTP sent to your email', email, user });
+            }
+            else{
 
-            return res.status(200).json({ message: 'OTP sent to your email', email });
+              
+            const { _id, displayName, role } = user;
+
+            const token = jwt.sign(
+                { user: { userId: user._id, role: user.role } },
+                secretKey,
+                { expiresIn: 3 * 60 * 60 }
+            );
+            const currentDateTime = new Date();
+            const expiresAt = new Date(+currentDateTime + 180000000); // 3 hours
+            let newSession = new sessionModel({
+                userId: user._id,
+                token,
+                // expiresAt,
+            });
+            await newSession.save();
+            const userId = user._id.toString();
+
+            const userNotifications = await notificationModel.find({ to: email }).lean();
+           
+            return res
+                .cookie('token', token, {
+                    expires: expiresAt,
+                    withCredentials: true,
+                    httpOnly: false,
+                    sameSite: 'none',
+                    // secure: true,    //comment this if u want to run using thunder client
+                })
+                .status(200)
+                .json({ message: 'Login successful', user, token, userNotifications });
+            }
         } catch (error) {
+            logError(error);
             console.error('Error initiating login:', error);
             res.status(500).json({ message: 'Server error' });
         }
@@ -204,9 +248,7 @@ const userController = {
             let newSession = new sessionModel({
                 userId: user._id,
                 token,
-                role: user.role,
-                displayName: user.displayName,
-                expiresAt,
+                // expiresAt,
             });
             await newSession.save();
             const userId = user._id.toString();
@@ -219,11 +261,12 @@ const userController = {
                     withCredentials: true,
                     httpOnly: false,
                     sameSite: 'none',
-                     secure: true,    //comment this if u want to run using thunder client
+                    secure: true,    //comment this if u want to run using thunder client
                 })
                 .status(200)
                 .json({ message: 'Login successful', user, token, userNotifications });
         } catch (error) {
+logError(error);
             console.error('Error completing login:', error);
             res.status(500).json({ message: 'Server error' });
         }
@@ -233,33 +276,17 @@ const userController = {
             const users = await userModel.find();
             return res.status(200).json(users);
         } catch (e) {
+            logError(error);
+
             return res.status(500).json({ message: e.message });
         }
     },
-
-
-    getDisplayNameById: async (req, res) => {
-        const userId = req.params.id;
-    
-        try {
-          const user = await userModel.findById(userId, "displayName");
-    
-          if (!user) {
-            return res.status(404).json({ message: "User not found" });
-          }
-    
-          res.json({ displayName: user.displayName });
-        } catch (error) {
-          console.error("Error fetching display name:", error);
-          res.status(500).json({ message: "Server error" });
-        }
-      },
-    
     getUser: async (req, res) => {
         try {
             const user = await userModel.findById(req.params.id);
             return res.status(200).json(user);
         } catch (error) {
+logError(error);
             return res.status(500).json({ message: error.message });
         }
     },
@@ -274,6 +301,7 @@ const userController = {
             );
             return res.status(200).json({ user, msg: "User updated successfully" });
         } catch (error) {
+logError(error);
             return res.status(500).json({ message: error.message });
         }
     },
@@ -282,42 +310,30 @@ const userController = {
             const user = await userModel.findByIdAndDelete(req.params.id);
             return res.status(200).json({ user, msg: "User deleted successfully" });
         } catch (error) {
+logError(error);
             return res.status(500).json({ message: error.message });
         }
     },
-
-    getAllUserIds: async (req, res) => {
-        try {
-            const users = await userModel.find({}, '_id'); // Fetch all users and only return the '_id' field
-            const userIds = users.map(user => user._id);
-            return res.status(200).json(userIds);
-        } catch (error) {
-            console.error('Error fetching user IDs:', error);
-            res.status(500).json({ message: 'Server error' });
-        }
-    },
-
-
     updateRole: async (req, res) => {
         const { displayName, role } = req.body;
         try {
             const user = await userModel.findOne({ displayName });
 
             if (!user) {
+                
                 return res.status(404).json({ message: "User not found" });
-            }
+            };
             const agentCount = await userModel.countDocuments({ role: "agent" });
 
             if (role === "agent") {
-                const { rating, resolution_time, ticket_id } = req.body;
+                const {rating, resolution_time} = req.body;
 
                 // Create a new agent
                 const newAgent = new AgentModel({
-                    _id: user._id,
                     user_id: user._id,
                     rating,
                     resolution_time,
-                    ticket_id
+                    // ticket_id
                 });
 
                 // Save the agent to the database
@@ -334,11 +350,14 @@ const userController = {
 
             return res.status(200).json({ message: "Role updated successfully", user: updatedUser });
         } catch (error) {
+            logError(error);
             console.error("Error updating user role:", error);
+            
             res.status(500).json({ message: "Server error" });
         }
     }
 
 };
+
 
 module.exports = userController;
