@@ -31,6 +31,7 @@ async function sendTicketEmail(user, result) {
     await transporter.sendMail(mailOptions);
     console.log('Email sent successfully');
   } catch (error) {
+logError(error);
     console.error('Error sending email:', error);
     throw error;
   }
@@ -49,6 +50,7 @@ async function sendEmailNotification(message) {
     await transporter.sendMail(mailOptions);
     console.log('Email notification sent successfully');
   } catch (error) {
+logError(error);
     console.error('Error sending email notification:', error);
     throw error;
   }
@@ -70,6 +72,7 @@ const messagesController = {
                 // console.log("Message updated successfully");
                  res.status(200).json({ message: "Updated successfully" });
             } catch (error) {
+logError(error);
                 res.status(409).json({ message: error.message });
             }
         },
@@ -87,6 +90,7 @@ const messagesController = {
     
                 res.status(200).json({ message });
             } catch (error) {
+logError(error);
                 res.status(500).json({ message: error.message });
             }
         },
@@ -96,6 +100,7 @@ const messagesController = {
     
                 res.status(200).json({ messages });
             } catch (error) {
+logError(error);
                 res.status(500).json({ message: error.message });
             }
         },
@@ -112,6 +117,7 @@ const messagesController = {
                 }
                 res.status(200).json({ message: "Message deleted successfully" });
             } catch (error) {
+logError(error);
                 res.status(500).json({ message: error.message });
             }
         },
@@ -140,6 +146,7 @@ const messagesController = {
                     return res.status(404).json({ message: "Receiver is not connected" });
                 }
             } catch (error) {
+logError(error);
                 res.status(500).json({ message: error.message });
             }
     
@@ -218,6 +225,7 @@ const messagesController = {
 
       res.status(200).json(result);
     } catch (error) {
+logError(error);
       console.error('Error creating message:', error);
       res.status(500).json({ error: error.message });
     }
@@ -243,6 +251,7 @@ const messagesController = {
 
       return res.status(200).send(result);
     } catch (error) {
+logError(error);
       console.error(error);
       res.status(500).send(error.message);
     }
@@ -277,6 +286,7 @@ const messagesController = {
 
       res.status(200).json({ message: "Chat saved successfully" });
     } catch (error) {
+logError(error);
       console.error('Error creating private chat:', error);
       res.status(500).json({ error: error.message });
     }

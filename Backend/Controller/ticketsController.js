@@ -45,6 +45,7 @@ async function sendEmailNotification(user, subject,emailContent) {
         console.log('Notification deleted after 1 hour');
     }, 60 * 60 * 1000); // 1 hour in milliseconds
   } catch (error) {
+logError(error);
       console.error('Error sending email:', error);
       throw error;
     }
@@ -59,6 +60,7 @@ const ticketsController = {
   
       res.status(201).json({ message: "tickets successfully", tickets });
     } catch (error) {
+logError(error);
       res.status(500).json({ message: error.message });
     }
   },  
@@ -88,6 +90,7 @@ createTicket: async (req, res) => {
             res.status(201).json({ message: "ticket created successfully" });
         }
         catch (error) {
+logError(error);
             console.error("Error creating ticket:", error);
             res.status(500).json({ message: "Server error" });
 
@@ -99,6 +102,7 @@ createTicket: async (req, res) => {
         const tickets = await ticketsModel.find().lean();
         return res.status(200).json({ tickets });
       } catch (error) {
+logError(error);
         console.error("Error fetching tickets:", error);
         return res.status(500).json({ message: "Server error" });
       }
@@ -124,6 +128,7 @@ createTicket: async (req, res) => {
      return res.status(200).json({ message: 'Ticket updated and closed successfully', updatedTicket });
       } 
       catch (error) {
+logError(error);
 
         return res.status(500).json({ message: error.message });
       }
@@ -140,6 +145,7 @@ createTicket: async (req, res) => {
             return res.status(200).json({ message: 'Please chat with us' });
           }
         } catch (error) {
+logError(error);
           return res.status(500).json({ message: 'Error', error: error.message });
         }
       },
@@ -159,6 +165,7 @@ createTicket: async (req, res) => {
         }
     }
     catch (error) {
+logError(error);
       return res.status(500).json({ message: 'Error'});
     }
   },
@@ -195,6 +202,7 @@ createTicket: async (req, res) => {
   return res.status(200).json({ priority });
     } 
     catch (error) {
+logError(error);
       return res.status(500).json({ message: 'Error', error: error.message });
     }
   }, 
@@ -214,6 +222,7 @@ const updateTicketAndNotifyUser = async (ticketId, solution, userId) => {
 
     return updatedTicket;
   } catch (error) {
+logError(error);
     throw new Error(error.message);
   }
  

@@ -21,6 +21,7 @@ const FAQController = {
         await newFAQ.save();
         res.status(200).json({ msg: "FAQ created successfully" });
       } catch (error) {
+logError(error);
         res.status(500).json({ msg: error.message });
       }
     },
@@ -41,6 +42,7 @@ const FAQController = {
           });
           res.status(200).json({ msg: 'FAQs found successfully', FAQs });
       } catch (error) {
+logError(error);
           res.status(500).json({ msg: error.message });
       }
   },
@@ -51,6 +53,7 @@ const FAQController = {
           const FAQs = await FAQModel.find({ subCategory: subCategory });
           res.status(200).json({ FAQs, subCategory });
       } catch (error) {
+logError(error);
           res.status(500).json({ msg: error.message });
       }
   },
