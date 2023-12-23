@@ -70,7 +70,9 @@ createTicket: async (req, res) => {
                 workflow
             });
             await newTicket.save();
-            res.status(201).json({ message: "ticket created successfully" });
+            const user = await userModel.findById({user_id});
+            console.log(user);
+            res.status(201).json({ message: "ticket created successfully" , user});
         }
         catch (error) {
             console.error("Error creating ticket:", error);
@@ -79,6 +81,15 @@ createTicket: async (req, res) => {
 
         }
     },
+    getAllTickets: async (req, res) => {
+      try {
+        const tickets = await ticketsModel.find().lean();
+        return res.status(200).json({ tickets });
+      } catch (error) {
+        console.error("Error fetching tickets:", error);
+        return res.status(500).json({ message: "Server error" });
+      }
+    },
     //update ticket
     updateTicket: async (req, res) => {
       console.log("hi");
@@ -178,7 +189,10 @@ createTicket: async (req, res) => {
 const updateTicketAndNotifyUser = async (ticketId, solution, userId) => {
   try {
     // Update ticket with solution and change status to 'closed'
-    const updatedTicket = await ticketsModel.findByIdAndUpdate(ticketId); // { new: true } returns the updated ticket
+    const updatedTicket = await ticketsModel.findByIdAndUpdate(ticketId,
+      { solution, status: 'closed' }, // Update solution and status
+      { new: true } 
+      ); // { new: true } returns the updated ticket
 
     // Send email notification to the user
     const user = await userModel.findById(userId); // Assuming user ID is available in the request

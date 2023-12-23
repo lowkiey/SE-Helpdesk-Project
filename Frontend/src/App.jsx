@@ -3,7 +3,6 @@ import Homepage from "./pages/HomePage";
 import Login from "./pages/login";
 import Signup from "./pages/register";
 import Tickets from "./pages/tickets";
-import Createticket from "./pages/createTicket";
 
 function App() {
   return (
@@ -15,7 +14,6 @@ function App() {
       <Route path="/home" element={<Homepage />} />
       <Route path="/register" element={<Signup />} />
       <Route path="/tickets" element={<Tickets />} />
-      <Route path="/createticket" element={<Createticket />} /> 
     </Routes>
   );
 }
