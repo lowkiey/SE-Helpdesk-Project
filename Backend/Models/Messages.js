@@ -7,6 +7,7 @@ const Messagesschema = new mongoose.Schema(
     user_id: { type: mongoose.Schema.Types.ObjectId, required: true, unique: true },
     messages: { type: [String], required: true, minLength: 6 },
     timestamp: { type: Date, default: Date.now },
+    requested:{ type:Boolean, default:false },
   },
   {
     strict: false,

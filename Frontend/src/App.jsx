@@ -3,9 +3,10 @@ import { Routes, Route } from "react-router-dom";
 import Homepage from "./pages/HomePage";
 import Login from "./pages/login";
 import Signup from "./pages/register";
-import Tickets from "./pages/reports";
+
 import Chat from "./chat/chatPage";
 import ChatPage from "./pages/chat";
+import Tickets from "./pages/tickets";
 
 import io from "socket.io-client";
 
@@ -43,6 +44,7 @@ const App = () => {
       <Route path="/register" element={<Signup />} />
       <Route path="/reports" element={<Tickets />} />
       <Route path="/chat" element={<ChatPage />} />
+      <Route path="/tickets" element={<Tickets />} />
 
       {/* Pass the socket instance as a prop to the Chat component */}
       <Route

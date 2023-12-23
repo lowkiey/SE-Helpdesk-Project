@@ -8,5 +8,5 @@ router.get('/getAllChats', messageController.getChat); // Update route to use ge
 router.put('/update/:id', messageController.updateMessage);
 router.post('/createPrivateChat', messageController.createPrivateChat);
 router.post('/check', messageController.checkChat);
-router.get('/chats', messageController.getChat); // Add a new route for getting chats
+router.get('/chats', messageController.getChat); 
 module.exports = router;
