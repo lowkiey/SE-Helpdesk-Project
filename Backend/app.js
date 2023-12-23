@@ -11,6 +11,7 @@ const FAQRouter = require("./Routes/FAQ");
 require('dotenv').config();
 const authenticationMiddleware = require("./Middleware/authenticationMiddleware");
 const cors = require("cors");
+const { backupDatabase } = require('./backup');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -45,6 +46,7 @@ const connectionOptions = {
 mongoose
     .connect(db_url, connectionOptions)
     .then(() => console.log("MongoDB connected"))
+    .then(() => backupDatabase())
     .catch((e) => {
         console.log(e);
     });
