@@ -65,16 +65,17 @@ const Login = () => {
 
       }
     } catch (error) {
+      logError(error);
       console.error(error);
-      if (error.response) {
-        if (error.response.status === 404) {
-          setError("Email Not Found.");
-        } else if (error.response.status === 405) {
-          setError("Incorrect password.");
-        }
-      } else {
-        setError("Server error. Please try again later.");
-      }
+      // if (error.response) {
+      //   // if (error.response.status === 404) {
+      //   //   setError("Email Not Found.");
+      //   // } else if (error.response.status === 405) {
+      //   //   setError("Incorrect password.");
+      //   // }
+      // } else {
+      //   setError("Server error. Please try again later.");
+      // }
     }
   };
 

@@ -4,6 +4,7 @@ const axios = require('axios');
 const speakeasy = require('speakeasy');
 const User = require('../Models/userModel');
 const Agent = require('../Models/Agent');
+const logError = require('../utils/logger');
 const ChatModel = require("../Models/ChatModel");
 const { ReturnDocument } = require('mongodb');
 const userModel = require('../Models/userModel');
@@ -54,6 +55,96 @@ async function sendEmailNotification(message) {
 }
 
 const messagesController = {
+      
+        updateMessage: async (req, res) => {
+            try {
+                const messages=await MessagesModel.findByIdAndUpdate(req.params.id,{message:req.body.message});
+               
+    
+                // Update the timestamp
+                // existingMessage.timestamp = new Date();
+                // await existingMessage.save();
+    
+                // sendEmailNotification(user_id, 'Ticket Update', 'Your ticket has been updated.');
+    
+                // console.log("Message updated successfully");
+                 res.status(200).json({ message: "Updated successfully" });
+            } catch (error) {
+                res.status(409).json({ message: error.message });
+            }
+        },
+        getMessageById: async (req, res) => {
+            try {
+                const messageId = req.params.id;
+                if (!ObjectId.isValid(messageId)) {
+                    return res.status(400).json({ message: "Invalid message ID" });
+                }
+                const message = await MessagesModel.findById(messageId);
+    
+                if (!message) {
+                    return res.status(404).json({ message: "Message not found" });
+                }
+    
+                res.status(200).json({ message });
+            } catch (error) {
+                res.status(500).json({ message: error.message });
+            }
+        },
+        getAllMessages: async (req, res) => {
+            try {
+                const messages = await MessagesModel.find();
+    
+                res.status(200).json({ messages });
+            } catch (error) {
+                res.status(500).json({ message: error.message });
+            }
+        },
+        deleteMessageById: async (req, res) => {
+            try {
+                const messageId = req.params.id;
+                if (!ObjectId.isValid(messageId)) {
+                    return res.status(400).json({ message: "Invalid message ID" });
+                }
+                const deletedMessage = await MessagesModel.findByIdAndDelete(messageId);
+    
+                if (!deletedMessage) {
+                    return res.status(404).json({ message: "Message not found" });
+                }
+                res.status(200).json({ message: "Message deleted successfully" });
+            } catch (error) {
+                res.status(500).json({ message: error.message });
+            }
+        },
+        sendMessage: async(req,res)=>{
+            try{
+                const { user_id, agent_id, message } = req.body;
+                if (!ObjectId.isValid(agent_id)) {
+                    return res.status(400).json({ message: "Invalid agent_id" });
+                }
+    
+                const receiverSocketId = userSockets[agent_id];
+                if (receiverSocketId) {
+                    // Send the message to the receiver using Socket.IO
+                    io.to(receiverSocketId).emit('new_message', { user_id, message });
+    
+                    // Save the message to your database
+                    const newMessage = new MessagesModel({
+                        user_id: user_id, 
+                        message,
+                    });
+    
+                    await newMessage.save();
+    
+                    res.status(200).json({ message: "Message sent successfully" });
+                } else {
+                    return res.status(404).json({ message: "Receiver is not connected" });
+                }
+            } catch (error) {
+                res.status(500).json({ message: error.message });
+            }
+    
+        },
+
   checkChat: async (userId, agentId, messages) => {
     return new Promise(async (myResolve, myReject) => {
         try {
@@ -75,8 +166,6 @@ const messagesController = {
         }
     });
 },
-
-
   getAgent: async (type) => {
 
     return new Promise(async (myResolve, myReject) => {

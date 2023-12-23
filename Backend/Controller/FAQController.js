@@ -2,6 +2,7 @@
 const FAQModel = require('../Models/FAQModel');
 const userModel = require("../Models/userModel");
 const sessionModel = require("../Models/sessionModel");
+const logError = require('../utils/logger');
 const jwt = require("jsonwebtoken");
 require('dotenv').config();
 const secretKey = process.env.SECRET_KEY;

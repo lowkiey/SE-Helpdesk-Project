@@ -10,7 +10,7 @@ import { set } from "lodash";
 
 let backend_url = "http://localhost:3000/api/v1";
 
-export default function HomePage() {
+export default function FAQ() {
     const navigate = useNavigate();
     const [cookies] = useCookies([]);
     const [userName, setUserName] = useState("");

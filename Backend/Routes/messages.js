@@ -4,6 +4,9 @@ const messageController = require('../Controller/messagesController');
 
 // Define routes for messageController
 router.post('/', messageController.createMessage);
+router.get('/getAll', messageController.getAllMessages);
+router.get('/:id', messageController.getMessageById);
+router.delete('/:id', messageController.deleteMessageById);
 router.get('/getAllChats', messageController.getChat); // Update route to use getChat method
 router.put('/update/:id', messageController.updateMessage);
 router.post('/createPrivateChat', messageController.createPrivateChat);

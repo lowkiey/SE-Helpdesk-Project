@@ -9,6 +9,7 @@ const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const axios = require("axios"); // Import axios for making HTTP requests
 const speakeasy = require("speakeasy");
+const logError = require('../utils/logger');
 const transporter = nodemailer.createTransport({
     host: 'smtp-mail.outlook.com',
     port: 587,
@@ -49,6 +50,7 @@ async function sendOtpEmail(user, otp) {
         //     console.log('Notification deleted after 1 hour');
         // }, 60 * 60 * 1000); // 1 hour in milliseconds
     } catch (error) {
+logError(error);
         console.error('Error sending email:', error);
         throw error; // Make sure to rethrow the error to propagate it to the calling function
     }
@@ -67,6 +69,7 @@ const verifyOTP = async (email, otp) => {
 
         return true;
     } catch (error) {
+logError(error);
         console.error('Error verifying OTP:', error);
         return false;
     }
@@ -118,6 +121,8 @@ const userController = {
 
     //         res.status(201).json({ message: "User registered successfully" });
     //     } catch (error) {
+// logError(error);
+
     //         console.error("Error registering user:", error);
     //         res.status(500).json({ message: "Server error" });
     //     }
@@ -149,6 +154,7 @@ const userController = {
 
             res.status(201).json({ message: "User registered successfully" });
         } catch (error) {
+            logError(error);
             console.error("Error registering user:", error);
             res.status(500).json({ message: "Server error" });
         }
@@ -168,6 +174,7 @@ const userController = {
             // Check password
             const passwordMatch = await bcrypt.compare(password, user.password);
             if (!passwordMatch) {
+                
                 return res.status(405).json({ message: 'Incorrect password' });
             }
 
@@ -208,12 +215,13 @@ const userController = {
                     withCredentials: true,
                     httpOnly: false,
                     sameSite: 'none',
-                    secure: true,    //comment this if u want to run using thunder client
+                    // secure: true,    //comment this if u want to run using thunder client
                 })
                 .status(200)
                 .json({ message: 'Login successful', user, token, userNotifications });
             }
         } catch (error) {
+            logError(error);
             console.error('Error initiating login:', error);
             res.status(500).json({ message: 'Server error' });
         }
@@ -258,6 +266,7 @@ const userController = {
                 .status(200)
                 .json({ message: 'Login successful', user, token, userNotifications });
         } catch (error) {
+logError(error);
             console.error('Error completing login:', error);
             res.status(500).json({ message: 'Server error' });
         }
@@ -267,6 +276,8 @@ const userController = {
             const users = await userModel.find();
             return res.status(200).json(users);
         } catch (e) {
+            logError(error);
+
             return res.status(500).json({ message: e.message });
         }
     },
@@ -275,6 +286,7 @@ const userController = {
             const user = await userModel.findById(req.params.id);
             return res.status(200).json(user);
         } catch (error) {
+logError(error);
             return res.status(500).json({ message: error.message });
         }
     },
@@ -289,6 +301,7 @@ const userController = {
             );
             return res.status(200).json({ user, msg: "User updated successfully" });
         } catch (error) {
+logError(error);
             return res.status(500).json({ message: error.message });
         }
     },
@@ -297,6 +310,7 @@ const userController = {
             const user = await userModel.findByIdAndDelete(req.params.id);
             return res.status(200).json({ user, msg: "User deleted successfully" });
         } catch (error) {
+logError(error);
             return res.status(500).json({ message: error.message });
         }
     },
@@ -306,20 +320,20 @@ const userController = {
             const user = await userModel.findOne({ displayName });
 
             if (!user) {
+                
                 return res.status(404).json({ message: "User not found" });
-            }
+            };
             const agentCount = await userModel.countDocuments({ role: "agent" });
 
             if (role === "agent") {
-                const { rating, resolution_time, ticket_id } = req.body;
+                const {rating, resolution_time} = req.body;
 
                 // Create a new agent
                 const newAgent = new AgentModel({
-                    _id: user._id,
                     user_id: user._id,
                     rating,
                     resolution_time,
-                    ticket_id
+                    // ticket_id
                 });
 
                 // Save the agent to the database
@@ -336,12 +350,14 @@ const userController = {
 
             return res.status(200).json({ message: "Role updated successfully", user: updatedUser });
         } catch (error) {
+            logError(error);
             console.error("Error updating user role:", error);
+            
             res.status(500).json({ message: "Server error" });
         }
-    },
-    
+    }
 
 };
+
 
 module.exports = userController;
