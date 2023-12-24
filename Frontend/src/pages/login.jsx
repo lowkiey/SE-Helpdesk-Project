@@ -62,9 +62,10 @@ const Login = () => {
         const user = response.data.user
         localStorage.setItem("token", response.data.token)
         console.log(response.data.token)
-        if (user.role === "user") {
+        if(user.role === "user"){ 
           navigate("/home");
         }
+        
         console.log(response.data)
 
       }

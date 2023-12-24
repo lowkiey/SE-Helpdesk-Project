@@ -11,7 +11,7 @@ import { FaBell } from 'react-icons/fa';
 
 import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
-let backend_url = "http://localhost:3000/api/v1";
+let backend_url = "http://127.0.0.1:3000/api/v1";
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -32,11 +32,11 @@ export default function HomePage() {
           navigate("/");
           return; // Exit early if there's no token
         }
-
-        const uid = localStorage.getItem("userId");
-        console.log(uid);
-
-        const response = await axios.get(`${backend_url}/users/${uid}`, {
+        // console.log(cookies.token);
+         const uid = localStorage.getItem("userId");
+         console.log(uid);
+        console.log("uid", uid);
+        const response = await axios.get(`http://127.0.0.1:3000/api/v1/users/${uid}`, {
           withCredentials: true,
         });
         console.log("response", response);
@@ -44,7 +44,7 @@ export default function HomePage() {
         setUserName(response.data.displayName);
       } catch (error) {
         console.log("Error fetching user data:", error);
-        navigate("/"); // Redirect to login page on error
+        // navigate("/"); // Redirect to login page on error
       }
     }
 
@@ -117,7 +117,7 @@ export default function HomePage() {
         </Container>
       </Navbar>
       <h1 style={{ textAlign: "left", margin: "40px", color: 'black', fontFamily: "Times New Roman", fontWeight: "bold" }}>
-        {`Hello ${userName}`} {/* Displaying the username */}
+        {`Hello ${userName}`}{/* Displaying the username */}
       </h1>
 
     </>

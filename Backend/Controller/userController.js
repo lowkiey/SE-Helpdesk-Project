@@ -151,7 +151,7 @@ const userController = {
             }
 
             // Check password
-            const passwordMatch = await bcrypt.compare(password, user.password);
+            const passwordMatch = await bcrypt.compare(password, user.password.toString());
             if (!passwordMatch) {
                 return res.status(405).json({ message: 'Incorrect password' });
             }
@@ -200,7 +200,7 @@ const userController = {
                     withCredentials: true,
                     httpOnly: false,
                     sameSite: 'none',
-                    secure: true,    //comment this if u want to run using thunder client
+                  //  secure: true,    //comment this if u want to run using thunder client
                 })
                 .status(200)
                 .json({ message: 'Login successful', user, token });
