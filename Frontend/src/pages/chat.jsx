@@ -74,6 +74,7 @@ export default function Chat() {
                                     <button
                                         className="btn btn-primary start-chat-btn"
                                         onClick={() => handleSelectUser(availableUser._id)}
+                                        style={{ backgroundColor: "purple", border: "purple" }}
                                     >
                                         Start Chat
                                     </button>

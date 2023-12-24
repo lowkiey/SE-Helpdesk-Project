@@ -232,7 +232,25 @@ export default function HomePage() {
                     <h1 style={{ textAlign: "center", margin: "40px", color: 'purple', fontFamily: "Sans-Serif", fontWeight: "bold" }}>
                         {`Hello ${userName}, This is the Agent's Page?`} {/* by3rfni 3aleh w y2oli ezayik ya latifa */}
                     </h1>
-                    
+                    <br></br>
+                    <div style={{ display: 'flex', justifyContent: 'center', marginTop: '50px' }}>
+                        <button
+                            className="open-chats"
+                            style={{
+                                fontFamily: "sans-serif",
+                                fontWeight: "bold",
+                                backgroundColor: 'purple',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '5px',
+                                width: '15%',
+                                padding: '8px',
+                            }}
+                            onClick={() => navigate("/chat")}
+                        >
+                            Open Chats
+                        </button>
+                    </div>
                     {/* <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <button className="create" onClick={() => navigate("/tickets")} style={{ fontFamily: "sans-serif", fontWeight: "bold", backgroundColor: 'purple', color: 'white', border: 'white', borderRadius: '5px', width: '15%', padding: '8px', }}>Create a new support ticket</button>
             <button className="activity" onClick={() => navigate("/tickets")} style={{ marginTop: '25px', fontFamily: "sans-serif", fontWeight: "bold", backgroundColor: 'purple', color: 'white', border: 'white', borderRadius: '5px', width: '15%', padding: '8px', }}>Recent Activity</button>
