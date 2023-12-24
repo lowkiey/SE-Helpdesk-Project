@@ -124,7 +124,9 @@ export default function HomePage() {
         const uid = localStorage.getItem("userId");
         console.log(uid);
 
-        const response = await axios.get(`${backend_url}/users/${uid}`, {
+
+        const response = await axios.get(`${backend_url}/users/${uid}`,
+         {
           withCredentials: true,
         });
         console.log("response", response);
