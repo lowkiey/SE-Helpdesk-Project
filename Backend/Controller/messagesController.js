@@ -31,7 +31,7 @@ async function sendTicketEmail(user, result) {
     await transporter.sendMail(mailOptions);
     console.log('Email sent successfully');
   } catch (error) {
-logError(error);
+    logError(error);
     console.error('Error sending email:', error);
     throw error;
   }
@@ -50,144 +50,144 @@ async function sendEmailNotification(message) {
     await transporter.sendMail(mailOptions);
     console.log('Email notification sent successfully');
   } catch (error) {
-logError(error);
+    logError(error);
     console.error('Error sending email notification:', error);
     throw error;
   }
 }
 
 const messagesController = {
-      
-        updateMessage: async (req, res) => {
-            try {
-                const messages=await MessagesModel.findByIdAndUpdate(req.params.id,{message:req.body.message});
-               
-    
-                // Update the timestamp
-                // existingMessage.timestamp = new Date();
-                // await existingMessage.save();
-    
-                // sendEmailNotification(user_id, 'Ticket Update', 'Your ticket has been updated.');
-    
-                // console.log("Message updated successfully");
-                 res.status(200).json({ message: "Updated successfully" });
-            } catch (error) {
-logError(error);
-                res.status(409).json({ message: error.message });
-            }
-        },
-        getMessageById: async (req, res) => {
-            try {
-                const messageId = req.params.id;
-                if (!ObjectId.isValid(messageId)) {
-                    return res.status(400).json({ message: "Invalid message ID" });
-                }
-                const message = await MessagesModel.findById(messageId);
-    
-                if (!message) {
-                    return res.status(404).json({ message: "Message not found" });
-                }
-    
-                res.status(200).json({ message });
-            } catch (error) {
-logError(error);
-                res.status(500).json({ message: error.message });
-            }
-        },
-        getAllMessages: async (req, res) => {
-            try {
-                const messages = await MessagesModel.find();
-    
-                res.status(200).json({ messages });
-            } catch (error) {
-logError(error);
-                res.status(500).json({ message: error.message });
-            }
-        },
-        deleteMessageById: async (req, res) => {
-            try {
-                const messageId = req.params.id;
-                if (!ObjectId.isValid(messageId)) {
-                    return res.status(400).json({ message: "Invalid message ID" });
-                }
-                const deletedMessage = await MessagesModel.findByIdAndDelete(messageId);
-    
-                if (!deletedMessage) {
-                    return res.status(404).json({ message: "Message not found" });
-                }
-                res.status(200).json({ message: "Message deleted successfully" });
-            } catch (error) {
-logError(error);
-                res.status(500).json({ message: error.message });
-            }
-        },
-        sendMessage: async(req,res)=>{
-            try{
-                const { user_id, agent_id, message } = req.body;
-                if (!ObjectId.isValid(agent_id)) {
-                    return res.status(400).json({ message: "Invalid agent_id" });
-                }
-    
-                const receiverSocketId = userSockets[agent_id];
-                if (receiverSocketId) {
-                    // Send the message to the receiver using Socket.IO
-                    io.to(receiverSocketId).emit('new_message', { user_id, message });
-    
-                    // Save the message to your database
-                    const newMessage = new MessagesModel({
-                        user_id: user_id, 
-                        message,
-                    });
-    
-                    await newMessage.save();
-    
-                    res.status(200).json({ message: "Message sent successfully" });
-                } else {
-                    return res.status(404).json({ message: "Receiver is not connected" });
-                }
-            } catch (error) {
-logError(error);
-                res.status(500).json({ message: error.message });
-            }
-    
-        },
+
+  updateMessage: async (req, res) => {
+    try {
+      const messages = await MessagesModel.findByIdAndUpdate(req.params.id, { message: req.body.message });
+
+
+      // Update the timestamp
+      // existingMessage.timestamp = new Date();
+      // await existingMessage.save();
+
+      // sendEmailNotification(user_id, 'Ticket Update', 'Your ticket has been updated.');
+
+      // console.log("Message updated successfully");
+      res.status(200).json({ message: "Updated successfully" });
+    } catch (error) {
+      logError(error);
+      res.status(409).json({ message: error.message });
+    }
+  },
+  getMessageById: async (req, res) => {
+    try {
+      const messageId = req.params.id;
+      if (!ObjectId.isValid(messageId)) {
+        return res.status(400).json({ message: "Invalid message ID" });
+      }
+      const message = await MessagesModel.findById(messageId);
+
+      if (!message) {
+        return res.status(404).json({ message: "Message not found" });
+      }
+
+      res.status(200).json({ message });
+    } catch (error) {
+      logError(error);
+      res.status(500).json({ message: error.message });
+    }
+  },
+  getAllMessages: async (req, res) => {
+    try {
+      const messages = await MessagesModel.find();
+
+      res.status(200).json({ messages });
+    } catch (error) {
+      logError(error);
+      res.status(500).json({ message: error.message });
+    }
+  },
+  deleteMessageById: async (req, res) => {
+    try {
+      const messageId = req.params.id;
+      if (!ObjectId.isValid(messageId)) {
+        return res.status(400).json({ message: "Invalid message ID" });
+      }
+      const deletedMessage = await MessagesModel.findByIdAndDelete(messageId);
+
+      if (!deletedMessage) {
+        return res.status(404).json({ message: "Message not found" });
+      }
+      res.status(200).json({ message: "Message deleted successfully" });
+    } catch (error) {
+      logError(error);
+      res.status(500).json({ message: error.message });
+    }
+  },
+  sendMessage: async (req, res) => {
+    try {
+      const { user_id, agent_id, message } = req.body;
+      if (!ObjectId.isValid(agent_id)) {
+        return res.status(400).json({ message: "Invalid agent_id" });
+      }
+
+      const receiverSocketId = userSockets[agent_id];
+      if (receiverSocketId) {
+        // Send the message to the receiver using Socket.IO
+        io.to(receiverSocketId).emit('new_message', { user_id, message });
+
+        // Save the message to your database
+        const newMessage = new MessagesModel({
+          user_id: user_id,
+          message,
+        });
+
+        await newMessage.save();
+
+        res.status(200).json({ message: "Message sent successfully" });
+      } else {
+        return res.status(404).json({ message: "Receiver is not connected" });
+      }
+    } catch (error) {
+      logError(error);
+      res.status(500).json({ message: error.message });
+    }
+
+  },
 
   checkChat: async (userId, agentId, messages) => {
     return new Promise(async (myResolve, myReject) => {
-        try {
-            let chat = await ChatModel.findOne({ userId, agentId });
+      try {
+        let chat = await ChatModel.findOne({ userId, agentId });
 
-            if (!chat) {
-                chat = await ChatModel.create({ userId, agentId, messages: [] });
-            }
-
-            // Assuming messages is an array of message objects
-            if (messages && messages.length > 0) {
-                chat.messages.push(...messages);
-                await chat.save();
-            }
-
-            myResolve(chat);
-        } catch (err) {
-            myReject(err);
+        if (!chat) {
+          chat = await ChatModel.create({ userId, agentId, messages: [] });
         }
+
+        // Assuming messages is an array of message objects
+        if (messages && messages.length > 0) {
+          chat.messages.push(...messages);
+          await chat.save();
+        }
+
+        myResolve(chat);
+      } catch (err) {
+        myReject(err);
+      }
     });
-},
+  },
   getAgent: async (type) => {
 
     return new Promise(async (myResolve, myReject) => {
-      await userModel.findOne({ type , role: 'agent'})
-      .then((agent) => {
-        if (!agent) {
-          myResolve('not available');
-        } else {
-          myResolve(agent);
-        }
-      })
-      .catch((err) => {
-        myReject(err);
-      })
-      
+      await userModel.findOne({ type, role: 'agent' })
+        .then((agent) => {
+          if (!agent) {
+            myResolve('not available');
+          } else {
+            myResolve(agent);
+          }
+        })
+        .catch((err) => {
+          myReject(err);
+        })
+
     })
   },
 
@@ -201,7 +201,7 @@ logError(error);
       res.status(500).json({ error: err.message });
     }
   },
-   
+
 
 
   createMessage: async (req, res) => {
@@ -225,7 +225,7 @@ logError(error);
 
       res.status(200).json(result);
     } catch (error) {
-logError(error);
+      logError(error);
       console.error('Error creating message:', error);
       res.status(500).json({ error: error.message });
     }
@@ -251,7 +251,7 @@ logError(error);
 
       return res.status(200).send(result);
     } catch (error) {
-logError(error);
+      logError(error);
       console.error(error);
       res.status(500).send(error.message);
     }
@@ -286,11 +286,38 @@ logError(error);
 
       res.status(200).json({ message: "Chat saved successfully" });
     } catch (error) {
-logError(error);
+      logError(error);
       console.error('Error creating private chat:', error);
       res.status(500).json({ error: error.message });
     }
   },
+  chatUser: async (req, res) => {
+    try {
+      const { userId } = req.body;
+
+      const existingUser = await User.findById(userId);
+      console.log(existingUser);
+      if (!existingUser) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+      console.log("existingUser.user_id", existingUser._id.toString());
+
+      // Check if the user is already available
+      if (existingUser.available) {
+        return res.status(200).json({ user: existingUser });
+      }
+      // Update the user's availability
+      existingUser.available = true;
+      await existingUser.save();
+      
+
+      // Return the user as a success response
+      res.status(200).json({ user: existingUser });
+    } catch (error) {
+      console.error('Error while creating chat user:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }
 };
 
 module.exports = messagesController;

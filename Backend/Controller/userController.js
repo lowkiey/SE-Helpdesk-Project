@@ -10,6 +10,7 @@ const nodemailer = require("nodemailer");
 const axios = require("axios"); // Import axios for making HTTP requests
 const speakeasy = require("speakeasy");
 const logError = require('../utils/logger');
+
 const transporter = nodemailer.createTransport({
     host: 'smtp-mail.outlook.com',
     port: 587,
@@ -50,7 +51,7 @@ async function sendOtpEmail(user, otp) {
         //     console.log('Notification deleted after 1 hour');
         // }, 60 * 60 * 1000); // 1 hour in milliseconds
     } catch (error) {
-logError(error);
+        logError(error);
         console.error('Error sending email:', error);
         throw error; // Make sure to rethrow the error to propagate it to the calling function
     }
@@ -69,13 +70,26 @@ const verifyOTP = async (email, otp) => {
 
         return true;
     } catch (error) {
-logError(error);
+        logError(error);
         console.error('Error verifying OTP:', error);
         return false;
     }
 };
 
 const userController = {
+
+    getAvailableUsers: async (req, res) => {
+        try {
+            // Find all available users
+            const availableUser = await userModel.find({ available: true }).lean();
+
+            res.status(200).json({ availableUser });
+        } catch (error) {
+            logError(error);
+            console.error('Error fetching available users:', error);
+            res.status(500).json({ message: 'Server error' });
+        }
+    },
     //Register El adima
     // register: async (req, res) => {
     //     try {
@@ -121,7 +135,7 @@ const userController = {
 
     //         res.status(201).json({ message: "User registered successfully" });
     //     } catch (error) {
-// logError(error);
+    // logError(error);
 
     //         console.error("Error registering user:", error);
     //         res.status(500).json({ message: "Server error" });
@@ -174,51 +188,51 @@ const userController = {
             // Check password
             const passwordMatch = await bcrypt.compare(password, user.password);
             if (!passwordMatch) {
-                
+
                 return res.status(405).json({ message: 'Incorrect password' });
             }
 
             // Generate and send OTP to user's email 
-            if(user.mfa === true){
+            if (user.mfa === true) {
 
-            const generatedOTP = generateOTP();
-            user.otp = generatedOTP; // Save OTP in user document
-            await user.save();
-            await sendOtpEmail(user, generatedOTP);
-            return res.status(200).json({ message: 'OTP sent to your email', email, user });
+                const generatedOTP = generateOTP();
+                user.otp = generatedOTP; // Save OTP in user document
+                await user.save();
+                await sendOtpEmail(user, generatedOTP);
+                return res.status(200).json({ message: 'OTP sent to your email', email, user });
             }
-            else{
+            else {
 
-              
-            const { _id, displayName, role } = user;
 
-            const token = jwt.sign(
-                { user: { userId: user._id, role: user.role } },
-                secretKey,
-                { expiresIn: 3 * 60 * 60 }
-            );
-            const currentDateTime = new Date();
-            const expiresAt = new Date(+currentDateTime + 180000000); // 3 hours
-            let newSession = new sessionModel({
-                userId: user._id,
-                token,
-                // expiresAt,
-            });
-            await newSession.save();
-            const userId = user._id.toString();
+                const { _id, displayName, role } = user;
 
-            const userNotifications = await notificationModel.find({ to: email }).lean();
-           
-            return res
-                .cookie('token', token, {
-                    expires: expiresAt,
-                    withCredentials: true,
-                    httpOnly: false,
-                    sameSite: 'none',
-                    // secure: true,    //comment this if u want to run using thunder client
-                })
-                .status(200)
-                .json({ message: 'Login successful', user, token, userNotifications });
+                const token = jwt.sign(
+                    { user: { userId: user._id, role: user.role } },
+                    secretKey,
+                    { expiresIn: 3 * 60 * 60 }
+                );
+                const currentDateTime = new Date();
+                const expiresAt = new Date(+currentDateTime + 180000000); // 3 hours
+                let newSession = new sessionModel({
+                    userId: user._id,
+                    token,
+                    // expiresAt,
+                });
+                await newSession.save();
+                const userId = user._id.toString();
+
+                const userNotifications = await notificationModel.find({ to: email }).lean();
+
+                return res
+                    .cookie('token', token, {
+                        expires: expiresAt,
+                        withCredentials: true,
+                        httpOnly: false,
+                        sameSite: 'none',
+                        // secure: true,    //comment this if u want to run using thunder client
+                    })
+                    .status(200)
+                    .json({ message: 'Login successful', user, token, userNotifications });
             }
         } catch (error) {
             logError(error);
@@ -254,7 +268,7 @@ const userController = {
             const userId = user._id.toString();
 
             const userNotifications = await notificationModel.find({ to: email }).lean();
-           
+
             return res
                 .cookie('token', token, {
                     expires: expiresAt,
@@ -266,7 +280,7 @@ const userController = {
                 .status(200)
                 .json({ message: 'Login successful', user, token, userNotifications });
         } catch (error) {
-logError(error);
+            logError(error);
             console.error('Error completing login:', error);
             res.status(500).json({ message: 'Server error' });
         }
@@ -286,7 +300,7 @@ logError(error);
             const user = await userModel.findById(req.params.id);
             return res.status(200).json(user);
         } catch (error) {
-logError(error);
+            logError(error);
             return res.status(500).json({ message: error.message });
         }
     },
@@ -301,7 +315,7 @@ logError(error);
             );
             return res.status(200).json({ user, msg: "User updated successfully" });
         } catch (error) {
-logError(error);
+            logError(error);
             return res.status(500).json({ message: error.message });
         }
     },
@@ -310,7 +324,7 @@ logError(error);
             const user = await userModel.findByIdAndDelete(req.params.id);
             return res.status(200).json({ user, msg: "User deleted successfully" });
         } catch (error) {
-logError(error);
+            logError(error);
             return res.status(500).json({ message: error.message });
         }
     },
@@ -320,13 +334,13 @@ logError(error);
             const user = await userModel.findOne({ displayName });
 
             if (!user) {
-                
+
                 return res.status(404).json({ message: "User not found" });
             };
             const agentCount = await userModel.countDocuments({ role: "agent" });
 
             if (role === "agent") {
-                const {rating, resolution_time} = req.body;
+                const { rating, resolution_time } = req.body;
 
                 // Create a new agent
                 const newAgent = new AgentModel({
@@ -352,7 +366,7 @@ logError(error);
         } catch (error) {
             logError(error);
             console.error("Error updating user role:", error);
-            
+
             res.status(500).json({ message: "Server error" });
         }
     }

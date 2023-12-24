@@ -47,7 +47,7 @@ function App() {
       <Route path="/reports" element={<Reports />} />
       <Route path="/tickets" element={<Tickets />} />
       <Route path="/chat" element={<Chat />} />
-      <Route path="/chats" element={<ChatPage socket={socket} />} />
+      <Route path="/chats/:userId" element={<ChatPage socket={socket} />} />
 
     </Routes>
   );

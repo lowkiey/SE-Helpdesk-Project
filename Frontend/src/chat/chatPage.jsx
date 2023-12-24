@@ -1,14 +1,33 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
+import { useParams, Link } from "react-router-dom";
+import { FiChevronLeft } from "react-icons/fi"; // Import the back icon from your desired icon library
+// import { useNavigate } from "react-router-dom";
 
 const ChatComponent = ({ socket }) => {
   const typingTimeout = 500; // milliseconds
-
+  // const navigate = useNavigate();
   const [toggleButtonText, setToggleButtonText] = useState("Disconnect");
   const [inputValue, setInputValue] = useState("");
   const [messages, setMessages] = useState([]);
-  const [displayName, setDisplayName] = useState("User"); // Default to "User" if display name is not available
+  const [displayName, setDisplayName] = useState(""); // Default to "User" if display name is not available
   let typingIndicatorTimeout;
+  const { userId } = useParams();
+
+  // const handleBack = () => {
+  //   const role = localStorage.getItem("role");
+
+  //   console.log("Back button clicked");
+  //   console.log(localStorage.getItem("role"))
+  //   if (role === "agent") {
+  //     navigate("/chat"); // Navigate to chat page if the user is an agent
+  //   } else if(role === "user") {
+  //     navigate("/home"); // Navigate to home if the user is a user
+  //   }else{
+  //     console.log("?");
+  //     navigate("/"); // Navigate to login page if the user is not logged in
+  //   }
+  // };
 
   const toggleConnection = (e) => {
     e.preventDefault();
@@ -75,13 +94,10 @@ const ChatComponent = ({ socket }) => {
   };
 
   useEffect(() => {
-    // Fetch the user information, including the display name, from the server
     const fetchUserInformation = async () => {
       try {
-        const userId = localStorage.getItem("userId");
-
-        // Set the display name in the state
-        setDisplayName( "User"); // Default to "User" if display name is not available
+        const storedDisplayName = localStorage.getItem("name");
+        setDisplayName(storedDisplayName || "User");
       } catch (error) {
         console.error("Error fetching user information:", error);
       }
@@ -89,35 +105,38 @@ const ChatComponent = ({ socket }) => {
 
     fetchUserInformation();
 
-    if (!socket) {
-      return;
+    if (socket) {
+      socket.on("chat message", (msg) => {
+        appendMessage(msg);
+      });
+
+      socket.on("typing", (user) => {
+        showTypingIndicator(user);
+      });
+
+      socket.on("stop typing", () => {
+        hideTypingIndicator();
+      });
     }
-
-    socket.on("chat message", (msg) => {
-      appendMessage(msg);
-    });
-
-    socket.on("typing", (user) => {
-      showTypingIndicator(user);
-    });
-
-    socket.on("stop typing", () => {
-      hideTypingIndicator();
-    });
 
     return () => {
       if (socket) {
         socket.disconnect();
       }
     };
-  }, [socket]);
+  }, [socket, setDisplayName]);
 
   return (
     <div className="container-fluid">
       <div className="row">
         <div className="col-lg-8 offset-lg-2">
           <div className="card mt-4">
-            <div className="card-header bg-dark text-white">Chat</div>
+            <div className="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+              <Link to="/chat" className="btn btn-secondary d-flex align-items-center">
+                <FiChevronLeft /> Back
+              </Link>
+              <h4 style={{ margin: "0" }}>Chats</h4>
+            </div>
             <ul id="messages" className="list-group">
               {messages.map((msg, index) => (
                 <li key={index} className="list-group-item">
