@@ -9,6 +9,7 @@ import Reports from './pages/Reports';
 import Tickets from './pages/tickets';
 import Chat from './pages/chat';
 import ChatPage from './chat/chatPage';
+import Agent from './pages/agent';
 import io from 'socket.io-client';
 
 function App() {
@@ -48,6 +49,7 @@ function App() {
       <Route path="/tickets" element={<Tickets />} />
       <Route path="/chat" element={<Chat />} />
       <Route path="/chats/:userId" element={<ChatPage socket={socket} />} />
+      <Route path="/agent" element={<Agent />} />
 
     </Routes>
   );

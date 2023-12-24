@@ -149,7 +149,7 @@ export default function Ticket() {
               - Run "sfc /scannow" to check for and repair corrupted system files.
           `);
                     break;
-                case ' Application software':
+                case 'Application software':
                     setDescription(`
             1-Update the Application:
               Open the application.
@@ -502,6 +502,7 @@ export default function Ticket() {
             </button>
             <div className="workflow-steps">
                 {selectedCategory && selectedSubCategory && showWorkflowSteps && (
+                    
                     <div className="workflow-steps">
                         <h3 style={{ fontWeight: 'bold', fontSize: '36px' }}>Workflow Steps:</h3>
                         <pre className="workflow-description">{description}</pre>

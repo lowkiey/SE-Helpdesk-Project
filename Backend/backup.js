@@ -33,10 +33,10 @@ async function backupAndSaveLocally() {
   try {
     // Backup database
     const { stdout, stderr } = await exec('mongodump --db SE_Project1 --out C:\\Users\\DaWitchBtch\\Documents\\SE_Project_Backup');
-    
+
     console.log('stdout:', stdout);
     console.error('stderr:', stderr);
-    
+
     // Upload to Dropbox
     await uploadToDropbox('C:\\Users\\DaWitchBtch\\Documents\\SE_Project_Backup\\SE_Project1');
 
