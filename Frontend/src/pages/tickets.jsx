@@ -477,7 +477,7 @@ const handleCreateTicketClick = () => {
   ></textarea>
   <label htmlFor="floatingTextarea2">Comments</label>
 </div>
-      <button className="btn btn-primary start-chat-btn" onClick={() => handleSelectUser()}>
+      <button className="btn btn-primary start-chat-btn" style={{backgroundColor:'purple', outlineColor:'purple'}} onClick={() => handleSelectUser()}>
                     Start Chat
                   </button>
             <div className="workflow-steps">     
