@@ -14,9 +14,17 @@ const Signup = () => {
   });
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [enableMfa, setEnableMfa] = useState(false);
+  const mfaEnabled = enableMfa ? "true" : "false";
 
   const { email, password, username } = inputValue;
+  const handleEnableMfaChange = (e) => {
+    setEnableMfa(e.target.checked);
+  };
 
+  const handleDisableMfaChange = (e) => {
+    setEnableMfa(!e.target.checked); // Reversing the state for disabling MFA
+  };
   const handleOnChange = (e) => {
     const { name, value } = e.target;
     setInputValue((prevInputValue) => ({
@@ -35,6 +43,8 @@ const Signup = () => {
           password,
           displayName: username,
           role: "user",
+          mfa: mfaEnabled, // Include mfaEnabled in the data being sent
+
         },
         { withCredentials: true }
       );
@@ -94,6 +104,27 @@ const Signup = () => {
             placeholder="Enter your password"
             onChange={handleOnChange}
           />
+        </div>
+        <div>
+          <label>
+            Enable Multi-Factor Authentication:
+            <input
+              type="checkbox"
+              checked={enableMfa}
+              onChange={handleEnableMfaChange}
+            />
+            Yes
+          </label>
+        
+
+        <label>
+          <input
+            type="checkbox"
+            checked={!enableMfa}
+            onChange={handleDisableMfaChange}
+          />
+          No
+        </label>
         </div>
         <button type="submit">Submit</button>
         <span>

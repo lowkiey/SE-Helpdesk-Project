@@ -7,6 +7,9 @@ const userschema = new mongoose.Schema(
         displayName: { type: String },
         role: { type: String, required: false },
         otp: { type: String }, //s7
+        mfa: { type: Boolean, default: false }, //s7
+        available: { type: Boolean, default: false, required: false } // Ensure available is defined as Boolean
+
     },
     {
         strict: false,
