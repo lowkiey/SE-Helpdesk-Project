@@ -1,28 +1,66 @@
 import React, { useEffect, useState } from "react";
-// import AppNavBar from "../components/navbar";
 import axios from "axios";
 import Navbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
-import { Link, NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { FaUser } from 'react-icons/fa';
-import { FaBell } from 'react-icons/fa';
-import styled, { createGlobalStyle } from 'styled-components';
-
-
-import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
+import { useNavigate } from "react-router-dom";
+import styled, { createGlobalStyle } from 'styled-components';
+import { FaBell } from 'react-icons/fa';
+
+
 let backend_url = "http://localhost:3000/api/v1";
 
-export default function HomePage() {
+export default function UpdateTickets() {
     const navigate = useNavigate();
     const [cookies] = useCookies([]);
+    const [tickets, setTickets] = useState([]);
     const [userName, setUserName] = useState("");
-    const [users, setUsers] = useState([]);
-    const [isUserTabOpen, setIsUserTabOpen] = useState(false)
-    const [showNotification, setShowNotification] = useState(false); // New state for notification
-    const [notifications, setNotifications] = useState([]);
+    const [isUserTabOpen, setIsUserTabOpen] = useState(false);
     const [theme, setTheme] = useState("light");
+    const [showNotification, setShowNotification] = useState(false);
+    const [notifications, setNotifications] = useState([]);
+    const [showPopup, setShowPopup] = useState(false);
+    const [solution, setSolution] = useState('');
+    const [selectedTicket, setSelectedTicket] = useState(null);
+    const [selectedTicketId, setSelectedTicketId] = useState(null);
+    const handleUpdateClick = (ticket) => {
+        setSelectedTicketId(ticket._id); // Store the ID of the selected ticket
+        setSelectedTicket(ticket); // Store the entire selected ticket
+        setShowPopup(true);
+    };
+
+    const handleSaveClick = async () => {
+        try {
+            if (!selectedTicketId || !solution) {
+                console.error('Ticket ID or Solution is missing');
+                return;
+            }
+            console.log('Updating ticket:', selectedTicket._id);
+            console.log('Solution:', solution)
+            const updatedTicket = { ...selectedTicket, solution }; // Update the selected ticket with the solution
+            const response = await axios.put(`${backend_url}/tickets/${selectedTicket._id}`, updatedTicket,
+                { withCredentials: true });
+
+            console.log('Ticket updated:', response.data);
+            setSelectedTicket(null);
+            setSolution('');
+            setShowPopup(false);
+            window.location.reload();
+        }
+        catch (error) {
+            console.log('Error updating ticket:', error.response);
+        }
+    };
+
+    const handleCancelClick = () => {
+        setSelectedTicket(null);
+        setSolution('');
+        setShowPopup(false);
+    };
+
 
     const toggleTheme = () => {
         const newTheme = theme === 'light' ? 'dark' : 'light';
@@ -32,8 +70,6 @@ export default function HomePage() {
     const handleToggleChange = () => {
         toggleTheme();
     };
-
-
     const GlobalStyle = createGlobalStyle`
     body {
       background-color: ${(props) => (props.theme === 'dark' ? '#0d001a' : 'white')};
@@ -45,59 +81,58 @@ export default function HomePage() {
   `;
     // Light Mode styles
     const LightMode = styled.div`
-  background-color: white;
-    color: black;
-`;
-
+    background-color: white;
+      color: black;
+  `;
     // Dark Mode styles
     const DarkMode = styled.div`
-  background-color: #0d001a;
-  color: white;
+    background-color: #0d001a;
+    color: white;
 
-  .toggle-container {
-    position: absolute;
-    top: 50%;
-    right: 20px;
-    transform: translateY(-50%);
-    display: flex;
-    align-items: center;
-  }
+    .toggle-container {
+        position: absolute;
+        top: 50%;
+        right: 20px;
+        transform: translateY(-50%);
+        display: flex;
+        align-items: center;
+    }
+    .toggle-label {
+        margin-right: 10px;
+    }
 
-  .toggle-label {
-    margin-right: 10px;
-  }
-
-  .toggle {
-    appearance: none;
-    width: 50px;
-    height: 25px;
-    background-color: #777;
-    border-radius: 25px;
-    position: relative;
-    cursor: pointer;
-    outline: none;
-    transition: background-color 0.3s ease;
-  }
-
-  .toggle::before {
-    content: '';
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background-color: white;
-    top: 50%;
-    transform: translateY(-50%);
-    transition: transform 0.3s ease;
-  }
-
-  .toggle:checked {
-    background-color: #52d869; /* Change color to match your theme */
-  }
-
-  .toggle:checked::before {
-    transform: translateX(25px) translateY(-50%);
-  }
+    .toggle {
+        appearance: none;
+        width: 50px;
+        height: 25px;
+        background-color: #777;
+        border-radius: 25px;
+        position: relative;
+        cursor: pointer;
+        outline: none;
+        transition: background-color 0.3s ease;
+    }
+    .toggle::before {
+        content: '';
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background-color: white;
+        top: 50%;
+        transform: translateY(-50%);
+        transition: transform 0.3s ease;
+    }
+    .toggle:checked {
+        background-color: #52d869; /* Change color to match your theme */
+    }
+    .toggle:checked::before {
+        transform: translateX(25px) translateY(-50%);
+    }
+    /* Adjusting text color for dark mode */
+    .navbar-light .navbar-nav .nav-link {
+        color: white !important;
+    }
 `;
     const handleUserIconClick = () => {
         setIsUserTabOpen(!isUserTabOpen);
@@ -124,31 +159,62 @@ export default function HomePage() {
             try {
                 if (!cookies.token) {
                     console.log("No token found, redirecting to login");
-                    // navigate("/");
-                    return; // Exit early if there's no token
+                    return;
                 }
 
-
                 const uid = localStorage.getItem("userId");
-                console.log(uid);
-
                 const response = await axios.get(`${backend_url}/users/${uid}`, {
                     withCredentials: true,
                 });
-                console.log("response", response);
-
-                setUserName(response.data.displayName);      //di btgib el esm lw 3aiza 7aga tani b3d kda b3mlha display
+                setUserName(response.data.displayName);
             } catch (error) {
                 console.log("Error fetching user data:", error);
-                navigate("/"); // Redirect to login page on error
             }
         }
-
+        async function fetchTickets() {
+            try {
+                const response = await axios.get(`${backend_url}/tickets`, {
+                    withCredentials: true,
+                });
+                setTickets(response.data.tickets);
+            } catch (error) {
+                console.log("Error fetching tickets:", error);
+            }
+        }
+        fetchTickets();
         fetchUserData();
-        fetchNotifications()
+    }, [cookies.token], showNotification);
+    const Button = ({ text }) => {
+        const [isHovered, setIsHovered] = useState(false);
 
+        const handleMouseEnter = () => {
+            setIsHovered(true);
+        };
 
-    }, [cookies.token, navigate, showNotification]);
+        const handleMouseLeave = () => {
+            setIsHovered(false);
+        };
+
+        const buttonStyle = {
+            fontSize: '16px',
+            padding: '10px 20px',
+            backgroundColor: isHovered ? '#8a4cf6' : '#6a0080', // Purple colors
+            color: 'white',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            transition: 'background-color 0.3s',
+        };
+        return (
+            <button
+                style={buttonStyle}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+            >
+                {text}
+            </button>
+        );
+    };
 
     return (
         <>
@@ -238,49 +304,62 @@ export default function HomePage() {
                     </Navbar.Collapse>
                 </Container>
             </Navbar>
-            <h1 style={{ textAlign: "center", margin: "40px", color: 'purple', fontFamily: "Sans-Serif", fontWeight: "bold" }}>
-                {`Hello ${userName}, This is the Agent's Page?`} {/* by3rfni 3aleh w y2oli ezayik ya latifa */}
-            </h1>
-            <br></br>
-            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '50px' }}>
-                <button
-                    className="open-chats"
-                    style={{
-                        fontFamily: "sans-serif",
-                        fontWeight: "bold",
-                        backgroundColor: 'purple',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '5px',
-                        width: '15%',
-                        padding: '8px',
-                    }}
-                    onClick={() => navigate("/chat")}
-                >
-                    Open Chats
-                </button>
-                
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '40px' }}>
-            <button
-                    className="open-chats"
-                    style={{
-                        fontFamily: "sans-serif",
-                        fontWeight: "bold",
-                        backgroundColor: 'purple',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '5px',
-                        width: '15%',
-                        padding: '8px',
-                    }}
-                    onClick={() => navigate("/updateTickets")}
-                >
-                    Update Tickets
-                </button>
-            </div>
+            {/* <h1 style={{ textAlign: "left", margin: "40px", color: 'black', fontFamily: "Times New Roman", fontWeight: "bold" }}>
+                {`Hello ${userName}`}
+            </h1> */}
 
+            <h2 style={{ textAlign: "center", margin: "20px 0", color: 'purple' }}>Open Tickets</h2>
+            <div style={{ width: '80%', margin: '0 auto', textAlign: 'center' }}>
+                <table className="table">
+                    <thead style={{ backgroundColor: '#6A5ACD', color: 'white' }}>
+                        <tr>
+                            <th>ID</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                            <th>Subcategory</th>
+                            <th>Update</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {tickets.filter((ticket) => ticket.status === 'open').map((ticket, index) => (
+                            <tr key={ticket._id}>
+                                <td>{index + 1}</td>
+                                <td>{ticket.category}</td>
+                                <td>{ticket.status}</td>
+                                <td>{ticket.subCategory}</td>
+                                <td>
+                                    {/* Pass the specific ticket to handleUpdateClick */}
+                                    <button
+                                        style={{ backgroundColor: '#6A5ACD', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '5px' }}
+                                        onClick={() => handleUpdateClick(ticket)} // Pass the ticket data here
+                                    >
+                                        Update
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
 
+                </table>
+
+                {showPopup && (
+                    <div className="popup">
+                        <div className="popup-content" style={{ backgroundColor: 'white', border: '2px solid purple', padding: '20px', position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', borderRadius: '10px', zIndex: '999' }}>
+                            <label htmlFor="solutionInput" style={{ color: 'purple', fontSize: '20px' }}>Solution:</label>
+                            <input
+                                type="text"
+                                id="solutionInput"
+                                value={solution}
+                                onChange={(e) => setSolution(e.target.value)}
+                                style={{ width: '100%', padding: '5px', marginBottom: '10px', borderRadius: '5px' }}
+                            />
+                            <button onClick={handleSaveClick} style={{ backgroundColor: '#8A2BE2', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '5px', marginRight: '10px' }}>Save</button>
+                            <button onClick={handleCancelClick} style={{ backgroundColor: '#DC143C', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '5px' }}>Cancel</button>
+                        </div>
+                    </div>
+                )}
+            </div>
         </>
-    );
+
+    )
 }
