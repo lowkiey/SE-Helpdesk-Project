@@ -297,9 +297,13 @@ export default function FAQ() {
                                             {/* Toggle switch for both modes */}
                                             <div style={{ display: 'flex', alignItems: 'center' }}>
                                                 <div>
-                                                    <span style={{ color: 'black', marginRight: '10px', visibility: isUserTabOpen ? 'visible' : 'hidden' }}>
-                                                        <span>Light Mode</span>
-                                                    </span>
+                                                    <div>
+                                                        <label className="toggle-container">
+                                                            <span className="toggle-label" style={{ color: theme === 'dark' ? 'black' : 'black' }}>
+                                                                {theme === 'light' ? 'Light Mode' : 'Dark Mode'}
+                                                            </span>
+                                                        </label>
+                                                    </div>
                                                 </div>
                                                 <label className="switch" style={{ position: 'relative', display: 'inline-block', width: '80px', height: '25px', visibility: isUserTabOpen ? 'visible' : 'hidden' }}>
                                                     <input

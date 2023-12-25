@@ -30,6 +30,9 @@ export default function Ticket() {
     const [theme, setTheme] = useState("light");
     const [showNotification, setShowNotification] = useState(false);
     const [notifications, setNotifications] = useState([]);
+    //
+    const [isCreateButtonVisible, setIsCreateButtonVisible] = useState(false);
+
 
     const toggleTheme = () => {
         const newTheme = theme === 'light' ? 'dark' : 'light';
@@ -204,15 +207,15 @@ export default function Ticket() {
         setSelectedCategory(selectedCategory);
 
         switch (selectedCategory) {
-            case '1': // Hardware
+            case 'Hardware': // Hardware
                 setSubCategoryOptions(['Desktops', 'Laptops', 'Printers', 'Servers', 'Networking equipment']);
                 setShowWorkflowSteps(true);
                 break;
-            case '2': // Software
+            case 'Software': // Software
                 setSubCategoryOptions(['Operating system', 'Application software', 'Custom software', 'Integration issues']);
                 setShowWorkflowSteps(true);
                 break;
-            case '3': // Network
+            case 'Network': // Network
                 setSubCategoryOptions(['Email issues', 'Internet connection problems', 'Website errors']);
                 setShowWorkflowSteps(true);
                 break;
@@ -226,7 +229,33 @@ export default function Ticket() {
                 setShowWorkflowSteps(true);
                 break;
         }
+        console.log('Is Create Button Visible:', selectedCategory !== '' && selectedSubCategory !== '');
 
+        setIsCreateButtonVisible(selectedCategory !== '' && selectedSubCategory !== '');
+
+    };
+    const handleCreateTicket = async () => {
+        try {
+            // Make a POST request to create a new ticket
+            const response = await axios.post(
+                `${backend_url}/tickets/`,
+                {
+                    user_id: localStorage.getItem("userId"),
+                    category: selectedCategory,
+                    subCategory: selectedSubCategory,
+                    description: description,
+                    status: 'pending',
+                    agent_id: null,
+                },
+                {
+                    withCredentials: true,
+                }
+            );
+
+            console.log("Ticket created successfully:", response.data.message);
+        } catch (error) {
+            console.error('Error creating ticket:', error);
+        }
     };
     const handleStartChat = () => {
         alert('Please chat with us');
@@ -255,7 +284,7 @@ export default function Ticket() {
         setSelectedSubCategory(selectedSubCategory);
 
         // Assign workflow steps based on category and subcategory
-        if (selectedCategory === '2') { // Software
+        if (selectedCategory === 'Software') { // Software
             switch (selectedSubCategory) {
                 case 'Operating system':
                     setDescription(`
@@ -318,7 +347,7 @@ export default function Ticket() {
           Reach out to the software vendor or developer for assistance.`
                     );
             }
-        } else if (selectedCategory === '1') { // Hardware
+        } else if (selectedCategory === 'Hardware') { // Hardware
             switch (selectedSubCategory) {
                 case 'Desktops':
                     setDescription(`
@@ -342,79 +371,79 @@ export default function Ticket() {
                     setDescription(`1. Check Power and Connections:
         - Ensure that the laptop is properly connected to the power source.
         - Verify that the power adapter is functioning correctly.
-     
-     2. Restart the Laptop:
-        - Restart your laptop.
-        - Shut down the laptop, wait for a few seconds, and then power it back on.
-        - Check if the issue persists after the restart.
-     
-     3. Update Laptop Drivers:
-        - Open "Device Manager" on your computer.
-        - Locate the laptop-related devices.
-        - Right-click on each device and select "Update driver."
-        - Follow the on-screen instructions to update drivers.
-     `);
+            
+            2. Restart the Laptop:
+                - Restart your laptop.
+                - Shut down the laptop, wait for a few seconds, and then power it back on.
+                - Check if the issue persists after the restart.
+            
+            3. Update Laptop Drivers:
+                - Open "Device Manager" on your computer.
+                - Locate the laptop-related devices.
+                - Right-click on each device and select "Update driver."
+                - Follow the on-screen instructions to update drivers.
+            `);
                     break
 
                 case "Printers":
                     setDescription(`1. Check Power and Connections:
-      - Ensure that the printer is plugged into a power source.
-      - Verify that all cables connecting the printer are secure.
-   
-   2. Restart the Printer:
-      - Turn off the printer.
-      - Wait for a few seconds and then turn the printer back on.
-      - Check if the issue persists after the restart.
-   
-   3. Update Printer Drivers:
-      - Open "Device Manager" on your computer.
-      - Locate the printer-related devices.
-      - Right-click on each device and select "Update driver."
-      - Follow the on-screen instructions to update drivers.
-   `);
+            - Ensure that the printer is plugged into a power source.
+            - Verify that all cables connecting the printer are secure.
+        
+        2. Restart the Printer:
+            - Turn off the printer.
+            - Wait for a few seconds and then turn the printer back on.
+            - Check if the issue persists after the restart.
+        
+        3. Update Printer Drivers:
+            - Open "Device Manager" on your computer.
+            - Locate the printer-related devices.
+            - Right-click on each device and select "Update driver."
+            - Follow the on-screen instructions to update drivers.
+        `);
                     break
                 case "Servers":
                     setDescription(`1. Check Server Hardware:
-      - Ensure that all server components are properly seated.
-      - Verify that there are no loose connections inside the server.
-   
-   2. Restart the Server:
-      - Restart the server.
-      - Shut down the server, wait for a few seconds, and then power it back on.
-      - Check if the issue persists after the restart.
-   
-   3. Monitor Server Logs:
-      - Examine server logs for any error messages or warnings.
-      - Address any issues indicated in the logs.
-   
-   4. Update Server Firmware:
-      - Check for firmware updates for your server model.
-      - Follow the manufacturer's instructions to update server firmware.
-   `);
+            - Ensure that all server components are properly seated.
+            - Verify that there are no loose connections inside the server.
+        
+        2. Restart the Server:
+            - Restart the server.
+            - Shut down the server, wait for a few seconds, and then power it back on.
+            - Check if the issue persists after the restart.
+        
+        3. Monitor Server Logs:
+            - Examine server logs for any error messages or warnings.
+            - Address any issues indicated in the logs.
+        
+        4. Update Server Firmware:
+            - Check for firmware updates for your server model.
+            - Follow the manufacturer's instructions to update server firmware.
+        `);
                     break
                 case "Networking equipment":
                     setDescription(`1. Check Network Connections:
-      - Ensure that all network cables are securely connected.
-      - Verify that networking equipment (routers, switches) is powered on.
-   
-   2. Restart Networking Equipment:
-      - Restart routers and switches.
-      - Wait for a few seconds and then power them back on.
-      - Check if the issue persists after the restart.
-   
-   3. Check Network Configuration:
-      - Verify that the network configuration settings are correct.
-      - Address any misconfigurations.
-   
-   4. Update Networking Device Firmware:
-      - Check for firmware updates for your networking devices.
-      - Follow the manufacturer's instructions to update firmware.
-   `);
+            - Ensure that all network cables are securely connected.
+            - Verify that networking equipment (routers, switches) is powered on.
+        
+        2. Restart Networking Equipment:
+            - Restart routers and switches.
+            - Wait for a few seconds and then power them back on.
+            - Check if the issue persists after the restart.
+        
+        3. Check Network Configuration:
+            - Verify that the network configuration settings are correct.
+            - Address any misconfigurations.
+        
+        4. Update Networking Device Firmware:
+            - Check for firmware updates for your networking devices.
+            - Follow the manufacturer's instructions to update firmware.
+        `);
                     break
 
             }
         }
-        else if (selectedCategory === '3') { // Network
+        else if (selectedCategory === 'Network') { // Network
             switch (selectedSubCategory) {
                 case "Email issues":
                     setDescription(`
@@ -463,6 +492,7 @@ export default function Ticket() {
             }
 
         };
+        setIsCreateButtonVisible(selectedCategory !== '' && selectedSubCategory !== '');
     };
     const Button = ({ text }) => {
         const [isHovered, setIsHovered] = useState(false);
@@ -565,9 +595,13 @@ export default function Ticket() {
                                             {/* Toggle switch for both modes */}
                                             <div style={{ display: 'flex', alignItems: 'center' }}>
                                                 <div>
-                                                    <span style={{ color: 'black', marginRight: '10px', visibility: isUserTabOpen ? 'visible' : 'hidden' }}>
-                                                        <span>Light Mode</span>
-                                                    </span>
+                                                    <div>
+                                                        <label className="toggle-container">
+                                                            <span className="toggle-label" style={{ color: theme === 'dark' ? 'black' : 'black' }}>
+                                                                {theme === 'light' ? 'Light Mode' : 'Dark Mode'}
+                                                            </span>
+                                                        </label>
+                                                    </div>
                                                 </div>
                                                 <label className="switch" style={{ position: 'relative', display: 'inline-block', width: '80px', height: '25px', visibility: isUserTabOpen ? 'visible' : 'hidden' }}>
                                                     <input
@@ -644,9 +678,9 @@ export default function Ticket() {
                     </label>
                     <select className="form-select" id="inputGroupSelect01" onChange={handleCategoryChange}>
                         <option value="">Choose..</option>
-                        <option value="1">Hardware</option>
-                        <option value="2">Software</option>
-                        <option value="3">Network</option>
+                        <option value="Hardware">Hardware</option>
+                        <option value="Software">Software</option>
+                        <option value="Network">Network</option>
                         <option value="4">others...</option>
                     </select>
                 </div>
@@ -675,9 +709,14 @@ export default function Ticket() {
                 ></textarea>
                 <label htmlFor="floatingTextarea2">Comments</label>
             </div>
-            <button className="btn btn-primary start-chat-btn" style={{ backgroundColor: '#8a4cf6', outlineColor: 'purple', borderColor: '#8a4cf6' }} onClick={() => handleStartUserChat()}>
+
+
+            <button className="btn btn-primary start-chat-btn" style={{ backgroundColor: '#8a4cf6', outlineColor: 'purple', borderColor: '#8a4cf6', width: '200px' }} onClick={() => handleStartUserChat()}>
                 Start Chat
             </button>
+            {selectedCategory && selectedSubCategory && isCreateButtonVisible && (
+                <button onClick={handleCreateTicket} className="btn btn-primary" style={{ backgroundColor: 'white', outlineColor: 'purple', borderColor: 'purple', color: 'purple', marginLeft: '1476px', width: '200px' }}>Create</button>
+            )}
             <div className="workflow-steps">
                 {selectedCategory && selectedSubCategory && showWorkflowSteps && (
 

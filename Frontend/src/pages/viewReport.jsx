@@ -6,22 +6,19 @@ import Nav from 'react-bootstrap/Nav';
 import { Link } from 'react-router-dom';
 import { FaUser } from 'react-icons/fa';
 import { FaBell } from 'react-icons/fa';
+import styled, { createGlobalStyle } from 'styled-components';
 import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
-import styled, { createGlobalStyle } from 'styled-components';
-
 let backend_url = "http://localhost:3000/api/v1";
 
-export default function Reports() {
+export default function ViewReports() {
   const navigate = useNavigate();
-  const [cookies] = useCookies([]);
-  const [tickets, setTickets] = useState([]);
+  const [cookies, setCookie, removeCookie] = useCookies(['token']);
   const [userName, setUserName] = useState("");
   const [isUserTabOpen, setIsUserTabOpen] = useState(false);
+  const [reports, setReports] = useState([]);
   const [showNotification, setShowNotification] = useState(false); // New state for notification
   const [notifications, setNotifications] = useState([]);
-  const userRole = localStorage.getItem("role");
-  const isManager = userRole === "manager";
   const [theme, setTheme] = useState("light");
 
   const toggleTheme = () => {
@@ -32,100 +29,99 @@ export default function Reports() {
   const handleToggleChange = () => {
     toggleTheme();
   };
+
+  const handleUserIconClick = () => {
+    setIsUserTabOpen(!isUserTabOpen);
+  };
   const GlobalStyle = createGlobalStyle`
-  body {
-    background-color: ${(props) => (props.theme === 'dark' ? '#0d001a' : 'white')};
-    color: ${(props) => (props.theme === 'dark' ? 'white' : 'black')};
-    margin: 0;
-    padding: 0;
-    transition: all 0.3s ease; /* Optional: Smooth transition */
-  }
-  .custom-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-  }
-  
-  .custom-table th,
-  .custom-table td {
-    padding: 12px;
-    text-align: left;
-  }
-  
-  .custom-table th {
-    background-color: #6d358c;
-    color: white;
-  }
-  
-  .custom-table tbody tr:nth-child(even) {
-    background-color: #f2f2f2;
-  }
-  
-  .custom-table tbody tr:hover {
-    background-color: #ddd;
-  }
+body {
+  background-color: ${(props) => (props.theme === 'dark' ? '#0d001a' : 'white')};
+  color: ${(props) => (props.theme === 'dark' ? 'white' : 'black')};
+  margin: 0;
+  padding: 0;
+  transition: all 0.3s ease; /* Optional: Smooth transition */
+}
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.custom-table th,
+.custom-table td {
+  padding: 12px;
+  text-align: left;
+}
+
+.custom-table th {
+  background-color: #6d358c;
+  color: white;
+}
+
+.custom-table tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.custom-table tbody tr:hover {
+  background-color: #ddd;
+}
 `;
-
-
   // Light Mode styles
   const LightMode = styled.div`
-  background-color: white;
-    color: black;
+background-color: white;
+color: black;
 `;
 
   // Dark Mode styles
   const DarkMode = styled.div`
-  background-color: #0d001a;
-  color: white;
+background-color: #0d001a;
+color: white;
 
-  .toggle-container {
-    position: absolute;
-    top: 50%;
-    right: 20px;
-    transform: translateY(-50%);
-    display: flex;
-    align-items: center;
-  }
+.toggle-container {
+position: absolute;
+top: 50%;
+right: 20px;
+transform: translateY(-50%);
+display: flex;
+align-items: center;
+}
 
-  .toggle-label {
-    margin-right: 10px;
-  }
+.toggle-label {
+margin-right: 10px;
+}
 
-  .toggle {
-    appearance: none;
-    width: 50px;
-    height: 25px;
-    background-color: #777;
-    border-radius: 25px;
-    position: relative;
-    cursor: pointer;
-    outline: none;
-    transition: background-color 0.3s ease;
-  }
+.toggle {
+appearance: none;
+width: 50px;
+height: 25px;
+background-color: #777;
+border-radius: 25px;
+position: relative;
+cursor: pointer;
+outline: none;
+transition: background-color 0.3s ease;
+}
 
-  .toggle::before {
-    content: '';
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background-color: white;
-    top: 50%;
-    transform: translateY(-50%);
-    transition: transform 0.3s ease;
-  }
+.toggle::before {
+content: '';
+position: absolute;
+width: 20px;
+height: 20px;
+border-radius: 50%;
+background-color: white;
+top: 50%;
+transform: translateY(-50%);
+transition: transform 0.3s ease;
+}
 
-  .toggle:checked {
-    background-color: #52d869; /* Change color to match your theme */
-  }
+.toggle:checked {
+background-color: #52d869; /* Change color to match your theme */
+}
 
-  .toggle:checked::before {
-    transform: translateX(25px) translateY(-50%);
-  }
+.toggle:checked::before {
+transform: translateX(25px) translateY(-50%);
+}
 `;
-  const handleUserIconClick = () => {
-    setIsUserTabOpen(!isUserTabOpen);
-  };
   async function fetchNotifications() {
     try {
       const userEmail = localStorage.getItem("email");
@@ -139,118 +135,51 @@ export default function Reports() {
       return []; // Return an empty array if there's an error
     }
   }
-
-  const handleViewIssues = () => {
-    navigate("/issue");
-  };
-
-  const handleViewAllReports = () => {
-    navigate("/viewReport");
-  };
-
-  async function fetchNotifications() {
-    try {
-      const userEmail = localStorage.getItem("email");
-      const response = await axios.get(`${backend_url}/notification/?email=${userEmail}`, { withCredentials: true, });
-      setNotifications(response.data.notificationsCombined);
-      console.log("response", response.data);
-      return response.data; // Assuming the response contains an array of notifications
-    } catch (error) {
-      console.log("Error fetching notifications:", error.response); // Log the error response
-      return []; // Return an empty array if there's an error
-    }
-  }
-
-
   useEffect(() => {
     const storedTheme = localStorage.getItem('theme');
     if (storedTheme) {
       setTheme(storedTheme);
     }
+
     async function fetchUserData() {
       try {
-        console.log("hi")
         if (!cookies.token) {
           console.log("No token found, redirecting to login");
+          // navigate("/");
           return; // Exit early if there's no token
         }
 
+
         const uid = localStorage.getItem("userId");
         console.log(uid);
-        const token = localStorage.getItem("token");
-        console.log(token);
-
 
         const response = await axios.get(`${backend_url}/users/${uid}`, {
           withCredentials: true,
         });
         console.log("response", response);
-        setUserName(response.data.displayName); // Assuming the display name comes from the response
 
-        // Set user data state here - setUserName(response.data.displayName);
-
+        setUserName(response.data.displayName);      //di btgib el esm lw 3aiza 7aga tani b3d kda b3mlha display
       } catch (error) {
         console.log("Error fetching user data:", error);
-        // navigate("/"); // Redirect to login page on error
+        navigate("/"); // Redirect to login page on error
       }
     }
 
-    async function fetchTickets() {
+    async function fetchReports() {
       try {
-        const response = await axios.get(`${backend_url}/tickets`, {
+        const response = await axios.get(`${backend_url}/reports/`, {
           withCredentials: true,
         });
-        console.log("response", response);
-
-        setTickets(response.data.tickets);
+        console.log("API response:", response.data);
+        setReports(response.data);
       } catch (error) {
-        console.log("Error fetching tickets:", error);
-        // navigate("/"); // Redirect to login page on error
+        console.log("Error fetching reports:", error);
       }
     }
 
-    fetchTickets();
-    fetchNotifications();
+    fetchReports();
     fetchUserData();
-
-  }, [cookies.token, navigate]);
-
-  const Button = ({ handleClick, text }) => {
-    const [isHovered, setIsHovered] = useState(false);
-
-    const handleMouseEnter = () => {
-      setIsHovered(true);
-    };
-
-    const handleMouseLeave = () => {
-      setIsHovered(false);
-    };
-
-    const buttonStyle = {
-      fontSize: '16px',
-      padding: '10px 20px',
-      backgroundColor: isHovered ? '#8a4cf6' : '#6a0080', // Purple colors
-      color: 'white',
-      border: 'none',
-      borderRadius: '5px',
-      cursor: 'pointer',
-      transition: 'background-color 0.3s',
-    };
-
-    return (
-      <button
-        style={buttonStyle}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        onClick={handleClick} // Click handler added here
-
-      >
-        {text}
-      </button>
-    );
-  };
-
-
+  }, [cookies.token, navigate], showNotification);
 
   return (
     <>
@@ -263,12 +192,7 @@ export default function Reports() {
               <Nav.Link as={Link} to="/home" style={{ fontSize: '24px', cursor: 'pointer', color: 'purple' }}>
                 HelpDesk
               </Nav.Link>
-              <Nav.Link as={Link} to="/tickets" style={{ fontSize: '24px', cursor: 'pointer', color: 'purple', marginLeft: '50px' }}>
-                Tickets
-              </Nav.Link>
-              <Nav.Link as={Link} to="/faq" style={{ fontSize: '24px', cursor: 'pointer', color: 'purple', marginLeft: '50px' }}>
-                FAQs
-              </Nav.Link>
+
               <Nav.Link as={Link} to="/reports" style={{ fontSize: '24px', cursor: 'pointer', color: 'purple', marginLeft: '50px' }}>
                 Reports
               </Nav.Link>
@@ -319,11 +243,13 @@ export default function Reports() {
                       {/* Toggle switch for both modes */}
                       <div style={{ display: 'flex', alignItems: 'center' }}>
                         <div>
-                          <label className="toggle-container">
-                            <span className="toggle-label" style={{ color: theme === 'dark' ? 'black' : 'black' }}>
-                              {theme === 'light' ? 'Light Mode' : 'Dark Mode'}
-                            </span>
-                          </label>
+                          <div>
+                            <label className="toggle-container">
+                              <span className="toggle-label" style={{ color: theme === 'dark' ? 'black' : 'black' }}>
+                                {theme === 'light' ? 'Light Mode' : 'Dark Mode'}
+                              </span>
+                            </label>
+                          </div>
                         </div>
                         <label className="switch" style={{ position: 'relative', display: 'inline-block', width: '80px', height: '25px', visibility: isUserTabOpen ? 'visible' : 'hidden' }}>
                           <input
@@ -346,42 +272,34 @@ export default function Reports() {
           </Navbar.Collapse>
         </Container>
       </Navbar>
-      {/* Buttons */}
-      {isManager && (
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '40px', marginInlineEnd: '140px' }}>
-          <div>
-            <Button handleClick={handleViewIssues} text="View Issues" />
-          </div>
 
-          <div style={{ marginLeft: '20px' }} />
-          <Button handleClick={handleViewAllReports} text="View All Reports" />
-        </div>
-      )}
-      <table className="table table-bordered custom-table" style={{ marginTop: '80px', width: '90%', marginTop: '5vh', marginLeft: '8vh', border:'purple' }}>
-        <thead>
-          <tr>
-            <th>#</th>
-            {/* <th>ID</th> */}
-            <th>Category</th>
-            <th>Status</th>
-            <th>Subcategory</th>
-            {/* Add more columns if needed */}
-          </tr>
-        </thead>
-        <tbody>
-          {tickets.map((ticket, index) => (
-            <tr key={ticket._id}>
-              <td>{index + 1}</td> {/* Display index + 1 to start from 1 instead of 0 */}
-              {/* <td>{ticket._id}</td> */}
-              <td>{ticket.category}</td>
-              <td>{ticket.status}</td>
-              <td>{ticket.subCategory}</td>
-              {/* Render other ticket data in respective columns */}
+      <div className="container mt-5">
+        <table className="table table-bordered custom-table" style={{ border: 'purple' }}>
+          <thead className="thead-dark">
+            <tr>
+              <th>Agent ID</th>
+              <th>Ticket ID</th>
+              <th>Ticket Status Report</th>
+              <th>Resolution Time Report</th>
+              <th>Agent Performance Report</th>
+              <th>Agent Rating</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {reports.map((report) => (
+              <tr key={report._id}>
+                <td>{report.agent_id}</td>
+                <td>{report.ticket_id}</td>
+                <td>{report.ticketStatusReport}</td>
+                <td>{report.resoultionTimeReport}</td>
+                <td>{report.agentPreformanceReport}</td>
+                <td>{report.agentRating.$numberDecimal}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
 
+      </div >
     </>
   );
 }

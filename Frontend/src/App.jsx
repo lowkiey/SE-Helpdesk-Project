@@ -10,6 +10,8 @@ import Tickets from './pages/tickets';
 import Chat from './pages/chat';
 import ChatPage from './chat/chatPage';
 import Agent from './pages/agent';
+import IssuePage from './pages/issuePage';
+import ViewReports from './pages/viewReport';
 import io from 'socket.io-client';
 
 function App() {
@@ -48,6 +50,8 @@ function App() {
       <Route path="/reports" element={<Reports />} />
       <Route path="/tickets" element={<Tickets />} />
       <Route path="/chat" element={<Chat />} />
+      <Route path="/issue" element={<IssuePage />} />
+      <Route path="/viewReport" element={<ViewReports />} />
       <Route path="/chats/:userId" element={<ChatPage socket={socket} />} />
       <Route path="/agent" element={<Agent />} />
 
