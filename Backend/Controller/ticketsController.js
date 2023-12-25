@@ -48,39 +48,55 @@ const ticketsController = {
     }
   },  
   // Create a new ticket
-createTicket: async (req, res) => {
-        try {
-            const { user_id,
-                category,
-                subCategory,
-                description,
-                priority,
-                status,
-                agent_id,
-                workflow } = req.body;
-        
-            const newTicket = new ticketsModel({
-                user_id,
-                category,
-                subCategory,
-                description,
-                priority,
-                status,
-                agent_id,
-                workflow
-            });
-            await newTicket.save();
-            const user = await userModel.findById({user_id});
-            console.log(user);
-            res.status(201).json({ message: "ticket created successfully" , user});
+  createTicket: async (req, res) => {
+    try {
+      const {
+        user_id,
+        category,
+        subCategory,
+        description,
+        priority,
+        status,
+        agent_id,
+        workflow
+      } = req.body;
+  
+      const newTicket = new ticketsModel({
+        user_id,
+        category,
+        subCategory,
+        description,
+        priority,
+        status,
+        agent_id,
+        workflow
+      });
+  
+      await newTicket.save();
+      const user = await userModel.findById(user_id);
+      console.log(user);
+      res.status(201).json({ message: "Ticket created successfully", user });
+  
+      // Check if the ticket was created successfully
+      if (newTicket) {
+        // Call the endpoint to trigger the automated workflow
+        const triggerWorkflowResponse = await axios.post('createAutomatedWorkflow', {
+          category,
+          subCategory
+        });
+        if (triggerWorkflowResponse.status === 200) {
+          console.log('Automated workflow triggered successfully');
+        } else {
+          console.error('Error triggering automated workflow');
         }
-        catch (error) {
-            console.error("Error creating ticket:", error);
-            res.status(500).json({ message: "Server error" });
-
-
-        }
-    },
+      }
+    } catch (error) {
+      console.error("Error creating ticket:", error);
+      res.status(500).json({ message: "Server error" });
+    }
+  },
+  
+    //get tickets
     getAllTickets: async (req, res) => {
       try {
         const tickets = await ticketsModel.find().lean();

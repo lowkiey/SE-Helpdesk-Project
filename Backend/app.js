@@ -9,6 +9,8 @@ const authRouter = require("./Routes/auth");
 require('dotenv').config();
 const authenticationMiddleware = require("./Middleware/authenticationMiddleware");
 const cors = require("cors");
+const autoRouter = require("./Routes/automatedWorkflow");
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -28,6 +30,7 @@ app.use(authenticationMiddleware);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/agents", agentRouter);
 app.use("/api/v1/tickets", ticketRouter);
+app.use("/api/v1/automatedWorkflow", autoRouter);
 
 const db_name = 'SE_Project1';
 const db_url = `${"mongodb://127.0.0.1:27017"}/${db_name}`;
@@ -49,3 +52,4 @@ app.use(function (req, res, next) {
 });
 
 app.listen(process.env.PORT, () => console.log("Server started"));
+

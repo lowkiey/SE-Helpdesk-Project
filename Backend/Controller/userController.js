@@ -168,7 +168,7 @@ const userController = {
                     withCredentials: true,
                     httpOnly: false,
                     sameSite: 'none',
-                    secure: true,
+                    //secure: true,
                 })
                 .status(200)
                 .json({ message: 'Login successful', user });

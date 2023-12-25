@@ -2,7 +2,7 @@ const sessionModel = require("../Models/sessionModel");
 const userModel = require("../Models/userModel");
 const agentModel = require("../Models/Agent");
 const ticketsModel = require("../Models/ticketsModel");
-const AutomatedWorkflow = require("../Models/AutomatedWorkflow");
+const AutomatedWorkflow = require("../Models/automatedWorkflow");
 
 const ticketsController = require('./ticketsController');
 const jwt = require("jsonwebtoken");
@@ -639,3 +639,4 @@ startAutomatedWorkflow: async () => {
 
 
  module.exports = automatedWorkflowController;
+ 
