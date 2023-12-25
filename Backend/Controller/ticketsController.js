@@ -11,6 +11,8 @@ const nodemailer = require("nodemailer");
 const notificationModel = require("../Models/notificationModel");
 const axios = require("axios"); // Import axios for making HTTP requests
 const speakeasy = require("speakeasy");
+const AutomatedWorkflowController = require("./AutomatedWorkflowController");
+const automatedWorkflowController = require("./AutomatedWorkflowController");
 const transporter = nodemailer.createTransport({
   host: 'smtp-mail.outlook.com',
   port: 587,
@@ -91,14 +93,16 @@ const ticketsController = {
   // Create a new ticket
   createTicket: async (req, res) => {
     try {
-      const { user_id,
+      const {
+        user_id,
         category,
         subCategory,
         description,
         priority,
         status,
         agent_id,
-        workflow } = req.body;
+        workflow
+      } = req.body;
 
       const newTicket = new ticketsModel({
         user_id,
@@ -111,14 +115,40 @@ const ticketsController = {
         workflow
       });
       await newTicket.save();
-      res.status(201).json({ message: "ticket created successfully" });
-    }
-    catch (error) {
-      logError(error);
+      console.log("a7aaaaaa")
+      console.log(newTicket._id.toString());
+      const idTicket = newTicket._id.toString();
+      console.log(idTicket);
+      // Call the endpoint to get the priority level
+
+
+      const priorityLevel = await ticketsController.priorityy(subCategory);
+      newTicket.priority = priorityLevel;
+      await newTicket.save();
+
+
+
+      // if (newTicket) {
+      //   // Call the endpoint to trigger the automated workflow
+      //   const workflowResult = await AutomatedWorkflowController.createAutomatedWorkflowWithRouting({
+      //     category: newTicket.category,
+      //     subCategory: newTicket.subCategory
+      //   });
+      // }
+      if (newTicket) {
+        // Call the endpoint to trigger the automated workflow
+        const workflowResult = await automatedWorkflowController.createAutomatedWorkflowWithRouting();
+
+        if (workflowResult && workflowResult.status === 200) {
+          console.log('Automated workflow triggered successfully');
+        } else {
+          console.error('Error triggering automated workflow');
+        }
+      }
+      res.status(201).json({ message: "Ticket created successfully", ticket: newTicket });
+    } catch (error) {
       console.error("Error creating ticket:", error);
       res.status(500).json({ message: "Server error" });
-
-
     }
   },
   getAllTickets: async (req, res) => {
@@ -198,35 +228,49 @@ const ticketsController = {
       const tickets = await ticketsModel.findByIdAndUpdate(
         req.params.id,
       )
+      let priorityLevel;
+
       const { subCategory } = req.body;
       if (subCategory == 'Desktops' || subCategory == 'Laptops') {
-        return res.status(200).json({ subCategory, message: 'priority = High' })
+        priorityLevel = 'High';
       } else if (subCategory == 'Printers' || subCategory == 'Servers') {
-        return res.status(200).json({ subCategory, message: 'priority = Medium' })
+        priorityLevel = 'Medium';
+        // return res.status(200).json({ subCategory, message: 'priority = Medium' })
       } else if (subCategory == 'Networking equipment') {
-        return res.status(200).json({ subCategory, message: 'priority = Low' })
+        priorityLevel = 'Low';
+        // return res.status(200).json({ subCategory, message: 'priority = Low' })
       }
 
       if (subCategory == 'Operating system') {
-        return res.status(200).json({ subCategory, message: 'priority = High' })
+        priorityLevel = 'High';
+        // return res.status(200).json({ subCategory, message: 'priority = High' })
       } else if (subCategory == 'Application software' || subCategory == 'Custom software') {
-        return res.status(200).json({ subCategory, message: 'priority = Medium' })
+        priorityLevel = 'Medium';
+        // return res.status(200).json({ subCategory, message: 'priority = Medium' })
       } else if (subCategory == 'Integration issues') {
-        return res.status(200).json({ subCategory, message: 'priority = Low' })
+        priorityLevel = 'Low';
+        // return res.status(200).json({ subCategory, message: 'priority = Low' })
       }
 
       if (subCategory == 'Email issues') {
-        return res.status(200).json({ subCategory, message: 'priority = High' })
+        priorityLevel = 'High';
+        // return res.status(200).json({ subCategory, message: 'priority = High' })
       } else if (subCategory == 'Internet connection problems') {
-        return res.status(200).json({ subCategory, message: 'priority = Medium' })
+        priorityLevel = 'Medium';
+        // return res.status(200).json({ subCategory, message: 'priority = Medium' })
       } else if (subCategory == 'Website errors') {
-        return res.status(200).json({ subCategory, message: 'priority = Low' })
+        priorityLevel = 'Low';
+        // return res.status(200).json({ subCategory, message: 'priority = Low' })
       }
-      return res.status(200).json({ priority });
+      // return res.status(200).json({ subCategory, message: `priority = ${priorityLevel}` });
+      return priorityLevel; // Return the computed priority level
+
     }
     catch (error) {
       logError(error);
-      return res.status(500).json({ message: 'Error', error: error.message });
+      // return res.status(500).json({ message: 'Error', error: error.message });
+      throw new Error('Error determining priority');
+
     }
   },
 };

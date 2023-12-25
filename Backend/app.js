@@ -16,6 +16,7 @@ const FAQRouter = require("./Routes/FAQ");
 const reportRouter = require("./Routes/reports");
 const viewRouter = require("./Routes/view");
 const viewIssues = require("./Routes/issues");
+const automatedWorkflowRouter = require("./Routes/AutomatedWorkflow");
 
 
 require('dotenv').config();
@@ -49,7 +50,7 @@ app.use("/api/v1/messages", messagesRouter);
 app.use("/api/v1/reports", reportRouter);
 app.use("/api/v1/view", viewRouter);
 app.use("/api/v1/issues", viewIssues);
-
+app.use("/api/v1/automatedWorkflow", automatedWorkflowRouter);
 
 // Add Socket.IO configuration here
 const io = socketIO(server, {

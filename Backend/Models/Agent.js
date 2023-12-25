@@ -11,6 +11,7 @@ const schemaOptions = {
 const agentschema = new mongoose.Schema(
   {
     id: { type: ObjectId },
+    name: { type: String, unique: true, required: true },
     user_id: { type: ObjectId },
     rating: { type: Number },
     resolution_time: { type: String },

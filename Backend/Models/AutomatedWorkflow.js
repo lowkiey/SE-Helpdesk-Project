@@ -1,12 +1,13 @@
-
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
+const agentModel = require("./Agent");
+
 
 const automatedWorkflowSchema = new Schema(
   {
-    agentAvailability: { type: Boolean, required: true },
-    workflowType: { type: String, required: true },
-    workflowDetails: { type: Object, required: true },
+    issueType: { type: String, required: true, minlength: 6 }, //hardware, software, network
+    workflowType: { type: String, required: true }, //subcategory laptop, os
+    workflowDetails: { type: Object, required: true },//details mn chatgpt
   },
   {
     timestamps: true,
