@@ -79,6 +79,15 @@ createTicket: async (req, res) => {
 
         }
     },
+    getAllTickets: async (req, res) => {
+      try {
+        const tickets = await ticketsModel.find().lean();
+        return res.status(200).json({ tickets });
+      } catch (error) {
+        console.error("Error fetching tickets:", error);
+        return res.status(500).json({ message: "Server error" });
+      }
+    },
     //update ticket
     updateTicket: async (req, res) => {
       console.log("hi");

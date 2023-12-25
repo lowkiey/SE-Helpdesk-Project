@@ -60,13 +60,19 @@ const Login = () => {
       if (response.status === 200) {
         localStorage.setItem("userId", response.data.user._id)
         const user = response.data.user
+        localStorage.setItem("token", response.data.token)
+        console.log(response.data.token)
         if (user.role === "user") {
           navigate("/home");
+        }
+        else if (user.role === "manager") {
+          navigate("/Reports");
         }
         console.log(response.data)
 
       }
-    } catch (error) {
+      }
+     catch (error) {
       console.error(error);
 
     }
@@ -118,7 +124,7 @@ const Login = () => {
         {/* Error or success messages */}
       </span>
       <span>
-        Already have an account? <Link to={"/register"}>Signup</Link>
+        Don't have an account? <Link to={"/register"}>Signup</Link>
       </span>
     </div>
   );

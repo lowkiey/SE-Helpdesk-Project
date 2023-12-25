@@ -6,6 +6,7 @@ const userRouter = require("./Routes/users");
 const agentRouter = require("./Routes/agent");
 const ticketRouter = require("./Routes/tickets");
 const authRouter = require("./Routes/auth");
+const reportRouter=require("./Routes/reports");
 require('dotenv').config();
 const authenticationMiddleware = require("./Middleware/authenticationMiddleware");
 const cors = require("cors");
@@ -18,7 +19,7 @@ app.use(
     cors({
         origin: 'http://localhost:5173',
         methods: ["GET", "POST", "DELETE", "PUT"],
-        credentials: true,
+            credentials: true,
         allowedHeaders: ['Content-Type', 'Authorization'], // Define the headers you want to allow
     })
 );
@@ -27,6 +28,7 @@ app.use("/api/v1", authRouter);
 app.use(authenticationMiddleware);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/tickets", ticketRouter);
+app.use("/api/v1/reports", reportRouter);
 // app.use("/api/v1/agent",agentRouter)
 
 app.listen(process.env.PORT, () => console.log("Server started"))
