@@ -250,8 +250,23 @@ export default function HomePage() {
 
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <button className="create" onClick={() => navigate("/tickets")} style={{ fontFamily: "sans-serif", fontWeight: "bold", backgroundColor: 'purple', color: 'white', border: 'white', borderRadius: '5px', width: '15%', padding: '8px', }}>Create a new support ticket</button>
-        <button className="activity" onClick={() => navigate("/tickets")} style={{ marginTop: '25px', fontFamily: "sans-serif", fontWeight: "bold", backgroundColor: 'purple', color: 'white', border: 'white', borderRadius: '5px', width: '15%', padding: '8px', }}>Recent Activity</button>
-      </div>
+        <button
+          className="activity"
+          onClick={() => window.open("https://www.dropbox.com/home/Apps/SE_HelpDesk/SE_Project", "_blank")}
+          style={{
+            marginTop: '25px',
+            fontFamily: "sans-serif",
+            fontWeight: "bold",
+            backgroundColor: 'purple',
+            color: 'white',
+            border: 'white',
+            borderRadius: '5px',
+            width: '15%',
+            padding: '8px',
+          }}
+        >
+          Retrieve Backup
+        </button>      </div>
       <div style={{ display: 'flex', justifyContent: 'center', marginTop: '50px' }}>
         <img
           src="/gg.jpg"
