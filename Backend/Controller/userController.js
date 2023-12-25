@@ -257,21 +257,13 @@ const userController = {
                         withCredentials: true,
                         httpOnly: false,
                         sameSite: 'none',
-<<<<<<< HEAD
-                        // secure: true,    //comment this if u want to run using thunder client
-=======
                         secure: true,    //comment this if u want to run using thunder client
->>>>>>> bcb00bb2b41a2b6d2a7721c6938b64cb2b3b8d1f
                     })
                     .status(200)
                     .json({ message: 'Login successful', user, token, userNotifications });
             }
         } catch (error) {
-<<<<<<< HEAD
-                   // logError(error);
-=======
             logError(error);
->>>>>>> bcb00bb2b41a2b6d2a7721c6938b64cb2b3b8d1f
             console.error('Error initiating login:', error);
             res.status(500).json({ message: 'Server error' });
         }
