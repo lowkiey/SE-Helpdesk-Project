@@ -2,11 +2,13 @@ const sessionModel = require("../Models/sessionModel");
 const userModel = require("../Models/userModel");
 const ticketsModel = require("../Models/ticketsModel");
 const Agent = require("../Models/Agent");
+const logError = require('../utils/logger');
 const jwt = require("jsonwebtoken");
 require('dotenv').config();
 const secretKey = process.env.SECRET_KEY;
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
+const notificationModel = require("../Models/notificationModel");
 const axios = require("axios"); // Import axios for making HTTP requests
 const speakeasy = require("speakeasy");
 const transporter = nodemailer.createTransport({
@@ -24,18 +26,45 @@ async function sendEmailNotification(user, subject, emailContent) {
     from: '"HELPDESK" <sehelpdeskproject@outlook.com>', // Replace with your email address
     to: user.email,
     subject: subject,
-    text: ` ${emailContent}`,
+    text: `${emailContent}`,
   };
   try {
+    const notification = new notificationModel({
+      from: '"HELPDESK" <sehelpdeskproject@outlook.com>',
+      to: user.email,
+      text: `${emailContent}`,
+    });
+    await notification.save();
+
     await transporter.sendMail(mailOptions);
-    console.log(' email sent successfully');
+    console.log('Updated Ticket sent successfully');
+
+    // Delete the notification after 1 hour
+    setTimeout(async () => {
+      await notificationModel.deleteOne({ _id: notification._id });
+      console.log('Notification deleted after 1 hour');
+    }, 60 * 60 * 1000); // 1 hour in milliseconds
   } catch (error) {
+    logError(error);
     console.error('Error sending email:', error);
     throw error;
   }
+
 };
-// Create a new ticket
+
 const ticketsController = {
+  getTickets: async (req, res) => {
+    try {
+      // Fetch all tickets from MongoDB
+      const tickets = await ticketsModel.find();
+
+      res.status(201).json({ message: "tickets successfully", tickets });
+    } catch (error) {
+      logError(error);
+      res.status(500).json({ message: error.message });
+    }
+  },
+  // Create a new ticket
   createTicket: async (req, res) => {
     try {
       const { user_id,
@@ -61,25 +90,25 @@ const ticketsController = {
       res.status(201).json({ message: "ticket created successfully" });
     }
     catch (error) {
+      logError(error);
       console.error("Error creating ticket:", error);
       res.status(500).json({ message: "Server error" });
 
 
     }
   },
-  //get all tickets
   getAllTickets: async (req, res) => {
     try {
       const tickets = await ticketsModel.find().lean();
       return res.status(200).json({ tickets });
     } catch (error) {
+      logError(error);
       console.error("Error fetching tickets:", error);
       return res.status(500).json({ message: "Server error" });
     }
   },
   //update ticket
   updateTicket: async (req, res) => {
-    console.log("hi");
     try {
       const tickets = await ticketsModel.findById(req.params.id);
       console.log(tickets);
@@ -98,6 +127,7 @@ const ticketsController = {
       return res.status(200).json({ message: 'Ticket updated and closed successfully', updatedTicket });
     }
     catch (error) {
+      logError(error);
 
       return res.status(500).json({ message: error.message });
     }
@@ -114,6 +144,7 @@ const ticketsController = {
         return res.status(200).json({ message: 'Please chat with us' });
       }
     } catch (error) {
+      logError(error);
       return res.status(500).json({ message: 'Error', error: error.message });
     }
   },
@@ -133,6 +164,7 @@ const ticketsController = {
       }
     }
     catch (error) {
+      logError(error);
       return res.status(500).json({ message: 'Error' });
     }
   },
@@ -169,6 +201,7 @@ const ticketsController = {
       return res.status(200).json({ priority });
     }
     catch (error) {
+      logError(error);
       return res.status(500).json({ message: 'Error', error: error.message });
     }
   },
@@ -176,7 +209,10 @@ const ticketsController = {
 const updateTicketAndNotifyUser = async (ticketId, solution, userId) => {
   try {
     // Update ticket with solution and change status to 'closed'
-    const updatedTicket = await ticketsModel.findByIdAndUpdate(ticketId); // { new: true } returns the updated ticket
+    const updatedTicket = await ticketsModel.findByIdAndUpdate(ticketId,
+      { solution, status: 'closed' }, // Update solution and status
+      { new: true }
+    ); // { new: true } returns the updated ticket
 
     // Send email notification to the user
     const user = await userModel.findById(userId); // Assuming user ID is available in the request
@@ -185,7 +221,9 @@ const updateTicketAndNotifyUser = async (ticketId, solution, userId) => {
 
     return updatedTicket;
   } catch (error) {
+    logError(error);
     throw new Error(error.message);
   }
+
 };
 module.exports = ticketsController;

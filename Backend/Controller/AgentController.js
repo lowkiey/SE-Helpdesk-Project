@@ -1,7 +1,7 @@
 const AgentModel = require("../Models/Agent");
 const sessionModel = require("../Models/sessionModel");
 const userModel = require("../Models/userModel");
-
+const logError = require('../utils/logger');
 const jwt = require("jsonwebtoken");
 require('dotenv').config();
 const secretKey = process.env.SECRET_KEY;
@@ -15,7 +15,8 @@ const AgentController = {
             
             return res.status(200).json({ agents });
         } catch (error) {
-            console.error("Error fetching agents:", error);
+logError(error);            
+console.error("Error fetching agents:", error);
             return res.status(500).json({ message: "Server error" });
         }
     },
@@ -25,7 +26,8 @@ const AgentController = {
             const agent = await AgentModel.findById(id).lean();
             return res.status(200).json({ agent });
         } catch (error) {
-            console.error("Error fetching agent:", error);
+logError(error);            
+console.error("Error fetching agent:", error);
             return res.status(500).json({ message: "Server error" });
         }
     },
@@ -47,7 +49,7 @@ const AgentController = {
 
             return res.status(200).json({ updatedAgent });
         } catch (error) {
-            console.error("Error updating agent:", error);
+logError(error);            console.error("Error updating agent:", error);
             return res.status(500).json({ message: "Server error" });
         }
     },
@@ -57,7 +59,7 @@ const AgentController = {
             await AgentModel.findByIdAndDelete(id);
             return res.status(200).json({ message: "Agent deleted successfully" });
         } catch (error) {
-            console.error("Error deleting agent:", error);
+logError(error);            console.error("Error deleting agent:", error);
             return res.status(500).json({ message: "Server error" });
         }
     },
