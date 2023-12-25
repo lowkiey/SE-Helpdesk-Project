@@ -101,7 +101,7 @@ const connectionOptions = {
 mongoose
   .connect(db_url, connectionOptions)
   .then(() => console.log("MongoDB connected"))
-  .then(() => backupAndSaveLocally())
+  // .then(() => backupAndSaveLocally())
   .catch((e) => {
     console.log(e);
   });

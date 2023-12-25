@@ -45,6 +45,7 @@ const Login = () => {
           setShowOtpInput(true);
           return;
         } else {
+          
           localStorage.setItem("userId", response.data.user._id)
           //
           localStorage.setItem("role", response.data.user.role)
@@ -57,25 +58,20 @@ const Login = () => {
           const user = response.data.user
           localStorage.setItem("token", response.data.token)
           console.log(response.data.token)
-<<<<<<< HEAD
+
           // if (user.role === "user") {
-          navigate("/home");
+            navigate("/home");
           // }
-=======
-          if (user.role === "user") {
-            navigate("/home");
-          }
-          else if (user.role === "admin") {
-            navigate("/assign");
-          }
-          else if (user.role === "agent") {
-            navigate("/agent");
-          }else if(user.role === "manager"){
-            navigate("/home");
-          }
+          // else if (user.role === "admin") {
+          //   navigate("/assign");
+          // }
+          // else if (user.role === "agent") {
+          //   navigate("/agent");
+          // }else if(user.role === "manager"){
+          //   navigate("/home");
+          // }
 
 
->>>>>>> bcb00bb2b41a2b6d2a7721c6938b64cb2b3b8d1f
           console.log(response.data)
         }
 
@@ -83,17 +79,7 @@ const Login = () => {
     } catch (error) {
       logError(error);
       console.error(error);
-<<<<<<< HEAD
-      // if (error.response) {
-      //   // if (error.response.status === 404) {
-      //   //   setError("Email Not Found.");
-      //   // } else if (error.response.status === 405) {
-      //   //   setError("Incorrect password.");
-      //   // }
-      // } else {
-      //   setError("Server error. Please try again later.");
-      // }
-=======
+
       if (error.response) {
         if (error.response.status === 404) {
           setError("Email Not Found.");
@@ -103,7 +89,6 @@ const Login = () => {
       } else {
         setError("Server error. Please try again later.");
       }
->>>>>>> bcb00bb2b41a2b6d2a7721c6938b64cb2b3b8d1f
     }
   };
 
@@ -129,24 +114,20 @@ const Login = () => {
         localStorage.setItem("email", response.data.user.email)
         //
 
+        
         const user = response.data.user
         localStorage.setItem("token", response.data.token)
         console.log(response.data.token)
-<<<<<<< HEAD
         // if (user.role === "user") {
-        navigate("/home");
+        //   navigate("/home");
         // }
-=======
-        if (user.role === "user") {
-          navigate("/home");
-        }
-        else if (user.role === "admin") {
-          navigate("/assign");
-        }
-        else if (user.role === "agent") {
-          navigate("/agent");
-        }
->>>>>>> bcb00bb2b41a2b6d2a7721c6938b64cb2b3b8d1f
+        // else if (user.role === "admin") {
+        //   navigate("/assign");
+        // }
+        // else if (user.role === "agent") {
+        //   navigate("/agent");
+        // }
+        navigate("/home");
         console.log(response.data)
 
       }
