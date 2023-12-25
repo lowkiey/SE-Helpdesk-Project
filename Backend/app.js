@@ -28,7 +28,7 @@ app.use(
 app.use("/api/v1", authRouter);
 app.use(authenticationMiddleware);
 app.use("/api/v1/users", userRouter);
-app.use("/api/v1/agents", agentRouter);
+// app.use("/api/v1/agents", agentRouter);
 app.use("/api/v1/tickets", ticketRouter);
 app.use("/api/v1/automatedWorkflow", autoRouter);
 

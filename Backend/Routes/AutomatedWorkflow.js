@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const AutomatedWorkflowController = require("../Controller/AutomatedWorkFlowController");
-const authorizationMiddleware = require('../Middleware/authorizationMiddleware');
+const authorizationMiddleware = require('../Middleware/autherizationMiddleware');
 
 
 // * OTP verification
