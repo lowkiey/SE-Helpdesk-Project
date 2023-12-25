@@ -9,11 +9,7 @@ const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const axios = require("axios"); // Import axios for making HTTP requests
 const speakeasy = require("speakeasy");
-<<<<<<< HEAD
-// const logError = require('../utils/logger');
-=======
 const logError = require('../utils/logger');
->>>>>>> bcb00bb2b41a2b6d2a7721c6938b64cb2b3b8d1f
 
 const transporter = nodemailer.createTransport({
     host: 'smtp-mail.outlook.com',
@@ -42,11 +38,7 @@ async function sendOtpEmail(user, otp) {
         // const notification = new notificationModel({
         //     from: '"HELPDESK" <sehelpdeskproject@outlook.com>',
         //     to: user.email,
-<<<<<<< HEAD
-        //     text: Your one-time password (OTP) is: ${otp},
-=======
         //     text: `Your one-time password (OTP) is: ${otp}`,
->>>>>>> bcb00bb2b41a2b6d2a7721c6938b64cb2b3b8d1f
         // });
         // await notification.save();
 
@@ -59,11 +51,7 @@ async function sendOtpEmail(user, otp) {
         //     console.log('Notification deleted after 1 hour');
         // }, 60 * 60 * 1000); // 1 hour in milliseconds
     } catch (error) {
-<<<<<<< HEAD
-               // logError(error);
-=======
         logError(error);
->>>>>>> bcb00bb2b41a2b6d2a7721c6938b64cb2b3b8d1f
         console.error('Error sending email:', error);
         throw error; // Make sure to rethrow the error to propagate it to the calling function
     }
@@ -82,11 +70,7 @@ const verifyOTP = async (email, otp) => {
 
         return true;
     } catch (error) {
-<<<<<<< HEAD
-        //        // logError(error);
-=======
         logError(error);
->>>>>>> bcb00bb2b41a2b6d2a7721c6938b64cb2b3b8d1f
         console.error('Error verifying OTP:', error);
         return false;
     }
@@ -101,11 +85,7 @@ const userController = {
 
             res.status(200).json({ availableUser });
         } catch (error) {
-<<<<<<< HEAD
-                   // logError(error);
-=======
             logError(error);
->>>>>>> bcb00bb2b41a2b6d2a7721c6938b64cb2b3b8d1f
             console.error('Error fetching available users:', error);
             res.status(500).json({ message: 'Server error' });
         }
@@ -155,11 +135,7 @@ const userController = {
 
     //         res.status(201).json({ message: "User registered successfully" });
     //     } catch (error) {
-<<<<<<< HEAD
-    //        // logError(error);
-=======
     // logError(error);
->>>>>>> bcb00bb2b41a2b6d2a7721c6938b64cb2b3b8d1f
 
     //         console.error("Error registering user:", error);
     //         res.status(500).json({ message: "Server error" });
@@ -192,11 +168,7 @@ const userController = {
 
             res.status(201).json({ message: "User registered successfully" });
         } catch (error) {
-<<<<<<< HEAD
-                   // logError(error);
-=======
             logError(error);
->>>>>>> bcb00bb2b41a2b6d2a7721c6938b64cb2b3b8d1f
             console.error("Error registering user:", error);
             res.status(500).json({ message: "Server error" });
         }
@@ -308,11 +280,7 @@ const userController = {
                 .status(200)
                 .json({ message: 'Login successful', user, token, userNotifications });
         } catch (error) {
-<<<<<<< HEAD
-                   // logError(error);
-=======
             logError(error);
->>>>>>> bcb00bb2b41a2b6d2a7721c6938b64cb2b3b8d1f
             console.error('Error completing login:', error);
             res.status(500).json({ message: 'Server error' });
         }
@@ -322,11 +290,7 @@ const userController = {
             const users = await userModel.find();
             return res.status(200).json(users);
         } catch (e) {
-<<<<<<< HEAD
-                   // logError(error);
-=======
             logError(error);
->>>>>>> bcb00bb2b41a2b6d2a7721c6938b64cb2b3b8d1f
 
             return res.status(500).json({ message: e.message });
         }
@@ -336,11 +300,7 @@ const userController = {
             const user = await userModel.findById(req.params.id);
             return res.status(200).json(user);
         } catch (error) {
-<<<<<<< HEAD
-                   // logError(error);
-=======
             logError(error);
->>>>>>> bcb00bb2b41a2b6d2a7721c6938b64cb2b3b8d1f
             return res.status(500).json({ message: error.message });
         }
     },
@@ -355,11 +315,7 @@ const userController = {
             );
             return res.status(200).json({ user, msg: "User updated successfully" });
         } catch (error) {
-<<<<<<< HEAD
-                   // logError(error);
-=======
             logError(error);
->>>>>>> bcb00bb2b41a2b6d2a7721c6938b64cb2b3b8d1f
             return res.status(500).json({ message: error.message });
         }
     },
@@ -368,11 +324,7 @@ const userController = {
             const user = await userModel.findByIdAndDelete(req.params.id);
             return res.status(200).json({ user, msg: "User deleted successfully" });
         } catch (error) {
-<<<<<<< HEAD
-                   // logError(error);
-=======
             logError(error);
->>>>>>> bcb00bb2b41a2b6d2a7721c6938b64cb2b3b8d1f
             return res.status(500).json({ message: error.message });
         }
     },
@@ -412,11 +364,7 @@ const userController = {
 
             return res.status(200).json({ message: "Role updated successfully", user: updatedUser });
         } catch (error) {
-<<<<<<< HEAD
-                   // logError(error);
-=======
             logError(error);
->>>>>>> bcb00bb2b41a2b6d2a7721c6938b64cb2b3b8d1f
             console.error("Error updating user role:", error);
 
             res.status(500).json({ message: "Server error" });
@@ -426,8 +374,4 @@ const userController = {
 };
 
 
-<<<<<<< HEAD
 module.exports = userController;
-=======
-module.exports = userController;
->>>>>>> bcb00bb2b41a2b6d2a7721c6938b64cb2b3b8d1f
