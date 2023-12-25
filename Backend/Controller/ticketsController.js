@@ -51,6 +51,30 @@ async function sendEmailNotification(user, subject, emailContent) {
   }
 
 };
+const updateTicketAndNotifyUser = async (ticketId, solution, userId) => {
+  try {
+    const user = await userModel.findById(userId);
+
+    if (!user || !user.email) {
+      throw new Error('User not found or missing email');
+    }
+
+    // Update ticket with solution and change status to 'closed'
+    const updatedTicket = await ticketsModel.findByIdAndUpdate(ticketId,
+      { solution, status: 'closed' },
+      { new: true }
+    );
+
+    const emailContent = `Your ticket (ID: ${ticketId}) has been updated. Status: Closed. Solution: ${solution}`;
+    sendEmailNotification(user, 'Ticket Updated and Closed', emailContent);
+
+    return updatedTicket;
+  } catch (error) {
+    logError(error);
+    throw new Error(error.message);
+  }
+};
+
 
 const ticketsController = {
   getTickets: async (req, res) => {
@@ -205,25 +229,5 @@ const ticketsController = {
       return res.status(500).json({ message: 'Error', error: error.message });
     }
   },
-};
-const updateTicketAndNotifyUser = async (ticketId, solution, userId) => {
-  try {
-    // Update ticket with solution and change status to 'closed'
-    const updatedTicket = await ticketsModel.findByIdAndUpdate(ticketId,
-      { solution, status: 'closed' }, // Update solution and status
-      { new: true }
-    ); // { new: true } returns the updated ticket
-
-    // Send email notification to the user
-    const user = await userModel.findById(userId); // Assuming user ID is available in the request
-    const emailContent = `Your ticket (ID: ${ticketId}) has been updated. Status: Closed. Solution: ${solution}`;
-    sendEmailNotification(user, 'Ticket Updated and Closed', emailContent);
-
-    return updatedTicket;
-  } catch (error) {
-    logError(error);
-    throw new Error(error.message);
-  }
-
 };
 module.exports = ticketsController;
