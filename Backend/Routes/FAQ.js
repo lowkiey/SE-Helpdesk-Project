@@ -5,9 +5,9 @@ const FAQController = require("../Controller/FAQController");
 const userController = require("../Controller/userController");
 const authorizationMiddleware = require('../Middleware/autherizationMiddleware');
 
-router.post("/", authorizationMiddleware(['user']), FAQController.createFAQ);
-router.get("/search", authorizationMiddleware(['user']), FAQController.searchFAQ);
-router.get('/', authorizationMiddleware(['user']), FAQController.searchFAQBySubcategory);
+router.post("/", authorizationMiddleware(['user', 'agent', 'maager', 'admin']), FAQController.createFAQ);
+router.get("/search", authorizationMiddleware(['user', 'agent', 'maager', 'admin']), FAQController.searchFAQ);
+router.get('/', authorizationMiddleware(['user', 'agent', 'maager', 'admin']), FAQController.searchFAQBySubcategory);
 
 
 module.exports = router;

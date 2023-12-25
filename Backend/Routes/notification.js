@@ -4,7 +4,7 @@ const userController = require("../Controller/userController");
 const notificationController = require("../Controller/notificationController.js");
 const authorizationMiddleware = require('../Middleware/autherizationMiddleware');
 
-router.get("/", authorizationMiddleware(['user']), notificationController.getNotifications);
+router.get("/", authorizationMiddleware(['user', 'agent','maager','admin']), notificationController.getNotifications);
 
 
 module.exports = router; // ! Don't forget to export the router

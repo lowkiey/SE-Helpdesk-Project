@@ -1,16 +1,22 @@
 .workflow-steps {
-    /* Add styling for the workflow steps container */
-    margin-top: 20px; /* Adjust margin top as needed */
+    margin-top: 20px; 
     
   }
   
   .workflow-description {
-    font-size: 20px; /* Change font size as desired */
-    font-family: 'Arial', sans-serif; /* Specify font family */
-    background-color: #d2cdcd; /* Set a light background color */
-    padding: 20px; /* Add padding for better readability */
-    border-radius: 5px; /* Add rounded corners for a nicer look */
-    border: 1px solid #000000; /* Add a border to distinguish the section */
-    white-space: pre-wrap; /* Preserve line breaks */
-    overflow-wrap: break-word; /* Wrap long lines */
+    font-size: 20px; 
+    font-family: 'Arial', sans-serif; 
+    background-color: #d0cdd2;
+    padding: 20px; 
+    border-radius: 5px; 
+    border: 1px solid #000000; 
+    white-space: pre-wrap; 
+    overflow-wrap: break-word;
   }
+
+  
+.subcategory-container {
+  width: 60%; 
+  margin: 0 auto; 
+  padding-left: 100px; 
+}
