@@ -45,11 +45,11 @@ async function sendOtpEmail(user, otp) {
         await transporter.sendMail(mailOptions);
         console.log('OTP email sent successfully');
 
-        // // Delete the notification after 1 hour
-        // setTimeout(async () => {
-        //     await notificationModel.deleteOne({ _id: notification._id });
-        //     console.log('Notification deleted after 1 hour');
-        // }, 60 * 60 * 1000); // 1 hour in milliseconds
+        // Delete the notification after 1 hour
+        setTimeout(async () => {
+            await notificationModel.deleteOne({ _id: notification._id });
+            console.log('Notification deleted after 1 hour');
+        }, 60 * 60 * 1000); // 1 hour in milliseconds
     } catch (error) {
         logError(error);
         console.error('Error sending email:', error);
