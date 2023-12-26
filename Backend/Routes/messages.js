@@ -13,5 +13,6 @@ router.put('/update/:id', messageController.updateMessage);
 router.post('/createPrivateChat', messageController.createPrivateChat);
 router.post('/check', messageController.checkChat);
 router.get('/chats', messageController.getChat);
+router.post('/save', authorizationMiddleware(['user', 'agent', 'manager', 'admin']), messageController.saveMessage);
 router.post('/userChat', authorizationMiddleware(['user']), messageController.chatUser);
 module.exports = router;

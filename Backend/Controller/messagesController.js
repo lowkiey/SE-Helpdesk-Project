@@ -121,6 +121,18 @@ const messagesController = {
       res.status(500).json({ message: error.message });
     }
   },
+  saveMessage: async (req, res) => {
+    try {
+      const { message } = req.body;
+      const newMessage = new MessagesModel({ message });
+      await newMessage.save();
+      res.status(200).json({ message: "Message saved successfully" });
+    } catch (error) {
+      logError(error);
+      res.status(500).json({ message: error.message });
+    }
+  },
+
   sendMessage: async (req, res) => {
     try {
       const { user_id, agent_id, message } = req.body;
@@ -139,7 +151,7 @@ const messagesController = {
           message,
         });
 
-        await newMessage.save();
+        await chat.save();
 
         res.status(200).json({ message: "Message sent successfully" });
       } else {
@@ -309,7 +321,7 @@ const messagesController = {
       // Update the user's availability
       existingUser.available = true;
       await existingUser.save();
-      
+
 
       // Return the user as a success response
       res.status(200).json({ user: existingUser });

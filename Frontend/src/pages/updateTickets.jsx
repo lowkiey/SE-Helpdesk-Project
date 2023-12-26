@@ -7,6 +7,8 @@ import { Link } from 'react-router-dom';
 import { FaUser } from 'react-icons/fa';
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
+import { FiChevronLeft } from "react-icons/fi"; // Import the back icon from your desired icon library
+
 import styled, { createGlobalStyle } from 'styled-components';
 import { FaBell } from 'react-icons/fa';
 
@@ -19,6 +21,7 @@ export default function UpdateTickets() {
     const [tickets, setTickets] = useState([]);
     const [userName, setUserName] = useState("");
     const [isUserTabOpen, setIsUserTabOpen] = useState(false);
+    const [userRole, setUserRole] = useState("");
     const [theme, setTheme] = useState("light");
     const [showNotification, setShowNotification] = useState(false);
     const [notifications, setNotifications] = useState([]);
@@ -163,6 +166,10 @@ export default function UpdateTickets() {
                 }
 
                 const uid = localStorage.getItem("userId");
+
+                const role = localStorage.getItem("role");
+                setUserRole(role);
+
                 const response = await axios.get(`${backend_url}/users/${uid}`, {
                     withCredentials: true,
                 });
@@ -224,9 +231,23 @@ export default function UpdateTickets() {
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto ms-lg-5" style={{ margin: "0px", marginLeft: '100px' }}>
-                            <Nav.Link as={Link} to="/home" style={{ fontSize: '24px', cursor: 'pointer', color: 'purple' }}>
-                                HelpDesk
-                            </Nav.Link>
+                            {userRole === 'agent' ? (
+                                <Nav.Link
+                                    as={Link}
+                                    to={userRole === 'agent' ? '/agent' : '/home'}
+                                    style={{ fontSize: '24px', cursor: 'pointer', color: 'purple' }}
+                                >
+                                    HelpDesk
+                                </Nav.Link>
+                            ) : (
+                                <Nav.Link
+                                    as={Link}
+                                    to={userRole === 'agent' ? '/agent' : '/home'}
+                                    style={{ fontSize: '24px', cursor: 'pointer', color: 'purple' }}
+                                >
+                                    HelpDesk
+                                </Nav.Link>
+                            )}
 
                         </Nav>
                         <Nav className="ms-auto" style={{ display: 'flex', alignItems: 'center' }}>
@@ -273,28 +294,7 @@ export default function UpdateTickets() {
                                         <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column', visibility: isUserTabOpen ? 'visible' : 'hidden' }}>
                                             <p style={{ margin: '10px', fontSize: '20px', fontWeight: 'bold', color: 'black' }}>{`${userName}`}</p>
                                             {/* Toggle switch for both modes */}
-                                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                <div>
-                                                    <div>
-                                                        <label className="toggle-container">
-                                                            <span className="toggle-label" style={{ color: theme === 'dark' ? 'black' : 'black' }}>
-                                                                {theme === 'light' ? 'Light Mode' : 'Dark Mode'}
-                                                            </span>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                <label className="switch" style={{ position: 'relative', display: 'inline-block', width: '80px', height: '25px', visibility: isUserTabOpen ? 'visible' : 'hidden' }}>
-                                                    <input
-                                                        className="toggle"
-                                                        type="checkbox"
-                                                        checked={theme === 'dark'}
-                                                        onChange={toggleTheme}
-                                                        style={{ display: 'none' }}
-                                                    />
-                                                    <span className="slider" style={{ position: 'absolute', cursor: 'pointer', top: '0', left: '0', right: '0', bottom: '0', backgroundColor: '#ccc', width: '50px', borderRadius: '25px', transition: 'background-color 0.3s ease' }}></span>
-                                                    <span className="slider-thumb" style={{ position: 'absolute', cursor: 'pointer', top: '3px', left: theme === 'light' ? '3px' : '28px', width: '19px', height: '19px', backgroundColor: 'white', borderRadius: '50%', transition: 'transform 0.3s ease' }}></span>
-                                                </label>
-                                            </div>
+
                                             <Link to="/" style={{ marginTop: '10px', color: 'rgb(209, 151, 240)', textDecoration: 'none', visibility: isUserTabOpen ? 'visible' : 'hidden' }}>Logout</Link>
                                         </div>
                                     </div>

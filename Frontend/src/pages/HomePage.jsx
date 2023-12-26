@@ -135,7 +135,7 @@ export default function HomePage() {
         const role = localStorage.getItem("role");
         console.log(role);
         setRole(role);
-        
+
 
         const response = await axios.get(`${backend_url}/users/${uid}`, {
           withCredentials: true,
@@ -229,26 +229,7 @@ export default function HomePage() {
                     <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column', visibility: isUserTabOpen ? 'visible' : 'hidden' }}>
                       <p style={{ margin: '10px', fontSize: '20px', fontWeight: 'bold', color: 'black' }}>{`${userName}`}</p>
                       {/* Toggle switch for both modes */}
-                      <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <div>
-                          <label className="toggle-container">
-                            <span className="toggle-label" style={{ color: theme === 'dark' ? 'black' : 'black' }}>
-                              {theme === 'light' ? 'Light Mode' : 'Dark Mode'}
-                            </span>
-                          </label>
-                        </div>
-                        <label className="switch" style={{ position: 'relative', display: 'inline-block', width: '80px', height: '25px', visibility: isUserTabOpen ? 'visible' : 'hidden' }}>
-                          <input
-                            className="toggle"
-                            type="checkbox"
-                            checked={theme === 'dark'}
-                            onChange={toggleTheme}
-                            style={{ display: 'none' }}
-                          />
-                          <span className="slider" style={{ position: 'absolute', cursor: 'pointer', top: '0', left: '0', right: '0', bottom: '0', backgroundColor: '#ccc', width: '50px', borderRadius: '25px', transition: 'background-color 0.3s ease' }}></span>
-                          <span className="slider-thumb" style={{ position: 'absolute', cursor: 'pointer', top: '3px', left: theme === 'light' ? '3px' : '28px', width: '19px', height: '19px', backgroundColor: 'white', borderRadius: '50%', transition: 'transform 0.3s ease' }}></span>
-                        </label>
-                      </div>
+
                       <Link to="/" style={{ marginTop: '10px', color: 'rgb(209, 151, 240)', textDecoration: 'none', visibility: isUserTabOpen ? 'visible' : 'hidden' }}>Logout</Link>
                     </div>
                   </div>
@@ -262,24 +243,6 @@ export default function HomePage() {
         {`Hello ${userName}, What are you trying to do today?`} {/* by3rfni 3aleh w y2oli ezayik ya latifa */}
       </h1>
 
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <button
-          className="activity"
-          onClick={() => window.open("https://www.dropbox.com/home/Apps/SE_HelpDesk/SE_Project", "_blank")}
-          style={{
-            marginTop: '25px',
-            fontFamily: "sans-serif",
-            fontWeight: "bold",
-            backgroundColor: 'purple',
-            color: 'white',
-            border: 'white',
-            borderRadius: '5px',
-            width: '15%',
-            padding: '8px',
-          }}
-        >
-          Retrieve Backup
-        </button>      </div>
       <div style={{ display: 'flex', justifyContent: 'center', marginTop: '50px' }}>
         <img
           src="/gg.jpg"

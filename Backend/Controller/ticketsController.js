@@ -197,7 +197,6 @@ const ticketsController = {
       const { solution } = req.body;
       assignedAgentId.ticketCount -= 1;
       await assignedAgentId.save();
-
       //
 
       //notification:to be done in frontend

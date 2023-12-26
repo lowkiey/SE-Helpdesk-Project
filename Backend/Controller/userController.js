@@ -229,7 +229,7 @@ const userController = {
                         withCredentials: true,
                         httpOnly: false,
                         sameSite: 'none',
-                        // secure: true,    //comment this if u want to run using thunder client
+                        secure: true,    //comment this if u want to run using thunder client
                     })
                     .status(200)
                     .json({ message: 'Login successful', user, token, userNotifications });
@@ -370,7 +370,6 @@ const userController = {
             res.status(500).json({ message: "Server error" });
         }
     },
-
     registerByAdmin: async (req, res) => {
         try {
             const { email, password, displayName, role, rating, resolution_time } = req.body;

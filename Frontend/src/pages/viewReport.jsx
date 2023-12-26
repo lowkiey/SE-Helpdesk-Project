@@ -241,28 +241,7 @@ transform: translateX(25px) translateY(-50%);
                     <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column', visibility: isUserTabOpen ? 'visible' : 'hidden' }}>
                       <p style={{ margin: '10px', fontSize: '20px', fontWeight: 'bold', color: 'black' }}>{`${userName}`}</p>
                       {/* Toggle switch for both modes */}
-                      <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <div>
-                          <div>
-                            <label className="toggle-container">
-                              <span className="toggle-label" style={{ color: theme === 'dark' ? 'black' : 'black' }}>
-                                {theme === 'light' ? 'Light Mode' : 'Dark Mode'}
-                              </span>
-                            </label>
-                          </div>
-                        </div>
-                        <label className="switch" style={{ position: 'relative', display: 'inline-block', width: '80px', height: '25px', visibility: isUserTabOpen ? 'visible' : 'hidden' }}>
-                          <input
-                            className="toggle"
-                            type="checkbox"
-                            checked={theme === 'dark'}
-                            onChange={toggleTheme}
-                            style={{ display: 'none' }}
-                          />
-                          <span className="slider" style={{ position: 'absolute', cursor: 'pointer', top: '0', left: '0', right: '0', bottom: '0', backgroundColor: '#ccc', width: '50px', borderRadius: '25px', transition: 'background-color 0.3s ease' }}></span>
-                          <span className="slider-thumb" style={{ position: 'absolute', cursor: 'pointer', top: '3px', left: theme === 'light' ? '3px' : '28px', width: '19px', height: '19px', backgroundColor: 'white', borderRadius: '50%', transition: 'transform 0.3s ease' }}></span>
-                        </label>
-                      </div>
+                     
                       <Link to="/" style={{ marginTop: '10px', color: 'rgb(209, 151, 240)', textDecoration: 'none', visibility: isUserTabOpen ? 'visible' : 'hidden' }}>Logout</Link>
                     </div>
                   </div>

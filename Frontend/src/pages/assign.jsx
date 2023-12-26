@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import { FaUser } from 'react-icons/fa';
 import { FaBell } from 'react-icons/fa';
 import { useNavigate } from "react-router-dom";
+import { FiChevronLeft } from "react-icons/fi"; // Import the back icon from your desired icon library
 import { useCookies } from "react-cookie";
 import styled, { createGlobalStyle } from 'styled-components';
 
@@ -37,6 +38,7 @@ export default function assign() {
     const [email, setEmail] = useState(''); // Added email state
     const [password, setPassword] = useState('');
     const [users, setUsers] = useState([]);
+    const [userRole, setUserRole] = useState('');
     const [fileContent, setFileContent] = useState('');
 
     const handleUserIconClick = () => {
@@ -307,6 +309,10 @@ export default function assign() {
                 const uid = localStorage.getItem("userId");
                 console.log(uid);
 
+                const role = localStorage.getItem("role");
+                console.log(role);
+                setUserRole(role);
+
                 const response = await axios.get(`${backend_url}/users/${uid}`, {
                     withCredentials: true,
                 });
@@ -340,18 +346,24 @@ export default function assign() {
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto ms-lg-5" style={{ margin: "0px", marginLeft: '100px' }}>
-                            <Nav.Link as={Link} to="/home" style={{ fontSize: '24px', cursor: 'pointer', color: 'purple' }}>
+                        {userRole === 'admin' ? (
+                                 <Nav.Link
+                                 as={Link}
+                                 to={userRole === 'admin' ? '/assign' : '/home'}
+                                 style={{ fontSize: '24px', cursor: 'pointer', color: 'purple' }}
+                               >
+                                 HelpDesk
+                               </Nav.Link>
+                            ) : (
+                                <Nav.Link
+                                as={Link}
+                                to={userRole === 'admin' ? '/assign' : '/home'}
+                                style={{ fontSize: '24px', cursor: 'pointer', color: 'purple' }}
+                              >
                                 HelpDesk
-                            </Nav.Link>
-                            <Nav.Link as={Link} to="/tickets" style={{ fontSize: '24px', cursor: 'pointer', color: 'purple', marginLeft: '50px' }}>
-                                Tickets
-                            </Nav.Link>
-                            <Nav.Link as={Link} to="/faq" style={{ fontSize: '24px', cursor: 'pointer', color: 'purple', marginLeft: '50px' }}>
-                                FAQs
-                            </Nav.Link>
-                            <Nav.Link as={Link} to="/reports" style={{ fontSize: '24px', cursor: 'pointer', color: 'purple', marginLeft: '50px' }}>
-                                Reports
-                            </Nav.Link>
+                              </Nav.Link>
+                            )}
+                        
                             <Nav.Link onClick={openAssignRoleModal} style={{ fontSize: '24px', cursor: 'pointer', color: 'purple', marginLeft: '50px' }}>
                                 Assign Role
                             </Nav.Link>
@@ -434,7 +446,25 @@ export default function assign() {
             <h1 style={{ textAlign: "center", margin: "40px", color: 'purple', fontFamily: "Sans-Serif", fontWeight: "bold" }}>
                 {`Hello Admin ${userName} , What are you trying to do today?`} {/* by3rfni 3aleh w y2oli ezayik ya latifa */}
             </h1>
-
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <button
+          className="activity"
+          onClick={() => window.open("https://www.dropbox.com/home/Apps/SE_HelpDesk/SE_Project", "_blank")}
+          style={{
+            marginTop: '25px',
+            fontFamily: "sans-serif",
+            fontWeight: "bold",
+            backgroundColor: 'purple',
+            color: 'white',
+            border: 'white',
+            borderRadius: '5px',
+            width: '15%',
+            padding: '8px',
+          }}
+        >
+          Retrieve Backup
+        </button>      </div>
+      
             <div style={{ textAlign: 'center', margin: '20px' }}>
                 <button
                     onClick={openCreateUserModal}
@@ -479,7 +509,7 @@ export default function assign() {
             {/* Modal for assigning roles */}
             <Modal show={showAssignRoleModal} onHide={closeAssignRoleModal}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Assign Role</Modal.Title>
+                    <Modal.Title style={{color:'black'}}>Assign Role</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form onSubmit={handleAssignRole}>
@@ -544,10 +574,10 @@ export default function assign() {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={closeAssignRoleModal}>
+                    <Button variant="secondary" onClick={closeAssignRoleModal} style={{ backgroundColor: 'white', border: '1px solid purple', color:'purple' }}>
                         Close
                     </Button>
-                    <button className="btn btn-primary" onClick={handleAssignRole} style={{ backgroundColor: '#A280A1' }}>
+                    <button className="btn btn-primary" onClick={handleAssignRole} style={{ backgroundColor: 'purple', border: '1px solid purple' }}>
                         Submit
                     </button>
                 </Modal.Footer>
