@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "babel src -d dist"
+    "build": "babel src -d dist",
+    "start": "vite",
+    "serve": "vite preview"
   },
   "keywords": [],
   "author": "",
