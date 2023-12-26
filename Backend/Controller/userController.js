@@ -6,6 +6,7 @@ require('dotenv').config();
 const secretKey = process.env.SECRET_KEY;
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
+const logError = require('../utils/logger'); 
 const axios = require("axios"); // Import axios for making HTTP requests
 const speakeasy = require("speakeasy");
 const transporter = nodemailer.createTransport({
@@ -48,8 +49,8 @@ const verifyOTP = async (email, otp) => {
         }
 
         // Clear OTP after successful verification
-        foundUser.otp = null;
-        await foundUser.save();
+        // foundUser.otp = null;
+        // await foundUser.save();
 
         return true;
     } catch (error) {
@@ -59,13 +60,62 @@ const verifyOTP = async (email, otp) => {
 };
 
 const userController = {
+    //Register El adima
+    // register: async (req, res) => {
+    //     try {
+    //         const { email, password, displayName, role } = req.body;
+
+    //         // Check if the user already exists
+    //         const existingUser = await userModel.findOne({ email });
+
+    //         if (existingUser) {
+    //             return res.status(409).json({ message: "User already exists" });
+    //         }
+
+    //         // Hash the password
+    //         const hashedPassword = await bcrypt.hash(password, 10);
+
+    //         // Create a new user
+    //         const newUser = new userModel({
+    //             email,
+    //             password: hashedPassword,
+    //             displayName,
+    //             role,
+    //         });
+
+    //         // Save the user to the database
+    //         await newUser.save();
+
+    //         // If the registered user is an agent
+    //         if (role === "agent") {
+    //             const { rating, resolution_time, ticket_id, agentType } = req.body;
+
+    //             // Create a new agent
+    //             const newAgent = new AgentModel({
+    //                 user_id: newUser._id,
+    //                 rating,
+    //                 resolution_time,
+    //                 ticket_id,
+    //                 agentType,
+    //             });
+
+    //             // Save the agent to the database
+    //             await newAgent.save();
+    //         }
+
+    //         res.status(201).json({ message: "User registered successfully" });
+    //     } catch (error) {
+    //         console.error("Error registering user:", error);
+    //         res.status(500).json({ message: "Server error" });
+    //     }
+    // },
+
     register: async (req, res) => {
         try {
-            const { email, password, displayName, role } = req.body;
+            const { email, password, displayName } = req.body;
 
             // Check if the user already exists
             const existingUser = await userModel.findOne({ email });
-
             if (existingUser) {
                 return res.status(409).json({ message: "User already exists" });
             }
@@ -78,28 +128,10 @@ const userController = {
                 email,
                 password: hashedPassword,
                 displayName,
-                role,
             });
 
             // Save the user to the database
             await newUser.save();
-
-            // If the registered user is an agent
-            if (role === "agent") {
-                const { rating, resolution_time, ticket_id, agentType } = req.body;
-
-                // Create a new agent
-                const newAgent = new AgentModel({
-                    user_id: newUser._id,
-                    rating,
-                    resolution_time,
-                    ticket_id,
-                    agentType,
-                });
-
-                // Save the agent to the database
-                await newAgent.save();
-            }
 
             res.status(201).json({ message: "User registered successfully" });
         } catch (error) {
@@ -107,35 +139,36 @@ const userController = {
             res.status(500).json({ message: "Server error" });
         }
     },
-    login: async (req, res) => {
+    login : async (req, res) => {
         try {
-            const { email, password } = req.body;
-
-            // Find the user by email
-            const user = await userModel.findOne({ email });
-
-            if (!user) {
-                return res.status(404).json({ message: 'User not found' });
-            }
-
-            // Check password
-            const passwordMatch = await bcrypt.compare(password, user.password);
-            if (!passwordMatch) {
-                return res.status(405).json({ message: 'Incorrect password' });
-            }
-
-            // Generate and send OTP to user's email
-            const generatedOTP = generateOTP();
-            user.otp = generatedOTP; // Save OTP in user document
-            await user.save();
-            await sendOtpEmail(user, generatedOTP);
-
-            return res.status(200).json({ message: 'OTP sent to your email', email });
+          const { email, password } = req.body;
+      
+          // Find the user by email
+          const user = await userModel.findOne({ email });
+      
+          if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+          }
+      
+          // Check password
+          const passwordMatch = await bcrypt.compare(password, user.password);
+          if (!passwordMatch) {
+            return res.status(405).json({ message: 'Incorrect password' });
+            
+          }
+      
+          // Generate and send OTP to user's email
+          const generatedOTP = generateOTP();
+          user.otp = generatedOTP; // Save OTP in user document
+          await user.save();
+          await sendOtpEmail(user, generatedOTP);
+      
+      return res.status(200).json({ message: 'OTP sent to your email', email });
         } catch (error) {
-            console.error('Error initiating login:', error);
-            res.status(500).json({ message: 'Server error' });
+          logError(error); // Log the error using the logger
+          res.status(500).json({ message: 'Server error' });
         }
-    },
+      },
     verify: async (req, res) => {
         try {
             const { email, otp } = req.body;
@@ -154,7 +187,7 @@ const userController = {
                 { expiresIn: 3 * 60 * 60 }
             );
             const currentDateTime = new Date();
-            const expiresAt = new Date(+currentDateTime + 1800000); // expire in 3 minutes
+            const expiresAt = new Date(+currentDateTime + 180000000); // 3 hours
             let newSession = new sessionModel({
                 userId: user._id,
                 token,
@@ -162,16 +195,17 @@ const userController = {
             });
             await newSession.save();
             const userId = user._id.toString();
+
             return res
                 .cookie('token', token, {
                     expires: expiresAt,
                     withCredentials: true,
                     httpOnly: false,
                     sameSite: 'none',
-                    secure: true,
+                    // secure: true,    //comment this if u want to run using thunder client
                 })
                 .status(200)
-                .json({ message: 'Login successful', user });
+                .json({ message: 'Login successful', user, token });
         } catch (error) {
             console.error('Error completing login:', error);
             res.status(500).json({ message: 'Server error' });
@@ -204,6 +238,7 @@ const userController = {
             );
             return res.status(200).json({ user, msg: "User updated successfully" });
         } catch (error) {
+            appendErrorToLogFile(`Error initiating login: ${error}`);
             return res.status(500).json({ message: error.message });
         }
     },
@@ -215,6 +250,105 @@ const userController = {
             return res.status(500).json({ message: error.message });
         }
     },
+    updateRole: async (req, res) => {
+        const { displayName, role } = req.body;
+        try {
+            const user = await userModel.findOne({ displayName });
 
+            if (!user) {
+                
+                return res.status(404).json({ message: "User not found" });
+                
+            }
+            const agentCount = await userModel.countDocuments({ role: "agent" });
+
+            if (role === "agent") {
+                const {rating, resolution_time} = req.body;
+
+                // Create a new agent
+                const newAgent = new AgentModel({
+                    user_id: user._id,
+                    rating,
+                    resolution_time,
+                    // ticket_id
+                });
+
+                // Save the agent to the database
+                await newAgent.save();
+
+            }
+            if (role === "agent" && agentCount >= 3) {
+                return res.status(400).json({ message: "Maximum number of agents reached" });
+            }
+            const updatedUser = await userModel.findOneAndUpdate(
+                { displayName },
+                { role },
+            );
+
+            return res.status(200).json({ message: "Role updated successfully", user: updatedUser });
+        } catch (error) {
+            logError(error);
+            console.error("Error updating user role:", error);
+            
+            res.status(500).json({ message: "Server error" });
+        }
+    },
+
+
+    registerByAdmin: async (req, res) => {
+        try {
+            const { email, password, displayName, role, rating, resolution_time } = req.body;
+    
+            // Check if the user already exists
+            const existingUser = await userModel.findOne({ email });
+            if (existingUser) {
+                return res.status(409).json({ message: "User already exists" });
+            }
+    
+            // Hash the password
+            const hashedPassword = await bcrypt.hash(password, 10);
+    
+            // Check the number of agents
+            const agentCount = await userModel.countDocuments({ role: "agent" });
+            if (role === "agent" && agentCount >= 3) {
+                return res.status(400).json({ message: "Maximum number of agents reached" });
+            }
+    
+            // Create a new user object
+            let newUser = {
+                email,
+                password: hashedPassword,
+                displayName,
+                role
+            };
+    
+            // Save the user to the userModel
+            const user = new userModel(newUser);
+            await user.save();
+    
+            // Add extra fields and save to AgentModel if the role is 'agent'
+            if (role === "agent") {
+                let newAgent = {
+                    ...newUser,
+                    rating,
+                    resolution_time
+                };
+                const agent = new AgentModel(newAgent);
+                await agent.save();
+            }
+    
+            res.status(201).json({ message: "User registered successfully" });
+        } catch (error) {
+            console.error("Error registering user:", error);
+            res.status(500).json({ message: "Server error" });
+        }
+    }
+
+
+    
+  
+    
 };
+
+
 module.exports = userController;

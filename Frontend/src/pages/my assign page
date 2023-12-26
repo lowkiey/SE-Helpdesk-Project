@@ -1,29 +1,40 @@
 import React, { useEffect, useState } from "react";
-// import AppNavBar from "../components/navbar";
 import axios from "axios";
+import { Modal, Button, Form , Toast, ToastContainer} from 'react-bootstrap';
 import Navbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
-import { Link, NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { FaUser } from 'react-icons/fa';
-import { FaBell } from 'react-icons/fa';
-import styled, { createGlobalStyle } from 'styled-components';
-
 
 import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
-let backend_url = "http://localhost:3000/api/v1";
+import styled, { createGlobalStyle } from 'styled-components';
+ 
+const backend_url = "http://localhost:3000/api/v1";
 
-export default function HomePage() {
+export default function assign() {
   const navigate = useNavigate();
-  const [cookies] = useCookies([]);
+  const [cookies] = useCookies(['token']);
   const [userName, setUserName] = useState("");
-  const [users, setUsers] = useState([]);
-  const [isUserTabOpen, setIsUserTabOpen] = useState(false)
-  const [showNotification, setShowNotification] = useState(false); // New state for notification
-  const [notifications, setNotifications] = useState([]);
+  const [isUserTabOpen, setIsUserTabOpen] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [displayName, setDisplayName] = useState("");
+  const [role, setRole] = useState("");
+  const [rating, setRating] = useState('');
+  const [resolutionTime, setResolutionTime] = useState('');
+  const [ticketId, setTicketId] = useState('');
+  const [numberOfTickets, setNumberOfTickets] = useState(5);
+  const [showAgentFields, setShowAgentFields] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
   const [theme, setTheme] = useState("light");
+  const [showNotification, setShowNotification] = useState(false);
+  const [notifications, setNotifications] = useState([]);
 
+  const handleUserIconClick = () => {
+    setIsUserTabOpen(!isUserTabOpen);
+  };
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
@@ -31,76 +42,6 @@ export default function HomePage() {
   };
   const handleToggleChange = () => {
     toggleTheme();
-  };
-
-  const GlobalStyle = createGlobalStyle`
-  body {
-    background-color: ${(props) => (props.theme === 'dark' ? '#0d001a' : 'white')};
-    color: ${(props) => (props.theme === 'dark' ? 'white' : 'black')};
-    margin: 0;
-    padding: 0;
-    transition: all 0.3s ease; /* Optional: Smooth transition */
-  }
-`;
-
-  // Light Mode styles
-  const LightMode = styled.div`
-  background-color: white;
-    color: black;
-`;
-
-  // Dark Mode styles
-  const DarkMode = styled.div`
-  background-color: #0d001a;
-  color: white;
-
-  .toggle-container {
-    position: absolute;
-    top: 50%;
-    right: 20px;
-    transform: translateY(-50%);
-    display: flex;
-    align-items: center;
-  }
-
-  .toggle-label {
-    margin-right: 10px;
-  }
-
-  .toggle {
-    appearance: none;
-    width: 50px;
-    height: 25px;
-    background-color: #777;
-    border-radius: 25px;
-    position: relative;
-    cursor: pointer;
-    outline: none;
-    transition: background-color 0.3s ease;
-  }
-
-  .toggle::before {
-    content: '';
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background-color: white;
-    top: 50%;
-    transform: translateY(-50%);
-    transition: transform 0.3s ease;
-  }
-
-  .toggle:checked {
-    background-color: #52d869; /* Change color to match your theme */
-  }
-
-  .toggle:checked::before {
-    transform: translateX(25px) translateY(-50%);
-  }
-`;
-  const handleUserIconClick = () => {
-    setIsUserTabOpen(!isUserTabOpen);
   };
   async function fetchNotifications() {
     try {
@@ -115,45 +56,87 @@ export default function HomePage() {
       return []; // Return an empty array if there's an error
     }
   }
+
+  const openAssignRoleModal = () => setShowModal(true);
+  const closeAssignRoleModal = () => setShowModal(false);
+
+  const handleAssignRole = async (e) => {
+    e.preventDefault();
+    let data = {
+      displayName,
+      role
+    };
+  
+    // Add additional data if the role is 'agent'
+    if (role === 'agent') {
+      // rating, resolution_time, ticket_id
+      data = {
+        ...data,
+        rating: Number(rating), // Ensure rating is a number
+        resolution_time: resolutionTime,
+        ticket_id: ticketId // Make sure this is the correct format for your backend
+         // Ensure numberOfTickets is a number
+      };
+    }
+        
+    try {
+      const response = await axios.post(`${backend_url}/users/assign`, data, {
+        withCredentials: true,
+      });
+      setToastMessage('Role added successfully');
+      setShowToast(true);
+      console.log(response.data.message);
+      setShowModal(false);
+    } catch (error) {
+      setToastMessage('Cannot change role');
+      setShowToast(true);
+      console.error("Error updating user role:", error);
+    }
+  };
+
   useEffect(() => {
     const storedTheme = localStorage.getItem('theme');
     if (storedTheme) {
       setTheme(storedTheme);
     }
     async function fetchUserData() {
-      try {
-        if (!cookies.token) {
-          console.log("No token found, redirecting to login");
-          // navigate("/");
-          return; // Exit early if there's no token
+        try {
+          if (!cookies.token) {
+            console.log("No token found, redirecting to login");
+            // navigate("/");
+            return; // Exit early if there's no token
+          }
+  
+  
+          const uid = localStorage.getItem("userId");
+          console.log(uid);
+  
+          const response = await axios.get(`${backend_url}/users/${uid}`, {
+            withCredentials: true,
+          });
+          console.log("response", response);
+  
+          setUserName(response.data.displayName);      //di btgib el esm lw 3aiza 7aga tani b3d kda b3mlha display
+        } catch (error) {
+          console.log("Error fetching user data:", error);
+          navigate("/"); // Redirect to login page on error
         }
-
-
-        const uid = localStorage.getItem("userId");
-        console.log(uid);
-
-        const response = await axios.get(`${backend_url}/users/${uid}`, {
-          withCredentials: true,
-        });
-        console.log("response", response);
-
-        setUserName(response.data.displayName);      //di btgib el esm lw 3aiza 7aga tani b3d kda b3mlha display
-      } catch (error) {
-        console.log("Error fetching user data:", error);
-        navigate("/"); // Redirect to login page on error
       }
-    }
-
     fetchUserData();
-    fetchNotifications()
+  }, [cookies.token, navigate]);
 
+  const handleCategoryChange = (e) => {
+    const selectedRole = e.target.value;
+    setRole(selectedRole);
+    setShowAgentFields(selectedRole === 'agent'); // Update this line
+  };
 
-  }, [cookies.token, navigate, showNotification]);
 
   return (
     <>
-
-      <GlobalStyle theme = {theme} />
+    
+    {theme === 'light' ? (
+        <LightMode>
           <Navbar expand="lg" className="bg-body-tertiary">
             <Container>
               <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -243,37 +226,101 @@ export default function HomePage() {
                 </Nav>
               </Navbar.Collapse>
             </Container>
-          </Navbar>
-          <h1 style={{ textAlign: "center", margin: "40px", color: 'purple', fontFamily: "Sans-Serif", fontWeight: "bold" }}>
-            {`Hello ${userName}, What are you trying to do today?`} {/* by3rfni 3aleh w y2oli ezayik ya latifa */}
-          </h1>
+            </Navbar>
+      <h1 style={{ textAlign: "left", margin: "40px", color: 'black', fontFamily: "Times New Roman", fontWeight: "bold" }}>
+        {`Hello ${userName}`} {/* Displaying the username */}
+      </h1>
 
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <button className="create" onClick={() => navigate("/tickets")} style={{ fontFamily: "sans-serif", fontWeight: "bold", backgroundColor: 'purple', color: 'white', border: 'white', borderRadius: '5px', width: '15%', padding: '8px', }}>Create a new support ticket</button>
-            <button className="activity" onClick={() => navigate("/tickets")} style={{ marginTop: '25px', fontFamily: "sans-serif", fontWeight: "bold", backgroundColor: 'purple', color: 'white', border: 'white', borderRadius: '5px', width: '15%', padding: '8px', }}>Recent Activity</button>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '50px' }}>
-            <img
-              src="/gg.jpg"
-              alt="Image Description"
-              style={{ width: '25%', height: '25%' }}
+      <ToastContainer position="top-end" className="p-3">
+        <Toast onClose={() => setShowToast(false)} show={showToast} delay={3000} autohide>
+          <Toast.Body>{toastMessage}</Toast.Body>
+        </Toast>
+      </ToastContainer>
+
+      {/* Modal for assigning roles */}
+      <Modal show={showModal} onHide={closeAssignRoleModal}>
+  <Modal.Header closeButton>
+    <Modal.Title>Assign Role</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    <Form onSubmit={handleAssignRole}>
+      <Form.Group controlId="formDisplayName">
+        <Form.Label>User Name</Form.Label>
+        <Form.Control
+          type="text"
+          placeholder="Enter user's name"
+          value={displayName}
+          onChange={(e) => setDisplayName(e.target.value)}
+        />
+      </Form.Group>
+      <Form.Group controlId="formRoleSelect">
+        <Form.Label>Role</Form.Label>
+        <Form.Control
+          as="select"
+          value={role}
+          onChange={(e) => {
+            setRole(e.target.value);
+            setShowAgentFields(e.target.value === 'agent');
+            handleCategoryChange(e)
+          }}
+        >
+          <option value="">Select a role</option>
+          <option value="admin">Manager</option>
+          <option value="agent">Agent</option>
+          <option value="user">User</option>
+        </Form.Control>
+      </Form.Group>
+
+      {showAgentFields && (
+        <>
+          <Form.Group controlId="formRating">
+            <Form.Label>Rating</Form.Label>
+            <Form.Control
+              type="number"
+              placeholder="Enter agent's rating"
+              value={rating}
+              onChange={(e) => setRating(e.target.value)}
             />
-          </div>
-          <div className="about us">
-            <h1 style={{ textAlign: "left", marginTop: '90px', color: 'purple', fontFamily: "Sans-Serif", fontWeight: "bold", marginLeft: '35px', marginRight: 'auto', width: 'fit-content' }}>
-              About Us
-            </h1>
-            <p style={{ textAlign: "left", marginTop: '10px', marginLeft: "15px", color: 'black', fontFamily: "Sans-Serif", fontWeight: "bold", width: '1500px', padding: '20px' }}>
-              Our mission at Helpdesk is to revolutionize support services through our cutting-edge ticketing system. We are dedicated to streamlining communication between users and support teams, ensuring swift and efficient resolution of issues. Our commitment lies in empowering both clients and businesses by providing a seamless, user-friendly platform that fosters clarity, transparency, and satisfaction. We strive to be the catalyst for exceptional customer experiences, offering reliable solutions that elevate the standards of support services in the digital age.
-            </p>
-            <h1 style={{ textAlign: "left", marginTop: '20px', color: 'purple', fontFamily: "Sans-Serif", fontWeight: "bold", marginLeft: '35px', marginRight: 'auto', width: 'fit-content' }}>
-              Our Services
-            </h1>
-            <p style={{ textAlign: "left", marginTop: '10px', marginLeft: "15px", color: 'black', fontFamily: "Sans-Serif", fontWeight: "bold", width: '1500px', padding: '20px' }}>
-              Our services are tailored to provide efficient solutions for your needs. Need help? Simply open a ticket with us, and rest assured that a specialized agent, skilled in hardware, software, or network-related issues, will promptly address your concern. Our priority ticketing system ensures that urgent matters receive immediate attention, while our live chat functionality enables real-time communication for quick resolutions. Experience reliable support catered specifically to your technical requirements, making your experience with us smooth and hassle-free.
-            </p>
-          </div>
-        
+          </Form.Group>
+          <Form.Group controlId="formResolutionTime">
+            <Form.Label>Resolution Time</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter resolution time"
+              value={resolutionTime}
+              onChange={(e) => setResolutionTime(e.target.value)}
+            />
+          </Form.Group>
+          {/* <Form.Group controlId="formNumberOfTickets">
+            <Form.Label>Number of Tickets</Form.Label>
+            <Form.Control
+              type="number"
+              placeholder="Enter number of tickets"
+              value={numberOfTickets}
+              onChange={(e) => setNumberOfTickets(e.target.value)}
+            />
+          </Form.Group> */}
+        </>
+      )}
+    </Form>
+  </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" onClick={closeAssignRoleModal}>
+      Close
+    </Button>
+    <button className="btn btn-primary" onClick={handleAssignRole} style={{ backgroundColor: '#A280A1' }}>
+  Submit
+</button>
+  </Modal.Footer>
+</Modal>
+</LightMode>
+    ):(
+
+    <DarkMode>
+
+    </DarkMode>
+     )}
     </>
+   
   );
-}
+};

@@ -6,6 +6,7 @@ const userRouter = require("./Routes/users");
 const agentRouter = require("./Routes/agent");
 const ticketRouter = require("./Routes/tickets");
 const authRouter = require("./Routes/auth");
+const path = require('path');
 require('dotenv').config();
 const authenticationMiddleware = require("./Middleware/authenticationMiddleware");
 const cors = require("cors");
@@ -13,6 +14,10 @@ const cors = require("cors");
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+// app.js
+
+
+// Example usage
 
 app.use(
     cors({
@@ -23,11 +28,13 @@ app.use(
     })
 );
 
+app.use(express.static(path.join(__dirname, 'public')));
 app.use("/api/v1", authRouter);
 app.use(authenticationMiddleware);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/agents", agentRouter);
 app.use("/api/v1/tickets", ticketRouter);
+
 
 const db_name = 'SE_Project1';
 const db_url = `${"mongodb://127.0.0.1:27017"}/${db_name}`;
