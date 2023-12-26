@@ -160,7 +160,7 @@ const ticketsController = {
 
       if (workflowResult && workflowResult.status === 200) {
         console.log('Automated workflow triggered successfully');
-      } 
+      }
       // }
       res.status(201).json({ message: "Ticket created successfully", ticket: newTicket });
     } catch (error) {
@@ -190,11 +190,13 @@ const ticketsController = {
       assignedAgentId.numberOfTickets -= 1;
       await assignedAgentId.save();
 
+      //
+
       //notification:to be done in frontend
       const updatedTicket = await updateTicketAndNotifyUser(tickets._id, solution, tickets.user_id);
       updatedTicket.status = 'closed';
 
-      
+
 
       return res.status(200).json({ message: 'Ticket updated and closed successfully', updatedTicket });
     }

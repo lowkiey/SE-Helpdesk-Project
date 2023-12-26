@@ -1,6 +1,7 @@
 const winston = require('winston');
 const path = require('path');
 
+
 const errorLogPath = path.join(__dirname, '..', 'file.txt'); // Correct path to file.txt in the project root
 
 const logger = winston.createLogger({

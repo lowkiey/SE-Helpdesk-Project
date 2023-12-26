@@ -82,19 +82,21 @@ export default function assign() {
     };
 
     const GlobalStyle = createGlobalStyle`
-  body {
-    background-color: ${(props) => (props.theme === 'dark' ? '#0d001a' : 'white')};
-    color: ${(props) => (props.theme === 'dark' ? 'white' : 'black')};
-    margin: 0;
-    padding: 0;
-    transition: all 0.3s ease; /* Optional: Smooth transition */
-  }
-`;
-    const LightMode = styled.div`
-  background-color: white;
-    color: black;
-`;
+    body {
+      background-color: ${(props) => (props.theme === 'dark' ? '#0d001a' : 'white')};
+      color: ${(props) => (props.theme === 'dark' ? 'white' : 'black')};
+      margin: 0;
+      padding: 0;
+      transition: all 0.3s ease; /* Optional: Smooth transition */
+    }
+  `;
 
+
+    // Light Mode styles
+    const LightMode = styled.div`
+    background-color: white;
+      color: black;
+  `;
     // Dark Mode styles
     const DarkMode = styled.div`
   background-color: #0d001a;
@@ -150,8 +152,8 @@ export default function assign() {
   width: 90%;
   margin: auto;
   color: ${(props) => props.theme === 'dark' ? 'white' : 'purple'};
-  font-family: "Sans-Serif";
-  font-weight: bold;
+//   font-family: "Sans-Serif";
+//   font-weight: bold;
   font-size: 18px;
 
   thead {
@@ -313,7 +315,7 @@ export default function assign() {
     return (
         <>
             <GlobalStyle theme={theme} />
-            <StyledNavbar expand="lg" variant={theme} theme={theme}>
+            <Navbar expand="lg" className="bg-body-tertiary">
                 <Container>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
@@ -334,21 +336,20 @@ export default function assign() {
                                 Assign Role
                             </Nav.Link>
                         </Nav>
-                        <Nav className="ms-auto">
-                        </Nav>
                         <Nav className="ms-auto" style={{ display: 'flex', alignItems: 'center' }}>
+
                             <Nav.Item>
                                 <div style={{ position: 'relative' }}>
                                     <FaBell
                                         onClick={() => setShowNotification(!showNotification)}
-                                        style={{ fontSize: '24px', cursor: 'pointer', color: 'purple', marginRight: '50px' }}
+                                        style={{ fontSize: '24px', cursor: 'pointer', color: 'purple', marginRight: '20px' }}
                                     />
                                     {showNotification && (
                                         <div style={{ position: 'absolute', top: '30px', right: '20px', width: '300px', maxHeight: '400px', backgroundColor: 'white', boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)', borderRadius: '5px', padding: '10px', overflowY: 'auto' }}>
                                             {/* notification tab content */}
                                             <div style={{ marginTop: '5px' }}>
-                                                <p style={{ margin: '0', fontWeight: 'bold', fontSize: '20px' }}>Notifications:</p>
-                                                <ul style={{ listStyleType: 'none', padding: '0', maxHeight: '300px', overflowY: 'auto', marginTop: '5px' }}>
+                                                <p style={{ margin: '0', fontWeight: 'bold', fontSize: '20px', color: 'black' }}>Notifications:</p>
+                                                <ul style={{ listStyleType: 'none', padding: '0', maxHeight: '300px', overflowY: 'auto', marginTop: '5px', color: 'black' }}>
                                                     {notifications.length === 0 ? (
                                                         <li>
                                                             <p style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center', color: 'purple', marginTop: '20px' }}>No notifications</p>
@@ -372,20 +373,21 @@ export default function assign() {
                                 <div style={{ position: 'relative' }}>
                                     <FaUser
                                         onClick={handleUserIconClick}
-                                        style={{ fontSize: '24px', cursor: 'pointer', color: 'purple', marginRight: '50px' }}
+                                        style={{ fontSize: '24px', cursor: 'pointer', color: 'purple', marginRight: '20px' }}
                                     />
                                     {/* User tab content */}
                                     <div style={{ position: 'absolute', top: '35px', right: '-150px', width: '200px', height: '150px', backgroundColor: 'white', boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)', borderRadius: '0px', padding: '10px', visibility: isUserTabOpen ? 'visible' : 'hidden' }}>
                                         <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column', visibility: isUserTabOpen ? 'visible' : 'hidden' }}>
-                                            <p style={{ margin: '10px', fontSize: '20px', fontWeight: 'bold' }}>{`${userName}`}</p>
+                                            <p style={{ margin: '10px', fontSize: '20px', fontWeight: 'bold', color: 'black' }}>{`${userName}`}</p>
                                             {/* Toggle switch for both modes */}
                                             <div style={{ display: 'flex', alignItems: 'center' }}>
                                                 <div>
-                                                    <span style={{ marginRight: '10px', visibility: isUserTabOpen ? 'visible' : 'hidden' }}>
-                                                        <span>Dark Mode</span>
-                                                    </span>
+                                                    <label className="toggle-container">
+                                                        <span className="toggle-label" style={{ color: theme === 'dark' ? 'black' : 'black' }}>
+                                                            {theme === 'light' ? 'Light Mode' : 'Dark Mode'}
+                                                        </span>
+                                                    </label>
                                                 </div>
-
                                                 <label className="switch" style={{ position: 'relative', display: 'inline-block', width: '80px', height: '25px', visibility: isUserTabOpen ? 'visible' : 'hidden' }}>
                                                     <input
                                                         className="toggle"
@@ -395,7 +397,7 @@ export default function assign() {
                                                         style={{ display: 'none' }}
                                                     />
                                                     <span className="slider" style={{ position: 'absolute', cursor: 'pointer', top: '0', left: '0', right: '0', bottom: '0', backgroundColor: '#ccc', width: '50px', borderRadius: '25px', transition: 'background-color 0.3s ease' }}></span>
-                                                    <span className="slider-thumb" style={{ position: 'absolute', cursor: 'pointer', top: '3px', left: theme === 'light' ? '3px' : '53px', width: '19px', height: '19px', backgroundColor: 'white', borderRadius: '50%', transition: 'transform 0.3s ease' }}></span>
+                                                    <span className="slider-thumb" style={{ position: 'absolute', cursor: 'pointer', top: '3px', left: theme === 'light' ? '3px' : '28px', width: '19px', height: '19px', backgroundColor: 'white', borderRadius: '50%', transition: 'transform 0.3s ease' }}></span>
                                                 </label>
                                             </div>
                                             <Link to="/" style={{ marginTop: '10px', color: 'rgb(209, 151, 240)', textDecoration: 'none', visibility: isUserTabOpen ? 'visible' : 'hidden' }}>Logout</Link>
@@ -406,7 +408,7 @@ export default function assign() {
                         </Nav>
                     </Navbar.Collapse>
                 </Container>
-            </StyledNavbar>
+            </Navbar>
             <h1 style={{ textAlign: "center", margin: "40px", color: 'purple', fontFamily: "Sans-Serif", fontWeight: "bold" }}>
                 {`Hello Admin ${userName} , What are you trying to do today?`} {/* by3rfni 3aleh w y2oli ezayik ya latifa */}
             </h1>
@@ -518,10 +520,10 @@ export default function assign() {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={closeAssignRoleModal} style={{ backgroundColor: 'white', borderColor:'purple', color:'purple' }}>
+                    <Button variant="secondary" onClick={closeAssignRoleModal} style={{ backgroundColor: 'white', borderColor: 'purple', color: 'purple' }}>
                         Close
                     </Button>
-                    <button className="btn btn-primary" onClick={handleAssignRole} style={{ backgroundColor: 'purple', borderColor:'purple' }}>
+                    <button className="btn btn-primary" onClick={handleAssignRole} style={{ backgroundColor: 'purple', borderColor: 'purple' }}>
                         Submit
                     </button>
                 </Modal.Footer>
@@ -627,7 +629,7 @@ export default function assign() {
 
             <StyledTable theme={theme}>
                 <thead style={{
-                    backgroundColor: theme === 'dark' ? '#222' : 'purple', // header background color changes based on theme
+                    backgroundColor: theme === 'dark' ? 'purple' : 'purple', // header background color changes based on theme
                     color: theme === 'dark' ? 'white' : 'white' // header text color changes based on theme
                 }}>
                     <tr>

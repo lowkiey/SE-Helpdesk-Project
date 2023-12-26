@@ -19,6 +19,7 @@ import io from 'socket.io-client';
 function App() {
   const [socket, setSocket] = useState(null);
   const userId = localStorage.getItem('userId');
+  const role = localStorage.getItem('role');
 
   useEffect(() => {
     const socketInstance = io('http://localhost:3000', { query: { userId } });
@@ -57,7 +58,7 @@ function App() {
       <Route path="/chats/:userId" element={<ChatPage socket={socket} />} />
       <Route path="/agent" element={<Agent />} />
       <Route path="/updateTickets" element={<UpdateTickets />} />
-      <Route path="/assign" element={<Assign />} />
+      <Route path="/assign" element={<Assign />} />
 
 
     </Routes>

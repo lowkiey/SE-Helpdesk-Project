@@ -185,10 +185,11 @@ color: white;
   useEffect(() => {
     const fetchUserInformation = async () => {
       try {
-        const storedDisplayName = localStorage.getItem("name");
-        setDisplayName(storedDisplayName || "User");
+        // const storedDisplayName = localStorage.getItem("name");
+        setDisplayName("User");
         const role = localStorage.getItem("role");
         setUserRole(role);
+        console.log("role", role);
       } catch (error) {
         console.error("Error fetching user information:", error);
       }
@@ -216,13 +217,18 @@ color: white;
       }
     };
   }, [socket, setDisplayName]);
-  const handleBack = () => {
-    if (userRole === "agent") {
-      navigate("/chat");
-    } else if (userRole === "user") {
-      navigate("/home");
-    };
-  };
+
+  // const handleBack = () => {
+  //   console.log("userRoleeeeeeeeeeeeeeeeeeeeeee", userRole)
+  //   if (userRole === "agent") {
+  //     navigate("/chat");
+  //   } else {
+  //     navigate("/home");
+  //   }
+  // if (userRole === "user") {
+  //   navigate("/home");
+  // };
+  // };
   return (
     <>
       <GlobalStyle theme={theme} />
@@ -231,9 +237,14 @@ color: white;
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto ms-lg-5" style={{ margin: "0px", marginLeft: '100px' }}>
-              <Nav.Link as={Link} to="/agent" style={{ fontSize: '24px', cursor: 'pointer', color: 'purple' }}>
+              <Nav.Link
+                as={Link}
+                to={userRole === 'agent' ? '/agent' : '/home'}
+                style={{ fontSize: '24px', cursor: 'pointer', color: 'purple' }}
+              >
                 HelpDesk
               </Nav.Link>
+
 
             </Nav>
             <Nav className="ms-auto" style={{ display: 'flex', alignItems: 'center' }}>
@@ -307,14 +318,21 @@ color: white;
           </Navbar.Collapse>
         </Container>
       </Navbar>
-      <div className="container-fluid" style={{ maxWidth: "50%" }}>
+      <div className="container-fluid" style={{ maxWidth: "50%", marginTop:'12vh' }}>
         <div className="row">
           <div className="col-lg-12">
             <div className="card mt-4">
               <div className="card-header d-flex justify-content-between align-items-center" style={{ backgroundColor: 'purple' }}>
-                <Link to="/chat" className="btn btn-secondary d-flex align-items-center" onClick={handleBack} style={{ backgroundColor: 'white', color: 'purple', borderColor: 'purple' }}>
-                  <FiChevronLeft /> Back
-                </Link>
+                {userRole === 'agent' ? (
+                  <Link to="/chat" className="btn btn-secondary d-flex align-items-center" style={{ backgroundColor: 'white', color: 'purple', borderColor: 'purple' }}>
+                    <FiChevronLeft /> Back
+                  </Link>
+                ) : (
+                  <Link to="/home" className="btn btn-secondary d-flex align-items-center" style={{ backgroundColor: 'white', color: 'purple', borderColor: 'purple' }}>
+                    <FiChevronLeft /> Back
+                  </Link>
+                )}
+                
                 <h4 style={{ margin: "0", color: 'white' }}>Chats</h4>
               </div>
               <ul id="messages" className="list-group">
@@ -348,6 +366,7 @@ color: white;
         </div>
       </div>
     </>
+
   );
 };
 

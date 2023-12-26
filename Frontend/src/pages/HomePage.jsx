@@ -19,6 +19,7 @@ export default function HomePage() {
   const [cookies] = useCookies([]);
   const [userName, setUserName] = useState("");
   const [users, setUsers] = useState([]);
+  const [role, setRole] = useState("");
   const [isUserTabOpen, setIsUserTabOpen] = useState(false)
   const [showNotification, setShowNotification] = useState(false); // New state for notification
   const [notifications, setNotifications] = useState([]);
@@ -131,6 +132,10 @@ export default function HomePage() {
 
         const uid = localStorage.getItem("userId");
         console.log(uid);
+        const role = localStorage.getItem("role");
+        console.log(role);
+        setRole(role);
+        
 
         const response = await axios.get(`${backend_url}/users/${uid}`, {
           withCredentials: true,
@@ -169,9 +174,16 @@ export default function HomePage() {
               <Nav.Link as={Link} to="/faq" style={{ fontSize: '24px', cursor: 'pointer', color: 'purple', marginLeft: '50px' }}>
                 FAQs
               </Nav.Link>
-              <Nav.Link as={Link} to="/reports" style={{ fontSize: '24px', cursor: 'pointer', color: 'purple', marginLeft: '50px' }}>
-                Reports
-              </Nav.Link>
+              {role === 'manager' && (
+                <Nav.Link
+                  as={Link}
+                  to="/reports"
+                  style={{ fontSize: '24px', cursor: 'pointer', color: 'purple', marginLeft: '50px' }}
+                >
+                  Reports
+                </Nav.Link>
+              )}
+
             </Nav>
             <Nav className="ms-auto" style={{ display: 'flex', alignItems: 'center' }}>
 
@@ -311,4 +323,4 @@ export default function HomePage() {
   );
 }
 
-{/* <button className="create" onClick={() => navigate("/tickets")} style={{ fontFamily: "sans-serif", fontWeight: "bold", backgroundColor: 'purple', color: 'white', border: 'white', borderRadius: '5px', width: '15%', padding: '8px', }}>Create a new support ticket</button> */}
+{/* <button className="create" onClick={() => navigate("/tickets")} style={{ fontFamily: "sans-serif", fontWeight: "bold", backgroundColor: 'purple', color: 'white', border: 'white', borderRadius: '5px', width: '15%', padding: '8px', }}>Create a new support ticket</button> */ }
