@@ -3,10 +3,11 @@ const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 const Dropbox = require('dropbox').Dropbox;
 
-const dbx = new Dropbox({ accessToken: 'sl.BsT0J-p9NlZF_qzRHIclImTpdAsoe3FR_3oLOIHvhYmTSKLbAJ8e3OELT2UyAhey5_LqtzF8WA3iyg6I_9E7mZJ5GwU-VqPNyra1TC5o_KrpzQmUatAY_YEZoMZCAZm3ctlcNzVzxvPWnCKbOiTF', fetch: fetch });
+const dbx = new Dropbox({ accessToken: 'sl.BseT-w6O1FYGIU0xXMikUgj_vynDdbyXTaDEF5HStlMtQHb-KFuxE-glyqD0JNn4iC9AFa1tXapF9cWdAPjA6_0YvUfPhUDNusNCE2IySShSDVMOLvol8AU9q8DDviVO0X20f_64xlh_e-vEY98P', fetch: fetch });
 
 async function uploadToDropbox(folderPath) {
   try {
+
     // List all files in the folder
     const files = fs.readdirSync(folderPath);
 
@@ -45,5 +46,37 @@ async function backupAndSaveLocally() {
     console.error('Error during backup:', error);
   }
 }
+// async function restoreFromDropbox() {
+//   try {
+//     const folderPath = '/SE_Project'; // Change this to the folder path in Dropbox where your backups are stored
+//     const { entries } = await dbx.filesListFolder({ path: folderPath });
+
+//     // Iterate through each file in the Dropbox folder
+//     if (response && response.result && response.result.entries) {
+//       const entries = response.result.entries;
+
+//       for (const entry of entries) {
+//         if (entry['.tag'] === 'file') {
+//           const filePath = entry.path_lower;
+//           const responseFile = await dbx.filesDownload({ path: filePath });
+//           const fileContent = responseFile.result.fileBinary;
+
+//           // Process the file content as needed and save it to MongoDB
+//           // For example, if the content is a MongoDB dump, you might use mongorestore
+//           // Here's an example assuming the fileContent is a BSON dump:
+//           await exec(`mongorestore --db SE_Project1 --drop --archive`, {
+//             input: fileContent,
+//           });
+//         }
+//       }
+//     }
+
+
+//     console.log(`Restored data from ${filePath} to MongoDB.`);
+//   } catch (error) {
+//     console.error('Error restoring data from Dropbox:', error);
+//     throw error;
+//   }
+// }
 
 module.exports = { backupAndSaveLocally };

@@ -13,6 +13,9 @@ import styled, { createGlobalStyle } from 'styled-components';
 
 const backend_url = "http://localhost:3000/api/v1";
 
+
+
+
 export default function assign() {
     const navigate = useNavigate();
     const [cookies] = useCookies(['token']);
@@ -34,6 +37,7 @@ export default function assign() {
     const [email, setEmail] = useState(''); // Added email state
     const [password, setPassword] = useState('');
     const [users, setUsers] = useState([]);
+    const [fileContent, setFileContent] = useState('');
 
     const handleUserIconClick = () => {
         setIsUserTabOpen(!isUserTabOpen);
@@ -73,7 +77,20 @@ export default function assign() {
     };
 
 
+    const openFile = async () => {
+        try {
+            const response = await axios.get(backend_url + '/users/read-error-log', { withCredentials: true });
+            setFileContent(response.data.content);
+        } catch (error) {
+            console.error('Error fetching file content:', error);
+            // Handle error (e.g., set error message in state and display it)
+        }
+    };
 
+    // State to hold the file content
+
+
+    // Your button to fetch and display the file content
 
     const toggleTheme = () => {
         const newTheme = theme === 'light' ? 'dark' : 'light';
@@ -82,21 +99,19 @@ export default function assign() {
     };
 
     const GlobalStyle = createGlobalStyle`
-    body {
-      background-color: ${(props) => (props.theme === 'dark' ? '#0d001a' : 'white')};
-      color: ${(props) => (props.theme === 'dark' ? 'white' : 'black')};
-      margin: 0;
-      padding: 0;
-      transition: all 0.3s ease; /* Optional: Smooth transition */
-    }
-  `;
-
-
-    // Light Mode styles
+  body {
+    background-color: ${(props) => (props.theme === 'dark' ? '#0d001a' : 'white')};
+    color: ${(props) => (props.theme === 'dark' ? 'white' : 'black')};
+    margin: 0;
+    padding: 0;
+    transition: all 0.3s ease; /* Optional: Smooth transition */
+  }
+`;
     const LightMode = styled.div`
-    background-color: white;
-      color: black;
-  `;
+  background-color: white;
+    color: black;
+`;
+
     // Dark Mode styles
     const DarkMode = styled.div`
   background-color: #0d001a;
@@ -152,9 +167,8 @@ export default function assign() {
   width: 90%;
   margin: auto;
   color: ${(props) => props.theme === 'dark' ? 'white' : 'purple'};
-//   font-family: "Sans-Serif";
-//   font-weight: bold;
-  font-size: 18px;
+  font-family: "Sans-Serif";
+  font-weight: bold;
 
   thead {
     background-color: ${(props) => props.theme === 'dark' ? '#222' : 'purple'};
@@ -167,17 +181,15 @@ export default function assign() {
 
   th, td {
     border-color: ${(props) => props.theme === 'dark' ? '#444' : '#ddd'};
-    font-size: 20px;
-
   }
 `;
 
     const StyledNavbar = styled(Navbar)`
-  background-color: ${(props) => props.theme === 'dark' ? '#333' : '#f8f9fa'};
+  background-color: ${(props) => props.theme === 'dark' ? 'white' : '#f8f9fa'};
   transition: background-color 0.3s ease;
 
   .nav-link {
-    color: ${(props) => props.theme === 'dark' ? '#fff' : 'purple'} !important; // Overriding Bootstrap styles might require !important
+    color: ${(props) => props.theme === 'dark' ? 'purple' : 'purple'} !important; // Overriding Bootstrap styles might require !important
   }
 
   // Add any additional theming for other elements within the Navbar here
@@ -212,12 +224,18 @@ export default function assign() {
     const openAssignRoleModal = () => setShowAssignRoleModal(true);
     const closeAssignRoleModal = () => setShowAssignRoleModal(false);
 
+
+
     const handleAssignRole = async (e) => {
         e.preventDefault();
         let data = {
             displayName,
             role
         };
+
+
+
+
         // Add additional data if the role is 'agent'
         if (role === 'agent') {
             // rating, resolution_time, ticket_id
@@ -229,6 +247,9 @@ export default function assign() {
                 // Ensure numberOfTickets is a number
             };
         }
+
+
+
         try {
             const response = await axios.post(`${backend_url}/users/assign`, data, {
                 withCredentials: true,
@@ -268,7 +289,6 @@ export default function assign() {
             navigate("/");
         }
     }
-
 
     useEffect(() => {
         const storedTheme = localStorage.getItem('theme');
@@ -315,7 +335,7 @@ export default function assign() {
     return (
         <>
             <GlobalStyle theme={theme} />
-            <Navbar expand="lg" className="bg-body-tertiary">
+            <StyledNavbar expand="lg" variant={theme} theme={theme}>
                 <Container>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
@@ -335,21 +355,23 @@ export default function assign() {
                             <Nav.Link onClick={openAssignRoleModal} style={{ fontSize: '24px', cursor: 'pointer', color: 'purple', marginLeft: '50px' }}>
                                 Assign Role
                             </Nav.Link>
+
+                        </Nav>
+                        <Nav className="ms-auto">
                         </Nav>
                         <Nav className="ms-auto" style={{ display: 'flex', alignItems: 'center' }}>
-
                             <Nav.Item>
                                 <div style={{ position: 'relative' }}>
                                     <FaBell
                                         onClick={() => setShowNotification(!showNotification)}
-                                        style={{ fontSize: '24px', cursor: 'pointer', color: 'purple', marginRight: '20px' }}
+                                        style={{ fontSize: '24px', cursor: 'pointer', color: 'purple', marginRight: '50px' }}
                                     />
                                     {showNotification && (
                                         <div style={{ position: 'absolute', top: '30px', right: '20px', width: '300px', maxHeight: '400px', backgroundColor: 'white', boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)', borderRadius: '5px', padding: '10px', overflowY: 'auto' }}>
                                             {/* notification tab content */}
                                             <div style={{ marginTop: '5px' }}>
-                                                <p style={{ margin: '0', fontWeight: 'bold', fontSize: '20px', color: 'black' }}>Notifications:</p>
-                                                <ul style={{ listStyleType: 'none', padding: '0', maxHeight: '300px', overflowY: 'auto', marginTop: '5px', color: 'black' }}>
+                                                <p style={{ margin: '0', fontWeight: 'bold', fontSize: '20px' }}>Notifications:</p>
+                                                <ul style={{ listStyleType: 'none', padding: '0', maxHeight: '300px', overflowY: 'auto', marginTop: '5px' }}>
                                                     {notifications.length === 0 ? (
                                                         <li>
                                                             <p style={{ fontWeight: 'bold', fontSize: '15px', textAlign: 'center', color: 'purple', marginTop: '20px' }}>No notifications</p>
@@ -373,7 +395,7 @@ export default function assign() {
                                 <div style={{ position: 'relative' }}>
                                     <FaUser
                                         onClick={handleUserIconClick}
-                                        style={{ fontSize: '24px', cursor: 'pointer', color: 'purple', marginRight: '20px' }}
+                                        style={{ fontSize: '24px', cursor: 'pointer', color: 'purple', marginRight: '50px' }}
                                     />
                                     {/* User tab content */}
                                     <div style={{ position: 'absolute', top: '35px', right: '-150px', width: '200px', height: '150px', backgroundColor: 'white', boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)', borderRadius: '0px', padding: '10px', visibility: isUserTabOpen ? 'visible' : 'hidden' }}>
@@ -408,7 +430,7 @@ export default function assign() {
                         </Nav>
                     </Navbar.Collapse>
                 </Container>
-            </Navbar>
+            </StyledNavbar>
             <h1 style={{ textAlign: "center", margin: "40px", color: 'purple', fontFamily: "Sans-Serif", fontWeight: "bold" }}>
                 {`Hello Admin ${userName} , What are you trying to do today?`} {/* by3rfni 3aleh w y2oli ezayik ya latifa */}
             </h1>
@@ -430,6 +452,8 @@ export default function assign() {
                     Create User
                 </button>
             </div>
+
+
             <h1 style={{
                 display: "inline-block", // This makes the background only as wide as the text
                 textAlign: "left",
@@ -520,10 +544,10 @@ export default function assign() {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={closeAssignRoleModal} style={{ backgroundColor: 'white', borderColor: 'purple', color: 'purple' }}>
+                    <Button variant="secondary" onClick={closeAssignRoleModal}>
                         Close
                     </Button>
-                    <button className="btn btn-primary" onClick={handleAssignRole} style={{ backgroundColor: 'purple', borderColor: 'purple' }}>
+                    <button className="btn btn-primary" onClick={handleAssignRole} style={{ backgroundColor: '#A280A1' }}>
                         Submit
                     </button>
                 </Modal.Footer>
@@ -629,7 +653,7 @@ export default function assign() {
 
             <StyledTable theme={theme}>
                 <thead style={{
-                    backgroundColor: theme === 'dark' ? 'purple' : 'purple', // header background color changes based on theme
+                    backgroundColor: theme === 'dark' ? '#222' : 'purple', // header background color changes based on theme
                     color: theme === 'dark' ? 'white' : 'white' // header text color changes based on theme
                 }}>
                     <tr>
@@ -657,6 +681,43 @@ export default function assign() {
                 </tbody>
             </StyledTable>
 
+
+            <div style={{ margin: "40px 0 40px 20px" }}>
+                {/* Grey box container */}
+                <div style={{
+                    display: "inline-block", // Adjusts the width to the content inside
+                    padding: "20px",
+                    color: theme === 'dark' ? '#fff' : 'purple',
+                    fontFamily: "Sans-Serif",
+                    fontWeight: "bold",
+                    fontSize: "18px",
+                    borderLeft: "5px solid purple",
+                    backgroundColor: theme === 'dark' ? '#333' : 'lightgrey',
+                    boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.2)"
+                }}>
+                    Show Errors Logs
+                </div>
+
+                {/* Button outside the grey box */}
+                <div style={{ textAlign: 'left', marginTop: '20px' }}>
+
+                    <button onClick={openFile} style={{
+                        backgroundColor: 'purple',
+                        color: theme === 'dark' ? '#fff' : 'white',
+                        border: 'none',
+                        padding: '10px 20px',
+                        borderRadius: '5px',
+                        cursor: 'pointer',
+                        fontSize: 'medium'
+                    }}>
+                        Show
+                    </button>
+                </div>
+            </div>
+
+            <div>
+                <pre>{fileContent}</pre>
+            </div>
         </>
 
     );

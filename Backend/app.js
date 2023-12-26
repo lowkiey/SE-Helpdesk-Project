@@ -23,7 +23,7 @@ require('dotenv').config();
 const server = http.createServer(app);
 const authenticationMiddleware = require("./Middleware/authenticationMiddleware");
 const cors = require("cors");
-const { backupAndSaveLocally } = require('./backup');
+const { backupAndSaveLocally, restoreFromDropbox } = require('./backup');
 const { checkChat, getAgent } = require("./Controller/messagesController")
 const { get } = require("lodash")
 app.use(express.json());
@@ -101,15 +101,34 @@ const connectionOptions = {
 
 mongoose
   .connect(db_url, connectionOptions)
-  .then(() => console.log("MongoDB connected"))
-  .then(() => backupAndSaveLocally())
+  .then(() => {
+    console.log("MongoDB connected");
+
+    // Trigger backupAndSaveLocally every 2 hours
+    setInterval(async () => {
+      try {
+        await backupAndSaveLocally();
+        console.log("Backup completed successfully. Auto-backup after 2 hours.");
+      } catch (error) {
+        console.error('Error during auto-backup:', error);
+      }
+    }, 2 * 60 * 60 * 1000); // 2 hours in milliseconds
+  })
+
   .catch((e) => {
     console.log(e);
   });
 
-app.use(function (req, res, next) {
-  return res.status(404).send("404");
-});
+// app.post('/restore-from-dropbox', async (req, res) => {
+//   try {
+//     await restoreFromDropbox();
+//     res.status(200).json({ message: 'Data restored successfully!' });
+//   } catch (error) {
+//     console.error('Error restoring data:', error); // Log the specific error
+//     res.status(500).json({ error: 'Failed to restore data. See server logs for details.' });
+//   }
+// });
+
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
