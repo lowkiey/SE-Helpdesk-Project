@@ -13,6 +13,7 @@ import Agent from './pages/agent';
 import IssuePage from './pages/issuePage';
 import ViewReports from './pages/viewReport';
 import UpdateTickets from './pages/updateTickets';
+import Assign from "./pages/assign";
 import io from 'socket.io-client';
 
 function App() {
@@ -56,6 +57,8 @@ function App() {
       <Route path="/chats/:userId" element={<ChatPage socket={socket} />} />
       <Route path="/agent" element={<Agent />} />
       <Route path="/updateTickets" element={<UpdateTickets />} />
+      <Route path="/assign" element={<Assign />} />
+
 
     </Routes>
   );

@@ -369,9 +369,58 @@ const userController = {
 
             res.status(500).json({ message: "Server error" });
         }
-    }
+    },
+    registerByAdmin: async (req, res) => {
+        try {
+            const { email, password, displayName, role, rating, resolution_time } = req.body;
 
+            // Check if the user already exists
+            const existingUser = await userModel.findOne({ email });
+            if (existingUser) {
+                return res.status(409).json({ message: "User already exists" });
+            }
+
+            // Hash the password
+            const hashedPassword = await bcrypt.hash(password, 10);
+
+            // Check the number of agents
+            const agentCount = await userModel.countDocuments({ role: "agent" });
+            if (role === "agent" && agentCount >= 3) {
+                return res.status(400).json({ message: "Maximum number of agents reached" });
+            }
+
+            // Create a new user object
+            let newUser = {
+                email,
+                password: hashedPassword,
+                displayName,
+                role
+            };
+
+            // Save the user to the userModel
+            const user = new userModel(newUser);
+            await user.save();
+
+            // Add extra fields and save to AgentModel if the role is 'agent'
+            if (role === "agent") {
+                let newAgent = {
+                    ...newUser,
+                    rating,
+                    resolution_time
+                };
+                const agent = new AgentModel(newAgent);
+                await agent.save();
+            }
+
+            res.status(201).json({ message: "User registered successfully" });
+        } catch (error) {
+            console.error("Error registering user:", error);
+            res.status(500).json({ message: "Server error" });
+        }
+    }
 };
+
+
 
 
 module.exports = userController;
