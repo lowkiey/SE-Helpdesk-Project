@@ -9,7 +9,7 @@ const Ticketschema = new mongoose.Schema(
     user_id: { type: mongoose.Schema.Types.ObjectId, required: false, unique: true },
     category: { type: String, required: true, minlength: 6 },
     subCategory: { type: String, required: true, minlength: 6 },
-    description: { type: String, required: true, minlength: 4 },
+    description: { type: String, required: false, minlength: 4 },
     priority: { type: String, required: false, minlength: 4 },
     status: { type: String, required: false, minlength: 4 },
     agent_id: { type: mongoose.Schema.Types.ObjectId, default: null },

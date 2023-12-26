@@ -122,29 +122,46 @@ const ticketsController = {
       // Call the endpoint to get the priority level
 
 
-      const priorityLevel = await ticketsController.priorityy(subCategory);
+      //Priority
+      let priorityLevel;
+      if (subCategory == 'Desktops' || subCategory == 'Laptops') {
+        priorityLevel = 'high';
+      } else if (subCategory == 'Printers' || subCategory == 'Servers') {
+        priorityLevel = 'medium';
+      } else if (subCategory == 'Networking equipment') {
+        priorityLevel = 'low';
+      }
+      if (subCategory == 'Operating system') {
+        priorityLevel = 'high';
+      } else if (subCategory == 'Application software' || subCategory == 'Custom software') {
+        priorityLevel = 'medium';
+      } else if (subCategory == 'Integration issues') {
+        priorityLevel = 'low';
+      }
+      if (subCategory == 'Email issues') {
+        priorityLevel = 'high';
+      } else if (subCategory == 'Internet connection problems') {
+        priorityLevel = 'medium';
+      } else if (subCategory == 'Website errors') {
+        priorityLevel = 'low';
+      }
+
       newTicket.priority = priorityLevel;
       await newTicket.save();
+
+      console.log("a7aaaaaa")
+      console.log(newTicket.priority.toString());
 
 
 
       // if (newTicket) {
       //   // Call the endpoint to trigger the automated workflow
-      //   const workflowResult = await AutomatedWorkflowController.createAutomatedWorkflowWithRouting({
-      //     category: newTicket.category,
-      //     subCategory: newTicket.subCategory
-      //   });
-      // }
-      if (newTicket) {
-        // Call the endpoint to trigger the automated workflow
-        const workflowResult = await automatedWorkflowController.createAutomatedWorkflowWithRouting();
+      const workflowResult = await automatedWorkflowController.createAutomatedWorkflowWithRouting();
 
-        if (workflowResult && workflowResult.status === 200) {
-          console.log('Automated workflow triggered successfully');
-        } else {
-          console.error('Error triggering automated workflow');
-        }
-      }
+      if (workflowResult && workflowResult.status === 200) {
+        console.log('Automated workflow triggered successfully');
+      } 
+      // }
       res.status(201).json({ message: "Ticket created successfully", ticket: newTicket });
     } catch (error) {
       console.error("Error creating ticket:", error);
@@ -177,6 +194,7 @@ const ticketsController = {
       const updatedTicket = await updateTicketAndNotifyUser(tickets._id, solution, tickets.user_id);
       updatedTicket.status = 'closed';
 
+      
 
       return res.status(200).json({ message: 'Ticket updated and closed successfully', updatedTicket });
     }
@@ -228,42 +246,42 @@ const ticketsController = {
       const tickets = await ticketsModel.findByIdAndUpdate(
         req.params.id,
       )
-      let priorityLevel;
+      // let priorityLevel;
 
-      const { subCategory } = req.body;
-      if (subCategory == 'Desktops' || subCategory == 'Laptops') {
-        priorityLevel = 'High';
-      } else if (subCategory == 'Printers' || subCategory == 'Servers') {
-        priorityLevel = 'Medium';
-        // return res.status(200).json({ subCategory, message: 'priority = Medium' })
-      } else if (subCategory == 'Networking equipment') {
-        priorityLevel = 'Low';
-        // return res.status(200).json({ subCategory, message: 'priority = Low' })
-      }
+      // const { subCategory } = req.body;
+      // if (subCategory == 'Desktops' || subCategory == 'Laptops') {
+      //   priorityLevel = 'High';
+      // } else if (subCategory == 'Printers' || subCategory == 'Servers') {
+      //   priorityLevel = 'Medium';
+      //   // return res.status(200).json({ subCategory, message: 'priority = Medium' })
+      // } else if (subCategory == 'Networking equipment') {
+      //   priorityLevel = 'Low';
+      //   // return res.status(200).json({ subCategory, message: 'priority = Low' })
+      // }
 
-      if (subCategory == 'Operating system') {
-        priorityLevel = 'High';
-        // return res.status(200).json({ subCategory, message: 'priority = High' })
-      } else if (subCategory == 'Application software' || subCategory == 'Custom software') {
-        priorityLevel = 'Medium';
-        // return res.status(200).json({ subCategory, message: 'priority = Medium' })
-      } else if (subCategory == 'Integration issues') {
-        priorityLevel = 'Low';
-        // return res.status(200).json({ subCategory, message: 'priority = Low' })
-      }
+      // if (subCategory == 'Operating system') {
+      //   priorityLevel = 'High';
+      //   // return res.status(200).json({ subCategory, message: 'priority = High' })
+      // } else if (subCategory == 'Application software' || subCategory == 'Custom software') {
+      //   priorityLevel = 'Medium';
+      //   // return res.status(200).json({ subCategory, message: 'priority = Medium' })
+      // } else if (subCategory == 'Integration issues') {
+      //   priorityLevel = 'Low';
+      //   // return res.status(200).json({ subCategory, message: 'priority = Low' })
+      // }
 
-      if (subCategory == 'Email issues') {
-        priorityLevel = 'High';
-        // return res.status(200).json({ subCategory, message: 'priority = High' })
-      } else if (subCategory == 'Internet connection problems') {
-        priorityLevel = 'Medium';
-        // return res.status(200).json({ subCategory, message: 'priority = Medium' })
-      } else if (subCategory == 'Website errors') {
-        priorityLevel = 'Low';
-        // return res.status(200).json({ subCategory, message: 'priority = Low' })
-      }
-      // return res.status(200).json({ subCategory, message: `priority = ${priorityLevel}` });
-      return priorityLevel; // Return the computed priority level
+      // if (subCategory == 'Email issues') {
+      //   priorityLevel = 'High';
+      //   // return res.status(200).json({ subCategory, message: 'priority = High' })
+      // } else if (subCategory == 'Internet connection problems') {
+      //   priorityLevel = 'Medium';
+      //   // return res.status(200).json({ subCategory, message: 'priority = Medium' })
+      // } else if (subCategory == 'Website errors') {
+      //   priorityLevel = 'Low';
+      //   // return res.status(200).json({ subCategory, message: 'priority = Low' })
+      // }
+      // // return res.status(200).json({ subCategory, message: `priority = ${priorityLevel}` });
+      // return priorityLevel; // Return the computed priority level
 
     }
     catch (error) {

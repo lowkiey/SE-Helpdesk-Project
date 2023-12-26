@@ -9,7 +9,7 @@ router.post("/", authorizationMiddleware(['user']), ticketsController.createTick
 router.put("/:id", authorizationMiddleware(['agent','user']), ticketsController.updateTicket);
 router.put("/category/:id", authorizationMiddleware(['user']), ticketsController.categoryTicket);
 router.put("/", authorizationMiddleware(['user']), ticketsController.subCategory);
-router.put("/priorr/:id", authorizationMiddleware(['user']), ticketsController.priorityy);
+// router.put("/priorr/:id", authorizationMiddleware(['user']), ticketsController.priorityy);
 router.get("/", authorizationMiddleware(['user', 'manager', 'agent']), ticketsController.getAllTickets);
 
 module.exports = router; // ! Don't forget to export the router

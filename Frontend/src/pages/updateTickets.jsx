@@ -321,7 +321,7 @@ export default function UpdateTickets() {
                         </tr>
                     </thead>
                     <tbody>
-                        {tickets.filter((ticket) => ticket.status === 'open').map((ticket, index) => (
+                        {tickets.filter((ticket) => ticket.status === 'pending').map((ticket, index) => (
                             <tr key={ticket._id}>
                                 <td>{index + 1}</td>
                                 <td>{ticket.category}</td>

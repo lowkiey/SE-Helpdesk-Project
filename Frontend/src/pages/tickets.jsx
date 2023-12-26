@@ -244,8 +244,7 @@ export default function Ticket() {
                     category: selectedCategory,
                     subCategory: selectedSubCategory,
                     description: description,
-                    status: 'pending',
-                    agent_id: null,
+                    status: 'open'
                 },
                 {
                     withCredentials: true,
@@ -459,7 +458,7 @@ export default function Ticket() {
         If emails work on another device, the problem may be with the original device or its settings.`
                     );
                     break
-                case "Internet Connection Issues":
+                case "Internet connection problems":
                     setDescription(`
         1-Restart Network Devices:
         Restart your router and modem to refresh the network connection.

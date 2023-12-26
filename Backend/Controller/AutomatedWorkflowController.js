@@ -278,10 +278,13 @@ const automatedWorkflowController = {
             const openTickets = await ticketsModel.find({ status: 'open' });
             console.log("open tickets: ", openTickets)
             //loop on open tickets to push in priority queues
-            for (const ticket of openTickets) {
+            for (let ticket of openTickets) {
+                console.log("aloooooooooooooooo")
                 switch (ticket.priority) {
                     case 'high':
+                        console.log("ticket: ", ticket.priority);
                         highQueue.push(ticket);
+                        console.log("high queue: ", highQueue)
                         break;
                     case 'medium':
                         mediumQueue.push(ticket);
@@ -302,6 +305,7 @@ const automatedWorkflowController = {
         }
 
         try {
+
             const agents = await agentModel.find().lean();
             console.log('Agents:', agents);
             // software high, network medium, hardware low
@@ -343,20 +347,25 @@ const automatedWorkflowController = {
                             const agentid = agent1._id.toString();
                             ticket.agent_id = agentid;
                             console.log(agent1._id.toString());
-                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id });
+                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id, status: 'pending'  });
                             // await ticket.save(ticket.agent_id);
+                            highQueue.pop(ticket);
                         }
                         else if (agent1.ticketCount > 5 && agent2.ticketCount < 5) {
                             const agentid = agent2._id.toString();
                             ticket.agent_id = agentid;
                             console.log(agent2._id.toString());
-                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id });
+                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id, status: 'pending'  });
+                            highQueue.pop(ticket);
+
                         }
                         else if (agent1.ticketCount > 5 && agent2.ticketCount > 5) {
                             const agentid = agent3._id.toString();
                             ticket.agent_id = agentid;
                             console.log(agent3._id.toString());
-                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id });
+                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id, status: 'pending'  });
+                            highQueue.pop(ticket);
+
                         }
                         else {
                             highQueue.push(ticket);
@@ -365,26 +374,31 @@ const automatedWorkflowController = {
                     }
 
                     if (ticket.category === 'Hardware') {
-
+                        console.log('agenyyy', agent2.ticketCount);
                         if (agent2.ticketCount < 5) {
                             console.log(agent2._id.toString(), "nedw")
                             const agentid = agent2._id.toString();
                             ticket.agent_id = agentid;
                             console.log(agent2._id.toString());
-                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id });
+                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id, status: 'pending'  });
+                            highQueue.pop(ticket);
                             // await ticket.save(ticket.agent_id);
                         }
                         else if (agent2.ticketCount > 5 && agent3.ticketCount < 5) {
                             const agentid = agent3._id.toString();
                             ticket.agent_id = agentid;
                             console.log(agent3._id.toString());
-                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id });
+                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id, status: 'pending'  });
+                            highQueue.pop(ticket);
+
                         }
                         else if (agent2.ticketCount > 5 && agent3.ticketCount > 5) {
                             const agentid = agent1._id.toString();
                             ticket.agent_id = agentid;
                             console.log(agent1._id.toString());
-                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id });
+                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id, status: 'pending'  });
+                            highQueue.pop(ticket);
+
                         }
                         else {
                             highQueue.push(ticket);
@@ -397,20 +411,26 @@ const automatedWorkflowController = {
                             const agentid = agent3._id.toString();
                             ticket.agent_id = agentid;
                             console.log(agent3._id.toString());
-                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id });
+                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id, status: 'pending'  });
                             // await ticket.save(ticket.agent_id);
+                            highQueue.pop(ticket);
+
                         }
                         else if (agent3.ticketCount > 5 && agent1.ticketCount < 5) {
                             const agentid = agent1._id.toString();
                             ticket.agent_id = agentid;
                             console.log(agent1._id.toString());
-                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id });
+                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id, status: 'pending'  });
+                            highQueue.pop(ticket);
+
                         }
                         else if (agent3.ticketCount > 5 && agent1.ticketCount > 5) {
                             const agentid = agent2._id.toString();
                             ticket.agent_id = agentid;
                             console.log(agent2._id.toString());
-                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id });
+                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id, status: 'pending'  });
+                            highQueue.pop(ticket);
+
                         }
                         else {
                             highQueue.push(ticket);
@@ -439,20 +459,26 @@ const automatedWorkflowController = {
                             const agentid = agent1._id.toString();
                             ticket.agent_id = agentid;
                             console.log(agent1._id.toString());
-                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id });
+                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id, status: 'pending'  });
+                            mediumQueue.pop(ticket);
+
                             // await ticket.save(ticket.agent_id);
                         }
                         else if (agent1.ticketCount > 5 && agent2.ticketCount < 5) {
                             const agentid = agent2._id.toString();
                             ticket.agent_id = agentid;
                             console.log(agent2._id.toString());
-                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id });
+                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id, status: 'pending'  });
+                            mediumQueue.pop(ticket);
+
                         }
                         else if (agent1.ticketCount > 5 && agent2.ticketCount > 5) {
                             const agentid = agent3._id.toString();
                             ticket.agent_id = agentid;
                             console.log(agent3._id.toString());
-                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id });
+                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id, status: 'pending'  });
+                            mediumQueue.pop(ticket);
+
                         }
                         else {
                             mediumQueue.push(ticket);
@@ -467,20 +493,26 @@ const automatedWorkflowController = {
                             const agentid = agent2._id.toString();
                             ticket.agent_id = agentid;
                             console.log(agent2._id.toString());
-                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id });
+                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id, status: 'pending'  });
+                           
+                            mediumQueue.pop(ticket);
                             // await ticket.save(ticket.agent_id);
                         }
                         else if (agent2.ticketCount > 5 && agent3.ticketCount < 5) {
                             const agentid = agent3._id.toString();
                             ticket.agent_id = agentid;
                             console.log(agent3._id.toString());
-                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id });
+                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id, status: 'pending'  });
+                            mediumQueue.pop(ticket);
+
                         }
                         else if (agent2.ticketCount > 5 && agent3.ticketCount > 5) {
                             const agentid = agent1._id.toString();
                             ticket.agent_id = agentid;
                             console.log(agent1._id.toString());
-                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id });
+                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id, status: 'pending'  });
+                            mediumQueue.pop(ticket);
+
                         }
                         else {
                             mediumQueue.push(ticket);
@@ -493,20 +525,26 @@ const automatedWorkflowController = {
                             const agentid = agent3._id.toString();
                             ticket.agent_id = agentid;
                             console.log(agent3._id.toString());
-                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id });
+                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id, status: 'pending'  });
                             // await ticket.save(ticket.agent_id);
+                            mediumQueue.pop(ticket);
+
                         }
                         else if (agent3.ticketCount > 5 && agent1.ticketCount < 5) {
                             const agentid = agent1._id.toString();
                             ticket.agent_id = agentid;
                             console.log(agent1._id.toString());
-                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id });
+                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id, status: 'pending'  });
+                            mediumQueue.pop(ticket);
+
                         }
                         else if (agent3.ticketCount > 5 && agent1.ticketCount > 5) {
                             const agentid = agent2._id.toString();
                             ticket.agent_id = agentid;
                             console.log(agent2._id.toString());
-                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id });
+                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id, status: 'pending'  });
+                            mediumQueue.pop(ticket);
+
                         }
                         else {
                             mediumQueue.push(ticket);
@@ -533,20 +571,26 @@ const automatedWorkflowController = {
                             const agentid = agent1._id.toString();
                             ticket.agent_id = agentid;
                             console.log(agent1._id.toString());
-                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id });
+                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id, status: 'pending'  });
                             // await ticket.save(ticket.agent_id);
+                            lowQueue.pop(ticket);
+
                         }
                         else if (agent1.ticketCount > 5 && agent2.ticketCount < 5) {
                             const agentid = agent2._id.toString();
                             ticket.agent_id = agentid;
                             console.log(agent2._id.toString());
-                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id });
+                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id, status: 'pending'  });
+                            lowQueue.pop(ticket);
+
                         }
                         else if (agent1.ticketCount > 5 && agent2.ticketCount > 5) {
                             const agentid = agent3._id.toString();
                             ticket.agent_id = agentid;
                             console.log(agent3._id.toString());
-                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id });
+                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id, status: 'pending'  });
+                            lowQueue.pop(ticket);
+
                         }
                         else {
                             lowQueue.push(ticket);
@@ -561,20 +605,26 @@ const automatedWorkflowController = {
                             const agentid = agent2._id.toString();
                             ticket.agent_id = agentid;
                             console.log(agent2._id.toString());
-                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id });
+                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id, status: 'pending'  });
+                            lowQueue.pop(ticket);
+
                             // await ticket.save(ticket.agent_id);
                         }
                         else if (agent2.ticketCount > 5 && agent3.ticketCount < 5) {
                             const agentid = agent3._id.toString();
                             ticket.agent_id = agentid;
                             console.log(agent3._id.toString());
-                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id });
+                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id, status: 'pending'  });
+                            lowQueue.pop(ticket);
+
                         }
                         else if (agent2.ticketCount > 5 && agent3.ticketCount > 5) {
                             const agentid = agent1._id.toString();
                             ticket.agent_id = agentid;
                             console.log(agent1._id.toString());
-                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id });
+                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id, status: 'pending'  });
+                            lowQueue.pop(ticket);
+
                         }
                         else {
                             lowQueue.push(ticket);
@@ -587,20 +637,26 @@ const automatedWorkflowController = {
                             const agentid = agent3._id.toString();
                             ticket.agent_id = agentid;
                             console.log(agent3._id.toString());
-                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id });
+                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id, status: 'pending'  });
+                            lowQueue.pop(ticket);
+
                             // await ticket.save(ticket.agent_id);
                         }
                         else if (agent3.ticketCount > 5 && agent1.ticketCount < 5) {
                             const agentid = agent1._id.toString();
                             ticket.agent_id = agentid;
                             console.log(agent1._id.toString());
-                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id });
+                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id, status: 'pending'  });
+                            lowQueue.pop(ticket);
+
                         }
                         else if (agent3.ticketCount > 5 && agent1.ticketCount > 5) {
                             const agentid = agent2._id.toString();
                             ticket.agent_id = agentid;
                             console.log(agent2._id.toString());
-                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id });
+                            await ticketsModel.findByIdAndUpdate(ticket._id, { agent_id: ticket.agent_id, status: 'pending'  });
+                            lowQueue.pop(ticket);
+
                         }
                         else {
                             lowQueue.push(ticket);
@@ -608,8 +664,6 @@ const automatedWorkflowController = {
                         }
                     }
                 }
-
-
 
                 if (automatedWorkflowController.isEmpty(highQueue)
                     && automatedWorkflowController.isEmpty(mediumQueue)
