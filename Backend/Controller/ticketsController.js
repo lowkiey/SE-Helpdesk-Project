@@ -110,12 +110,11 @@ const ticketsController = {
         subCategory,
         description,
         priority,
-        status,
+        status: 'open',
         agent_id,
         workflow
       });
       await newTicket.save();
-      console.log("a7aaaaaa")
       console.log(newTicket._id.toString());
       const idTicket = newTicket._id.toString();
       console.log(idTicket);
@@ -149,18 +148,27 @@ const ticketsController = {
       newTicket.priority = priorityLevel;
       await newTicket.save();
 
-      console.log("a7aaaaaa")
       console.log(newTicket.priority.toString());
 
 
+      console.log(newTicket, "newwwww")
 
       // if (newTicket) {
       //   // Call the endpoint to trigger the automated workflow
       const workflowResult = await automatedWorkflowController.createAutomatedWorkflowWithRouting();
-
       if (workflowResult && workflowResult.status === 200) {
         console.log('Automated workflow triggered successfully');
       }
+
+      const ticketAgent = await ticketsModel.findById(newTicket._id);
+      console.log(ticketAgent, "ticke");
+      console.log(ticketAgent.agent_id, "ticke agent id")
+
+
+      const assignedAgentId = await Agent.findById(ticketAgent.agent_id);
+      assignedAgentId.ticketCount += 1;
+      await assignedAgentId.save();
+
       // }
       res.status(201).json({ message: "Ticket created successfully", ticket: newTicket });
     } catch (error) {
@@ -187,7 +195,7 @@ const ticketsController = {
       const assignedAgentId = await Agent.findById(tickets.agent_id);
       console.log(assignedAgentId);
       const { solution } = req.body;
-      assignedAgentId.numberOfTickets -= 1;
+      assignedAgentId.ticketCount -= 1;
       await assignedAgentId.save();
 
       //
