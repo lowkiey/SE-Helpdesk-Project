@@ -544,7 +544,7 @@ export default function Ticket() {
                             <Nav.Link as={Link} to="/faq" style={{ fontSize: '24px', cursor: 'pointer', color: 'purple', marginLeft: '50px' }}>
                                 FAQs
                             </Nav.Link>
-                            
+
                         </Nav>
                         <Nav className="ms-auto" style={{ display: 'flex', alignItems: 'center' }}>
 
@@ -590,7 +590,7 @@ export default function Ticket() {
                                         <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column', visibility: isUserTabOpen ? 'visible' : 'hidden' }}>
                                             <p style={{ margin: '10px', fontSize: '20px', fontWeight: 'bold', color: 'black' }}>{`${userName}`}</p>
                                             {/* Toggle switch for both modes */}
-                                            
+
                                             <Link to="/" style={{ marginTop: '10px', color: 'rgb(209, 151, 240)', textDecoration: 'none', visibility: isUserTabOpen ? 'visible' : 'hidden' }}>Logout</Link>
                                         </div>
                                     </div>

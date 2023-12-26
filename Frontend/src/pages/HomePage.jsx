@@ -24,6 +24,8 @@ export default function HomePage() {
   const [showNotification, setShowNotification] = useState(false); // New state for notification
   const [notifications, setNotifications] = useState([]);
   const [theme, setTheme] = useState("light");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [userNameInput, setUserNameInput] = useState("");
 
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
@@ -100,6 +102,32 @@ export default function HomePage() {
     transform: translateX(25px) translateY(-50%);
   }
 `;
+  const handleEditProfileClick = () => {
+    setIsModalOpen(true);
+  };
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+  };
+  const handleInputChange = (event) => {
+    setUserNameInput(event.target.value);
+  };
+  const handleSubmit = async () => {
+    try {
+      const uid = localStorage.getItem("userId");
+      const response = await axios.put(
+        `${backend_url}/users/${uid}`,
+        { displayName: userNameInput }, // Pass the updated display name
+        { withCredentials: true }
+      );
+      console.log("response", response);
+      // Optionally update the user name displayed in the UI
+      setUserName(response.data.user.displayName);
+      setIsModalOpen(false); // Close the modal after successful update
+    } catch (error) {
+      console.error('Error updating user:', error);
+      // Handle error scenarios
+    }
+  };
   const handleUserIconClick = () => {
     setIsUserTabOpen(!isUserTabOpen);
   };
@@ -229,7 +257,21 @@ export default function HomePage() {
                     <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column', visibility: isUserTabOpen ? 'visible' : 'hidden' }}>
                       <p style={{ margin: '10px', fontSize: '20px', fontWeight: 'bold', color: 'black' }}>{`${userName}`}</p>
                       {/* Toggle switch for both modes */}
-
+                      <Link style={{ marginTop: '5px', color: 'rgb(209, 151, 240)', textDecoration: 'none', visibility: isUserTabOpen ? 'visible' : 'hidden' }} onClick={handleEditProfileClick}>edit profile</Link>
+                      <div>
+                        {isModalOpen && (
+                          <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '50%', backgroundColor: 'rgba(0, 0, 0, 0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                            <div style={{ backgroundColor: 'white', padding: '30px', borderRadius: '10px', minWidth: '300px' }}>
+                              <h3 style={{ color: "black" }}>Edit Profile</h3>
+                              <input type="text" value={userNameInput} onChange={handleInputChange} placeholder="Enter your name" />
+                              <div style={{ marginTop: '10px' }}>
+                                <button className="btn btn-secondary" onClick={handleSubmit} style={{ color: "white", background: 'purple' }}>Save</button>
+                                <button className="btn btn-secondary" onClick={handleModalClose} style={{ color: "purple", background: 'white', marginLeft: '50px', borderColor: "purple" }}>Cancel</button>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                       <Link to="/" style={{ marginTop: '10px', color: 'rgb(209, 151, 240)', textDecoration: 'none', visibility: isUserTabOpen ? 'visible' : 'hidden' }}>Logout</Link>
                     </div>
                   </div>
